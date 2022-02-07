@@ -1,0 +1,877 @@
+{
+
+    "name": "Goldfinger",
+    "maxJumps": 2,
+    "maxHealth": 10000,
+    "maxMeter": 1000,
+    "maxMana": 5,
+    "gravity": 6, 
+
+
+    // NOTE: The 0th color in the palette will be ignored, made transparent.
+    // Colors can be defined as a triplet or quadruplet, RGBA. If triplet, A is assumed to be 255.
+    "palettes":[
+        [[0, 136, 72],[248, 224, 208],[248, 192, 160],[200, 136, 112],[152, 88, 72],[166, 166, 166],[103, 103, 103],[41, 41, 41],[17, 17, 17],[255, 255, 255],[212, 215, 255],[176, 176, 229],[119, 123, 185],[195, 0, 0],[167, 0, 0],[140, 0, 0],[113, 0, 0],[63, 86, 149],[42, 60, 125],[21, 35, 102],[0, 10, 79],[3, 3, 0],[0, 109, 113],[0, 50, 66],[162, 159, 212],[252, 252, 252],[52, 44, 44],[13, 13, 13],[123, 83, 83],[108, 71, 71],[79, 43, 43],[166, 166, 166],[72, 72, 72],[169, 195, 200],[255, 126, 126],[251, 251, 251],[203, 208, 230],[154, 165, 209],[105, 122, 187],[56, 79, 166],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[255, 0, 0],[0, 2, 8],[0, 0, 31],[0, 0, 22],[0, 10, 23],[0, 6, 38],[0, 10, 16],[8, 8, 8],[0, 3, 60],[3, 0, 53],[0, 10, 49],[0, 0, 78],[0, 19, 39],[10, 20, 1],[0, 0, 102],[0, 12, 76],[16, 16, 16],[1, 20, 34],[0, 30, 6],[11, 0, 94],[0, 22, 65],[12, 22, 28],[0, 30, 55],[0, 19, 92],[10, 1, 121],[19, 29, 10],[24, 24, 24],[0, 30, 81],[13, 29, 49],[0, 20, 116],[11, 1, 148],[0, 29, 106],[6, 36, 57],[0, 14, 142],[6, 0, 171],[0, 42, 76],[21, 0, 162],[24, 34, 40],[31, 32, 31],[14, 32, 80],[0, 41, 101],[0, 31, 133],[9, 31, 113],[0, 50, 86],[0, 41, 125],[23, 0, 189],[40, 40, 40],[12, 45, 87],[34, 44, 51],[0, 55, 112],[27, 49, 64],[0, 41, 155],[25, 0, 215],[48, 48, 48],[0, 53, 140],[0, 29, 191],[34, 46, 99],[25, 35, 144],[0, 10, 232],[10, 58, 112],[4, 44, 162],[25, 60, 85],[0, 69, 127],[33, 0, 237],[47, 0, 248],[0, 60, 165],[48, 61, 71],[20, 53, 151],[59, 59, 58],[0, 77, 143],[23, 70, 111],[11, 76, 115],[0, 57, 189],[0, 70, 172],[36, 40, 184],[0, 85, 152],[53, 58, 137],[44, 74, 96],[0, 66, 217],[42, 72, 138],[70, 74, 76],[0, 83, 192],[2, 75, 202],[26, 87, 140],[0, 115, 102],[0, 96, 174],[21, 75, 183],[64, 26, 244],[15, 89, 164],[20, 60, 230],[0, 91, 209],[0, 79, 228],[72, 85, 97],[0, 107, 190],[51, 91, 125],[44, 89, 166],[72, 72, 173],[0, 99, 223],[0, 91, 243],[78, 50, 241],[0, 120, 210],[12, 105, 209],[16, 90, 236],[0, 110, 236],[95, 96, 96],[40, 109, 170],[39, 103, 197],[70, 107, 141],[68, 66, 249],[55, 90, 217],[68, 100, 178],[0, 120, 244],[17, 114, 235],[0, 134, 241],[29, 104, 245],[8, 149, 158],[103, 110, 117],[13, 125, 242],[36, 123, 218],[10, 142, 245],[85, 92, 244],[76, 125, 178],[68, 123, 203],[96, 112, 187],[47, 117, 245],[40, 132, 244],[26, 145, 245],[60, 136, 214],[59, 127, 240],[125, 126, 126],[1, 184, 167],[92, 122, 215],[113, 130, 157],[63, 153, 186],[44, 148, 247],[78, 131, 248],[63, 144, 245],[47, 164, 226],[31, 170, 246],[114, 140, 195],[76, 152, 242],[103, 144, 217],[125, 123, 248],[61, 170, 249],[145, 148, 150],[95, 149, 244],[88, 162, 239],[39, 192, 248],[130, 157, 198],[86, 172, 245],[17, 213, 221],[103, 168, 240],[80, 184, 248],[117, 165, 244],[163, 164, 164],[15, 230, 233],[61, 206, 235],[96, 189, 244],[109, 180, 247],[153, 166, 213],[123, 183, 244],[134, 177, 244],[113, 193, 247],[149, 185, 237],[38, 245, 246],[140, 191, 250],[183, 185, 186],[109, 212, 242],[131, 202, 249],[176, 187, 231],[98, 225, 245],[68, 246, 244],[155, 200, 247],[159, 211, 246],[131, 228, 244],[177, 206, 249],[173, 217, 247],[207, 209, 213],[126, 248, 250],[193, 219, 241],[184, 225, 251],[150, 252, 246],[203, 229, 247],[227, 229, 231],[172, 254, 251],[184, 251, 248],[215, 236, 249],[223, 245, 254],[232, 242, 248],[240, 240, 240],[240, 250, 255],[248, 248, 248]],
+        [[0, 0, 0],[248, 224, 208],[248, 192, 160],[200, 136, 112],[152, 88, 72],[166, 166, 166],[103, 103, 103],[41, 41, 41],[17, 17, 17],[26, 26, 255],[22, 23, 213],[18, 20, 171],[14, 17, 129],[53, 196, 237],[46, 151, 220],[40, 106, 204],[34, 61, 188],[205, 225, 255],[164, 177, 206],[123, 130, 158],[83, 83, 110],[3, 3, 0],[0, 109, 113],[0, 50, 66],[162, 159, 212],[252, 252, 252],[52, 44, 44],[13, 13, 13],[123, 83, 83],[108, 71, 71],[79, 43, 43],[166, 166, 166],[72, 72, 72],[169, 195, 200],[255, 126, 126],[251, 251, 251],[203, 208, 230],[154, 165, 209],[105, 122, 187],[56, 79, 166],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[255, 0, 0],[0, 2, 8],[0, 0, 31],[0, 0, 22],[0, 10, 23],[0, 6, 38],[0, 10, 16],[8, 8, 8],[0, 3, 60],[3, 0, 53],[0, 10, 49],[0, 0, 78],[0, 19, 39],[10, 20, 1],[0, 0, 102],[0, 12, 76],[16, 16, 16],[1, 20, 34],[0, 30, 6],[11, 0, 94],[0, 22, 65],[12, 22, 28],[0, 30, 55],[0, 19, 92],[10, 1, 121],[19, 29, 10],[24, 24, 24],[0, 30, 81],[13, 29, 49],[0, 20, 116],[11, 1, 148],[0, 29, 106],[6, 36, 57],[0, 14, 142],[6, 0, 171],[0, 42, 76],[21, 0, 162],[24, 34, 40],[31, 32, 31],[14, 32, 80],[0, 41, 101],[0, 31, 133],[9, 31, 113],[0, 50, 86],[0, 41, 125],[23, 0, 189],[40, 40, 40],[12, 45, 87],[34, 44, 51],[0, 55, 112],[27, 49, 64],[0, 41, 155],[25, 0, 215],[48, 48, 48],[0, 53, 140],[0, 29, 191],[34, 46, 99],[25, 35, 144],[0, 10, 232],[10, 58, 112],[4, 44, 162],[25, 60, 85],[0, 69, 127],[33, 0, 237],[47, 0, 248],[0, 60, 165],[48, 61, 71],[20, 53, 151],[59, 59, 58],[0, 77, 143],[23, 70, 111],[11, 76, 115],[0, 57, 189],[0, 70, 172],[36, 40, 184],[0, 85, 152],[53, 58, 137],[44, 74, 96],[0, 66, 217],[42, 72, 138],[70, 74, 76],[0, 83, 192],[2, 75, 202],[26, 87, 140],[0, 115, 102],[0, 96, 174],[21, 75, 183],[64, 26, 244],[15, 89, 164],[20, 60, 230],[0, 91, 209],[0, 79, 228],[72, 85, 97],[0, 107, 190],[51, 91, 125],[44, 89, 166],[72, 72, 173],[0, 99, 223],[0, 91, 243],[78, 50, 241],[0, 120, 210],[12, 105, 209],[16, 90, 236],[0, 110, 236],[95, 96, 96],[40, 109, 170],[39, 103, 197],[70, 107, 141],[68, 66, 249],[55, 90, 217],[68, 100, 178],[0, 120, 244],[17, 114, 235],[0, 134, 241],[29, 104, 245],[8, 149, 158],[103, 110, 117],[13, 125, 242],[36, 123, 218],[10, 142, 245],[85, 92, 244],[76, 125, 178],[68, 123, 203],[96, 112, 187],[47, 117, 245],[40, 132, 244],[26, 145, 245],[60, 136, 214],[59, 127, 240],[125, 126, 126],[1, 184, 167],[92, 122, 215],[113, 130, 157],[63, 153, 186],[44, 148, 247],[78, 131, 248],[63, 144, 245],[47, 164, 226],[31, 170, 246],[114, 140, 195],[76, 152, 242],[103, 144, 217],[125, 123, 248],[61, 170, 249],[145, 148, 150],[95, 149, 244],[88, 162, 239],[39, 192, 248],[130, 157, 198],[86, 172, 245],[17, 213, 221],[103, 168, 240],[80, 184, 248],[117, 165, 244],[163, 164, 164],[15, 230, 233],[61, 206, 235],[96, 189, 244],[109, 180, 247],[153, 166, 213],[123, 183, 244],[134, 177, 244],[113, 193, 247],[149, 185, 237],[38, 245, 246],[140, 191, 250],[183, 185, 186],[109, 212, 242],[131, 202, 249],[176, 187, 231],[98, 225, 245],[68, 246, 244],[155, 200, 247],[159, 211, 246],[131, 228, 244],[177, 206, 249],[173, 217, 247],[207, 209, 213],[126, 248, 250],[193, 219, 241],[184, 225, 251],[150, 252, 246],[203, 229, 247],[227, 229, 231],[172, 254, 251],[184, 251, 248],[215, 236, 249],[223, 245, 254],[232, 242, 248],[240, 240, 240],[240, 250, 255],[248, 248, 248]],
+        [[0, 136, 72],[203, 229, 247],[159, 211, 246],[130, 157, 198],[76, 125, 178],[166, 166, 166],[103, 103, 103],[41, 41, 41],[17, 17, 17],[255, 255, 255],[248, 224, 208],[248, 224, 208],[200, 136, 112],[1, 184, 167],[1, 184, 167],[8, 149, 158],[0, 109, 113],[152, 88, 72],[152, 88, 72],[108, 71, 71],[79, 43, 43],[0, 0, 0],[113, 0, 0],[24, 24, 24],[248, 192, 160],[252, 252, 252],[52, 44, 44],[13, 13, 13],[123, 83, 83],[108, 71, 71],[79, 43, 43],[166, 166, 166],[72, 72, 72],[169, 195, 200],[255, 126, 126],[251, 251, 251],[203, 208, 230],[154, 165, 209],[105, 122, 187],[56, 79, 166],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0],[255, 0, 0],[0, 2, 8],[0, 0, 31],[0, 0, 22],[0, 10, 23],[0, 6, 38],[0, 10, 16],[8, 8, 8],[0, 3, 60],[3, 0, 53],[0, 10, 49],[0, 0, 78],[0, 19, 39],[10, 20, 1],[0, 0, 102],[0, 12, 76],[16, 16, 16],[1, 20, 34],[0, 30, 6],[11, 0, 94],[0, 22, 65],[12, 22, 28],[0, 30, 55],[0, 19, 92],[10, 1, 121],[19, 29, 10],[24, 24, 24],[0, 30, 81],[13, 29, 49],[0, 20, 116],[11, 1, 148],[0, 29, 106],[6, 36, 57],[0, 14, 142],[6, 0, 171],[0, 42, 76],[21, 0, 162],[24, 34, 40],[31, 32, 31],[14, 32, 80],[0, 41, 101],[0, 31, 133],[9, 31, 113],[0, 50, 86],[0, 41, 125],[23, 0, 189],[40, 40, 40],[12, 45, 87],[34, 44, 51],[0, 55, 112],[27, 49, 64],[0, 41, 155],[25, 0, 215],[48, 48, 48],[0, 53, 140],[0, 29, 191],[34, 46, 99],[25, 35, 144],[0, 10, 232],[10, 58, 112],[4, 44, 162],[25, 60, 85],[0, 69, 127],[33, 0, 237],[47, 0, 248],[0, 60, 165],[48, 61, 71],[20, 53, 151],[59, 59, 58],[0, 77, 143],[23, 70, 111],[11, 76, 115],[0, 57, 189],[0, 70, 172],[36, 40, 184],[0, 85, 152],[53, 58, 137],[44, 74, 96],[0, 66, 217],[42, 72, 138],[70, 74, 76],[0, 83, 192],[2, 75, 202],[26, 87, 140],[0, 115, 102],[0, 96, 174],[21, 75, 183],[64, 26, 244],[15, 89, 164],[20, 60, 230],[0, 91, 209],[0, 79, 228],[72, 85, 97],[0, 107, 190],[51, 91, 125],[44, 89, 166],[72, 72, 173],[0, 99, 223],[0, 91, 243],[78, 50, 241],[0, 120, 210],[12, 105, 209],[16, 90, 236],[0, 110, 236],[95, 96, 96],[40, 109, 170],[39, 103, 197],[70, 107, 141],[68, 66, 249],[55, 90, 217],[68, 100, 178],[0, 120, 244],[17, 114, 235],[0, 134, 241],[29, 104, 245],[8, 149, 158],[103, 110, 117],[13, 125, 242],[36, 123, 218],[10, 142, 245],[85, 92, 244],[76, 125, 178],[68, 123, 203],[96, 112, 187],[47, 117, 245],[40, 132, 244],[26, 145, 245],[60, 136, 214],[59, 127, 240],[125, 126, 126],[1, 184, 167],[92, 122, 215],[113, 130, 157],[63, 153, 186],[44, 148, 247],[78, 131, 248],[63, 144, 245],[47, 164, 226],[31, 170, 246],[114, 140, 195],[76, 152, 242],[103, 144, 217],[125, 123, 248],[61, 170, 249],[145, 148, 150],[95, 149, 244],[88, 162, 239],[39, 192, 248],[130, 157, 198],[86, 172, 245],[17, 213, 221],[103, 168, 240],[80, 184, 248],[117, 165, 244],[163, 164, 164],[15, 230, 233],[61, 206, 235],[96, 189, 244],[109, 180, 247],[153, 166, 213],[123, 183, 244],[134, 177, 244],[113, 193, 247],[149, 185, 237],[38, 245, 246],[140, 191, 250],[183, 185, 186],[109, 212, 242],[131, 202, 249],[176, 187, 231],[98, 225, 245],[68, 246, 244],[155, 200, 247],[159, 211, 246],[131, 228, 244],[177, 206, 249],[173, 217, 247],[207, 209, 213],[126, 248, 250],[193, 219, 241],[184, 225, 251],[150, 252, 246],[203, 229, 247],[227, 229, 231],[172, 254, 251],[184, 251, 248],[215, 236, 249],[223, 245, 254],[232, 242, 248],[240, 240, 240],[240, 250, 255],[248, 248, 248]]
+    ],
+
+    "animations": [
+        {
+            //'Frames' is the number of non-duplicate frames (cells) in an animation. 'Wait' is how many frames (1/60 second) each cell is paused on. There is NOT support for variable framerate animations. 'LoopStart' is the cell index that is returned to on loop, or null."
+            "name": "Idle",
+            "sprite": "Graphics/Fighter/Shoto/aoko_idle.png",
+            "frames": 16,
+            "wait": 4,
+            "cropRect":[0, 0, 43, 105],
+        },
+        {
+            "name": "Crouch Start",
+            "sprite": "Graphics/Fighter/Shoto/aoko_crouch_start.png",
+            "frames": 6,
+            "wait": 4,
+            "cropRect":[0, 0, 63, 106],
+        },
+        {
+            "name": "Crouch Loop",
+            "sprite": "Graphics/Fighter/Shoto/aoko_crouch_loop.png",
+            "frames": 1,
+            "wait": 4,
+            "cropRect":[0, 0, 63, 106],
+        },
+        {
+            "name": "Stand",
+            "sprite": "Graphics/Fighter/Shoto/aoko_stand.png",
+            "frames": 5,
+            "wait": 4,
+            "cropRect":[0, 0, 63, 106],
+            "link": "Idle",
+        },
+        {
+            "name": "Walk Forward",
+            "sprite": "Graphics/Fighter/Shoto/aoko_walk_f.png",
+            "frames": 10,
+            "wait": 4,
+            "cropRect":[0, 0, 70, 105],
+            "loopStart": 2
+        },
+        {
+            "name": "Walk Backward",
+            "sprite": "Graphics/Fighter/Shoto/aoko_walk_b.png",
+            "frames": 10,
+            "wait": 4,
+            "cropRect":[0, 0, 69, 105],
+            "loopStart": 2
+        },
+        {
+            "name": "Jump Rise",
+            "sprite": "Graphics/Fighter/Shoto/aoko_jump_rise.png",
+            "frames": 4,
+            "wait": 4,
+            "cropRect":[0,0, 70, 111],
+            "loopStart": 1
+        },
+        {
+            "name": "Jump Squat",
+            "sprite": "Graphics/Fighter/Shoto/aoko_jump_squat.png",
+            "frames": 4,
+            "wait": 2,
+            "cropRect":[0,0, 70, 111],
+            "link": "Jump Rise",
+            "loopStart": 5
+        },
+        {
+            "name": "Jump Fall",
+            "sprite": "Graphics/Fighter/Shoto/aoko_jump_fall.png",
+            "frames": 6,
+            "wait": 4,
+            "cropRect":[0,0, 82, 156],
+            "loopStart": 3
+        },
+        {
+            "name": "Jump Land",
+            "sprite": "Graphics/Fighter/Shoto/aoko_jump_land.png",
+            "frames": 7,
+            "wait": 2,
+            "cropRect":[0,0, 72, 123],
+            "link": "Idle",
+            "loopStart": 2
+        },
+        {
+            "name": "5A",
+            "sprite": "Graphics/Fighter/Shoto/aoko_5a.png",
+            "frames": 5,
+            "wait": 4,
+            "cropRect":[0,0, 255, 103],
+            "loopStart": 2
+        },
+        {
+            "name": "5B",
+            "sprite": "Graphics/Fighter/Shoto/aoko_5b.png",
+            "frames": 8,
+            "wait": 4,
+            "cropRect":[0,0, 255, 115],
+            "loopStart": 2
+        },
+        {
+            "name": "5C",
+            "sprite": "Graphics/Fighter/Shoto/aoko_5c.png",
+            "frames": 11,
+            "wait": 4,
+            "cropRect":[0, 0, 255, 103],
+            "loopStart": 2
+        },
+        {
+            "name": "5[C]",
+            "sprite": "Graphics/Fighter/Shoto/aoko_5c.png",
+            "frames": 11,
+            "wait": 8,
+            "cropRect":[0, 0, 255, 103],
+            "loopStart": 2
+        },
+        {
+            "name": "2A",
+            "sprite": "Graphics/Fighter/Shoto/aoko_2a.png",
+            "frames": 4,
+            "wait": 4,
+            "cropRect":[0,0, 87, 62],
+            "loopStart": 2
+        },
+        {
+            "name": "2B",
+            "sprite": "Graphics/Fighter/Shoto/aoko_2b.png",
+            "frames": 7,
+            "wait": 4,
+            "cropRect":[0,0, 109, 66],
+            "loopStart": 2
+        },
+        {
+            "name": "2C",
+            "sprite": "Graphics/Fighter/Shoto/aoko_2c.png",
+            "frames": 10,
+            "wait": 4,
+            "cropRect":[0,0, 133, 64],
+            "loopStart": 2
+        },
+        {
+            "name": "Tatsu",
+            "sprite": "Graphics/Fighter/Shoto/shoto_tatsu.png",
+            "frames": 8,
+            "wait": 8,
+            "cropRect":[0, 0, 64, 64],
+        },
+        {
+            "name": "3C",
+            "sprite": "Graphics/Fighter/Shoto/aoko_3c.png",
+            "frames": 12,
+            "wait": 4,
+            "cropRect":[0, 0, 255, 121],
+        },
+        {
+            "name": "j.A",
+            "sprite": "Graphics/Fighter/Shoto/aoko_ja.png",
+            "frames": 4,
+            "wait": 4,
+            "cropRect":[0, 0, 255, 124],
+        },
+        {
+            "name": "j.B",
+            "sprite": "Graphics/Fighter/Shoto/aoko_jb.png",
+            "frames": 7,
+            "wait": 4,
+            "cropRect":[0, 0, 255, 135],
+        },
+        {
+            "name": "j.C",
+            "sprite": "Graphics/Fighter/Shoto/aoko_jc.png",
+            "frames": 9,
+            "wait": 4,
+            "cropRect":[0, 0, 255, 151],
+        },
+
+        {
+            "name": "Airdash F",
+            "sprite": "Graphics/Fighter/Shoto/aoko_ad.png",
+            "frames": 6,
+            "wait": 4,
+            "cropRect":[0,0, 255, 148],
+        },
+        {
+            "name": "Stagger High",
+            "sprite": "Graphics/Fighter/Shoto/aoko_stagger_high.png",
+            "frames": 8,
+            "wait": 4,
+            "cropRect":[0,0, 255, 102],
+            "loopStart": 7
+        },
+        {
+            "name": "Stagger Low",
+            "sprite": "Graphics/Fighter/Shoto/aoko_stagger_low.png",
+            "frames": 8,
+            "wait": 4,
+            "cropRect":[0,0, 255, 104],
+            "loopStart": 7
+        },
+        {
+            // 7100.png - 7108.png
+            "name":"Air Grab",
+            "sprite": "Graphics/Fighter/Shoto/aoko_airgrab.png",
+            "frames": 9,
+            "wait": 3,
+            "cropRect": [0,0,255,138],
+            "loopStart":0
+
+        },
+        {
+            "name": "Air Stagger",
+            // aok2100.png - 2105.png, aok2407.png - 2412.png, land 2413.png - 2415.png
+            "sprite": "Graphics/Fighter/Shoto/aoko_airstagger.png",
+            "frames": 12,
+            "wait": 2,
+            "cropRect": [0,0,255,106],
+            "loopStart":9
+        },
+        {
+            "name": "Back Land",
+            // aok2100.png - 2105.png, aok2407.png - 2412.png, land 2413.png - 2415.png
+            "sprite": "Graphics/Fighter/Shoto/aoko_backland.png",
+            "frames": 3,
+            "wait": 5,
+            "cropRect": [0,0,255,94],
+            "loopStart":2
+        },
+        {
+            "name": "Back Wakeup",
+            "sprite": "Graphics/Fighter/Shoto/aoko_backwakeup.png",
+            "frames": 10,
+            "wait": 3,
+            "cropRect": [0,0, 255, 108],
+        }
+    ],
+
+    "actions":[
+        {
+            //'state' is a mask integer; see docs for details, but know that 
+            // 0 will make this character grounded and 1 will make character airborn.
+            // -1 will not change. json does not allow for binary literals."
+            "name": "Idle",
+
+            
+            "linksTo": null,         // list of Action strings to link to
+            "canLinkAfter": 0,       // ALLOWS for canceling into any of linksTo[] after this many frames
+            "mustLinkAfter": -1,     // AUTOMATICALLY goes to linksTo[0] after this many frames
+
+            "hitStop": 0,           // Time before knockback happens
+            "groundAir": 0,          // Put self into grounded if 0, air if 1. -1 by default.
+            "forceAir": false,       // Force opponent into air upon hitbox connection (for launchers)
+            "overrideGravity":[0,0], // Override the character gravity with this new
+                                     // gravity until opponent collides with wall/floor, or is hit
+                                     // (for wallsplats, launchers, dunks)
+            "knockback":[0,0],       // XY knockback per frame. On block can maybe be doubled or something.
+            "airKnockback":[0,0],
+            "knockbackFrames":0,     // How many frames knockback lasts.
+            "selfKnockback": [0,0],  // Self
+            "selfKnockbackFrames": 0,// Self
+            "wallSplat": false,      // Go to tech state upon touching wall
+            "dunk": false,           // Go to tech state upon touching ground
+            "slam": false,           // Hard knockdown upon touching ground
+            "hurtboxes": [[-250,-1100, 500, 1100]],
+            "shovebox": [-200, -600, 400, 600]
+
+        },
+        {
+            "name": "Crouch Start",
+            "linksTo": ["Crouch Loop",],
+            "mustLinkAfter": 24,
+            "priority": 2,
+            "shovebox": [-200, -600, 400, 600]
+
+        },
+        {
+            "name": "Crouch Loop",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "priority": 2,
+            "shovebox": [-200, -600, 400, 600]
+
+        },
+        {
+            "name": "Stand",
+            "linksTo": ["Idle",],
+            "mustLinkAfter": 20,
+            "shovebox": [-200, -600, 400, 600]
+
+        },
+        {
+            "name": "Walk Forward",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "priority": 1,
+            "hurtboxes": [[-250, -600, 500, 600]],
+            "shovebox": [-200, -600, 400, 600],
+            "overrideSelfVelocity": [45, 0]
+
+        },
+        {
+            "name": "Walk Backward",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "priority": 1,
+            "hurtboxes": [[-250, -600, 500, 600]],
+            "shovebox": [-200, -600, 400, 600],
+            "overrideSelfVelocity": [-35, 0]
+
+        },
+        {
+            "name": "Jump Squat",
+            "linksTo": ["8Jump", "7Jump", "9Jump"],
+            "canLinkAfter": 3,
+            "mustLinkAfter": 3,
+            "priority": 50,
+            "animation": "Jump Squat",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]]
+
+        },
+        {
+            "name": "8Jump",
+            "linksFrom": "Jump Squat",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "groundAir": 1,
+            "priority": 50,
+            "animation": "Jump Rise",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]],
+            "overrideSelfVelocity": [0, -100],
+            "burnsJump": 1
+        },
+        {
+            "name": "7Jump",
+            "linksFrom": "Jump Squat",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "groundAir": 1,
+            "priority": 50,
+            "animation": "Jump Rise",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]],
+            "overrideSelfVelocity": [-35, -100],
+            "burnsJump": 1
+        },
+        {
+            "name": "9Jump",
+            "linksFrom": "Jump Squat",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "groundAir": 1,
+            "priority": 50,
+            "animation": "Jump Rise",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]],
+            "overrideSelfVelocity": [45, -100],
+            "burnsJump": 1
+        },
+
+        {
+            "name": "dj8",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "groundAir": 1,
+            "priority": 100,
+            "animation": "Jump Rise",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]],
+            "overrideSelfVelocity": [0, -100],
+            "burnsJump": 1
+        },
+        {
+            "name": "dj7",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "groundAir": 1,
+            "priority": 100,
+            "animation": "Jump Rise",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]],
+            "overrideSelfVelocity": [-15, -100],
+            "burnsJump": 1
+        },
+        {
+            "name": "dj9",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "groundAir": 1,
+            "priority": 100,
+            "animation": "Jump Rise",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]],
+            "overrideSelfVelocity": [45, -100],
+            "burnsJump": 1
+        },
+
+        {
+            "name": "Land",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 14,
+            "animation": "Jump Land",
+            "shovebox": [-200, -600, 400, 600],
+            "restoresJump": true
+
+        },
+        {
+            "name": "A",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 20,
+            "priority": 10,
+            "animation": "5A",
+            "damage": 350,
+            "hitstun": 16,
+            "hitboxes": [[-112.5, -630, 55, 280],[-32.5, -565, 120, 255],[97.5, -565, 25, 5],[97.5, -505, 200, 195],],
+            "hurtboxes": [[-247.5, -1045, 610, 1010],[-242.5, -1030, 175, 170],[47.5, -885, 5, 5],[-242.5, -675, 155, 605],[-112.5, -630, 55, 280],[-202.5, -625, 5, 15],[-32.5, -565, 120, 255],[97.5, -565, 25, 5],[97.5, -505, 200, 195],[-102.5, -275, 50, 205],],
+            "shovebox": [-317.5, -1035, 265, 970],
+            "hitStop": 60
+
+
+        },
+        {
+            "name": "B",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 32,
+            "priority": 20,
+            "animation": "5B",
+            "damage": 800,
+            "hitstun": 22,
+            "hitboxes": [[-50, -600, 650, 200, 10, 24], [-50, -500, 250, 250, 0, 24]],
+            "hurtboxes": [[-300, -1000, 450, 1000],[50, -650, 450, 300],[50, -500, 200, 250]],
+            "shovebox": [-150, -970, 300, 950]
+
+
+        },
+        {
+            "name": "5[C]",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 88,
+            "priority": 31,
+            "animation": "5[C]",
+            "damage": 850,
+            "hitstun": 28,
+            "hitboxes": [[-165, -1000, 1000, 1000]],
+            "hurtboxes": [[305.0, 745, 150, 150],[145.0, 585, 195, 195],[-5.0, 435, 25, 25],[-95.0, 345, 0, 0],[-105.0, 335, 170, 170],[-285.0, 155, 90, 90],[5.0, 445, 100, 100],[-105.0, 335, 170, 170],[-285.0, 155, 25, 25],[-335.0, 105, 40, 40],[-285.0, 155, 40, 40],[-105.0, 335, 220, 220],[145.0, 585, 85, 85],[225.0, 665, 5, 5],[175.0, 615, 20, 20],[305.0, 745, 150, 150],[-105.0, 335, 270, 270],[55.0, 495, 35, 35],[-95.0, 345, 0, 0],[-65.0, 375, 30, 30],[145.0, 585, 240, 240],[175.0, 615, 20, 20]],
+            "shovebox": [165.0, 605, 10, 10]
+
+        },
+        {
+            "name": "C",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 44,
+            "priority": 30,
+            "animation": "5C",
+            "damage": 850,
+            "hitstun": 28,
+            "hitboxes": [[-85.0, -155, 195, 195],[-185.0, -55, 160, 160],[-85.0, -155, 90, 90],[205.0, -445, 100, 100],[105.0, -335, 170, 170],[-85.0, -155, 25, 25],[-135.0, -105, 40, 40],[-85.0, -155, 40, 40],[105.0, -335, 220, 220],[195.0, -345, 0, 0]],
+            "hurtboxes": [[305.0, 745, 150, 150],[145.0, 585, 195, 195],[-5.0, 435, 25, 25],[-95.0, 345, 0, 0],[-105.0, 335, 170, 170],[-285.0, 155, 90, 90],[5.0, 445, 100, 100],[-105.0, 335, 170, 170],[-285.0, 155, 25, 25],[-335.0, 105, 40, 40],[-285.0, 155, 40, 40],[-105.0, 335, 220, 220],[145.0, 585, 85, 85],[225.0, 665, 5, 5],[175.0, 615, 20, 20],[305.0, 745, 150, 150],[-105.0, 335, 270, 270],[55.0, 495, 35, 35],[-95.0, 345, 0, 0],[-65.0, 375, 30, 30],[145.0, 585, 240, 240],[175.0, 615, 20, 20]],
+            "shovebox": [165.0, 605, 10, 10]
+
+        },
+        {
+            "name": "Tatsu",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 64,
+            "priority": 40,
+            "shovebox": [-200, -600, 400, 600]
+
+        },
+        {
+            "name": "Stop Walk",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 1,
+            "priority": 2,
+            "animation": "Idle",
+            "shovebox": [-200, -600, 400, 600]
+
+        },
+        {
+            "name": "2A",
+            "linksTo": ["Crouch Loop"],
+            "mustLinkAfter": 16,
+            "priority": 10,
+            "shovebox": [-200, -600, 400, 600],
+            "hitboxes": [[50, -500, 400, 500]],
+            "hitstun": 15,
+            "hitStop": 1,
+            "damage": 350
+        },
+        {
+            "name": "2B",
+            "linksTo": ["Crouch Loop"],
+            "mustLinkAfter": 28,
+            "priority": 20,
+            "shovebox": [-200, -600, 400, 600],
+            "hitboxes": [[100, -600, 450, 600, 10, 24]],
+            "hitstun": 21,
+            "hitStop": 2,
+            "damage": 700
+
+        },
+        {
+            "name": "2C",
+            "linksTo": ["Crouch Loop"],
+            "mustLinkAfter": 40,
+            "priority": 30,
+            "shovebox": [-200, -600, 400, 600],
+            "hitboxes": [[0, -400, 800, 400, 10, 24]],
+            "hitstun": 23,
+            "hitStop": 3,
+            "damage": 800,
+            "hardKnockdown": true
+
+        },
+        {
+            "name": "Fall Loop",
+            "linksTo": null,
+            "mustLinkAfter": -1,
+            "groundAir": 1,
+            "priority": 1,
+            "animation": "Jump Fall",
+            "shovebox": [-200, -600, 400, 600],
+            "hurtboxes": [[-250, -1100, 500, 1100]]
+
+        },
+        {
+            "name": "3C",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 48,
+            "priority": 40,
+            "shovebox": [-200, -600, 400, 600],
+            "forceAir": true,
+            "knockback": [10, -115],
+            "airKnockback": [10, -115],
+            "hitboxes": [[400, -1200, 300, 1200, 10]],
+            "step": [40,0],
+            "hitstun": 27,
+            "hitStop": 3,
+            "stepDelay": 0,
+            "damage": 800
+
+
+        },
+        {
+            "name": "j.A",
+            "linksTo": ["Fall Loop"],
+            "mustLinkAfter": 16,
+            "priority": 60,
+            "shovebox": [-200, -600, 400, 600],
+            "hitboxes":[[200, -800, 300, 300]],
+            "damage": 250,
+            "knockback": [10, 0],
+            "airKnockback": [10, -35],
+            "groundAir": 1,
+            "hitStop": 60
+
+        },
+        {
+            "name": "j.B",
+            "linksTo": ["Fall Loop"],
+            "mustLinkAfter": 28,
+            "priority": 70,
+            "hitstun": 20,
+            "hitboxes": [[-50, -600, 650, 200]],
+            "hurtboxes": [[-300, -1000, 450, 1000],[50, -650, 450, 300],[50, -500, 200, 250]],
+            "shovebox": [-200, -600, 400, 600],
+            "hitStop": 5,
+            "damage": 700,
+            "knockback": [10, 0],
+            "airKnockback": [10, -35],
+            "groundAir": 1,
+
+        },
+        {
+            "name": "j.C",
+            "linksTo": ["Fall Loop"],
+            "mustLinkAfter": 36,
+            "priority": 80,
+            "hitstun": 30,
+            "hitboxes": [[-50, -1200, 650, 800]],
+            "shovebox": [-200, -600, 400, 600],
+            "hitStop": 5,
+            "damage": 1000,
+            "knockback": [10, 0],
+            "airKnockback": [10, -35],
+            "groundAir": 1,
+
+        },
+        {
+            "name": "Airdash F",
+            "linksTo": ["Fall Loop"],
+            "mustLinkAfter": 24,
+            "priority": 30,
+            "groundAir": 1,
+            "shovebox": [-200, -600, 400, 600],
+            "step": [1,0],
+            "overrideSelfTime": 8,
+            "overrideSelfGravity": [0, 0],
+            "overrideSelfVelocity": [50, 0]
+        },
+        {
+            "name": "Stagger",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 1,
+            "priority": 1000,
+            "animation": "Stagger High",
+            "hurtboxes": [[-250, -1100, 500, 1100]],
+            "shovebox": [-200, -600, 400, 600]
+        },
+        {
+            "name": "Air Grab",
+            "linksTo": ["Fall Loop"],
+            "priority": 130,
+            "selfKnockback": [-20, -20],
+            "airKnockback": [100, 100],
+            "forceAir": true,
+            "selfKnockbackFrames": 4,
+            "shovebox": [-200, -600, 400, 600],
+            "hitboxes": [[0, -600, 500, 200]],
+            "mustLinkAfter": 27,
+            "hardKnockdown": true
+        },
+        {
+            "name": "Air Grab Back",
+            "animation": "Air Grab",
+            "linksTo": ["Fall Loop"],
+            "priority": 130,
+            "selfKnockback": [20, -20],
+            "airKnockback": [-100, 100],
+            "forceAir": true,
+            "selfKnockbackFrames": 4,
+            "shovebox": [-200, -600, 400, 600],
+            "hitboxes": [[0, -600, 500, 200]],
+            "mustLinkAfter": 27,
+            "hardKnockdown": true,
+            "phase": true
+        },
+        {
+            // Untechable
+            "name": "Air Stagger",
+            "linksTo": ["Air Stagger Fall"],
+            "mustLinkAfter": 1,
+            "priority": 1000,
+            "hurtboxes": [[-250, -900, 500, 900]],
+            "shovebox": [-200, -600, 400, 600]
+        },
+        {
+            // Techable
+            "name": "Air Stagger Fall",
+            "animation": "Air Stagger",
+            "linksTo": ["Fall Loop"],
+            "mustLinkAfter": 1,
+            "priority": 1000,
+            "hurtboxes": [[-250, -900, 500, 900]],
+            "shovebox": [-200, -600, 400, 600]
+        },
+        {
+            "name": "Back Land",
+            "priority": 1000,
+            "shovebox": [-200, -600, 400, 600],
+            "linksTo": ["Back Wakeup"],
+            "mustLinkAfter": 15
+        },
+        {
+            "name": "Back Land Hard",
+            "animation": "Back Land",
+            "priority": 1000,
+            "shovebox": [-200, -600, 400, 600],
+            "linksTo": ["Back Wakeup"],
+            "mustLinkAfter": 60
+        },
+        {
+            "name": "Back Wakeup",
+            "priority": 1000,
+            "shovebox": [-200, -600, 400, 600],
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 30
+        }
+    ],
+
+    "motions": [
+        {
+            "name":"Air Grab",
+            "pattern": "(6B)",
+            "priority": 130,
+            "airOk": true
+        },
+        {
+            "name":"Air Grab Back",
+            "pattern": "(4B)",
+            "priority": 130,
+            "airOk": true
+        },
+        {
+            "name": "Tatsu",
+            "pattern": "214A",
+            "priority": 40,
+            "airOk": false,
+            "action": "Tatsu",
+            "bufferSize": -1
+        },
+        {   "name": "j.X",
+            "pattern": "X",
+            "priority": 60,
+            "airOk":true,
+            "action":"j.A"
+        },
+        {   "name": "j.Y",
+            "pattern": "Y",
+            "priority": 70,
+            "airOk":true,
+            "action":"j.B"
+        },
+        {   "name": "j.Z",
+            "pattern": "Z",
+            "priority": 80,
+            "airOk":true,
+            "action":"j.C"
+        },
+        {   "name": "Light Tatsu",
+            "pattern": "214A",
+            "priority": 50,
+            "action":"Tatsu",
+            "bufferSize":1
+        },
+        {   "name": "3C",
+            "pattern": "(3Z)",
+            "priority": 40,
+            "action":"3C"
+        },
+        {   "name": "2C",
+            "pattern": "(dZ)",
+            "priority": 30,
+            "action":"2C",
+            "hitstun":0,
+            "hitStop": 0
+        },
+        {   "name": "2B",
+            "pattern": "(dY)",
+            "priority": 20,
+            "action":"2B",
+            "hitstun":10,
+            "hitStop": 2
+        },
+        {   "name": "2A",
+            "pattern": "(dX)",
+            "priority": 10,
+            "action":"2A",
+            "hitstun":60
+        },
+        {   "name": "5[C]",
+            "pattern": "[Z-10]",
+            "priority": 31,
+            "action":"5[C]",
+            "bufferSize":15
+        },
+        {   "name": "5C",
+            "pattern": "Z",
+            "priority": 30,
+            "action":"C"
+        },
+        {   "name": "5B",
+            "pattern": "Y",
+            "priority": 20,
+            "action":"B"
+        },
+        {   "name": "5A",
+            "pattern": "X",
+            "priority": 10,
+            "action":"A"
+        },
+        {   "name": "dj7",
+            "pattern": "m7",
+            "priority": 100,
+            "airOk":true,
+            "bufferSize":2,
+            "burnsJump": 1
+            
+        },
+        {   "name": "dj8",
+            "pattern": "m8",
+            "priority": 100,
+            "airOk":true,
+            "bufferSize":2,
+            "burnsJump": 1
+            
+        },
+        {   "name": "dj9",
+            "pattern": "m9",
+            "priority": 100,
+            "airOk":true,
+            "bufferSize":2,
+            "burnsJump": 1
+            
+        },
+        {   "name": "JumpSquat",
+            "pattern": "u",
+            "priority": 50,
+            "action":"Jump Squat",
+            "bufferSize":1
+            
+        },
+        {   "name": "8Jump",
+            "pattern": "8",
+            "priority": 51,
+            "bufferSize":1
+            
+        },
+        {   "name": "7Jump",
+            "pattern": "7",
+            "priority": 51,
+            "bufferSize":1
+            
+        },
+        {   "name": "9Jump",
+            "pattern": "9",
+            "priority": 51,
+            "bufferSize":1
+            
+        },
+        {   "name": "Airdash F",
+            "pattern": "656",
+            "priority": 101,
+            "airOk":true,
+            "bufferSize":6
+        },
+        {   "name": "Stop crouch",
+            "pattern": "dm",
+            "priority": 3,
+            "action":"Stand",
+            "bufferSize":1
+        },
+        {   "name": "Crouch",
+            "pattern": "d",
+            "priority": 2,
+            "action":"Crouch Start"
+        },
+        {   "name": "Stop back walk",
+            "pattern": "b5",
+            "priority": 2,
+            "action":"Stop Walk",
+            "bufferSize":3
+        },
+        {   "name": "Stop f walk",
+            "pattern": "f5",
+            "priority": 2,
+            "action":"Stop Walk",
+            "bufferSize":3
+        },
+        {   "name": "Walk forward",
+            "pattern": "6",
+            "priority": 1,
+            "action":"Walk Forward"
+            
+        },
+        {   "name": "Walk backward",
+            "pattern": "4",
+            "priority": 1,
+            "action":"Walk Backward"
+        }
+    ]
+}
