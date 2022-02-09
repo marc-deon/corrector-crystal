@@ -1,12 +1,12 @@
-#include <SDL2/SDL.h>
-#include "Fighter.h"
-#include "CC_Consts.h"
-#include "stretchy_buffer.h"
-#include "circular_buffer.h"
-#include "Action.h"
-#include "CC_Audio.h"
-#include "main.h"
+#include <raylib.h>
 #include <assert.h>
+#include "stretchy_buffer.h"
+#include "main.h"
+#include "Fighter.h"
+#include "circular_buffer.h"
+#include "CC_Consts.h"
+#include "CC_Audio.h"
+#include "Action.h"
 
 int sign(int x){
     return x > 0 ? 1 : x < 0 ? -1 : 0;
@@ -181,18 +181,22 @@ void Fighter_DrawSprite(Fighter* f, RectI camera){
     Animation* an = fs->animation;
     RectI** sc = fs->animation->spriteClips; 
     
-    RectI* currentClip = curAnim->spriteClips[fs->animation->currentFrame / curAnim->frameWait];
-
-    RectI targetRect = {
-        (fs->position.x - camera.x) * UNIT_TO_PIX - currentClip->w/2,
-        (fs->position.y - camera.y) * UNIT_TO_PIX - currentClip->h,
-        currentClip->w,
-        currentClip->h
+    RectI* ricc = curAnim->spriteClips[fs->animation->currentFrame / curAnim->frameWait];
+    
+    Rectangle currentClip = {
+         ricc->x,ricc->y, ricc->w, ricc->h
     };
 
-    bool flip = Fighter_OnRight(f);
-    
-    // SDL_RenderCopyEx(ren, fs->animation->texture, currentClip, &targetRect, 0, 0, SDL_FLIP_HORIZONTAL * flip);
+    Vector2 target = {
+        (fs->position.x - camera.x) * UNIT_TO_PIX - currentClip.width/2,
+        (fs->position.y - camera.y) * UNIT_TO_PIX - currentClip.height
+    };
+
+    int flip = Fighter_OnRight(f);
+    currentClip.width *= -1            * ((flip == 1) - (flip == 0));
+    currentClip.x += currentClip.width * ((flip == 1));
+
+    DrawTextureRec(fs->animation->texture, currentClip, target, WHITE);
 
     // Advance the frame
     assert(f && "no fighter");
@@ -225,18 +229,19 @@ void Fighter_ChangeAnimation(Fighter* f, Animation* newAnimation){
 }
 
 void Fighter_DrawPoint(Fighter* f, RectI camera){
-    RectI r ={
-        r.x = (cb_last(f->stateHistory).position.x - 1 - camera.x) * UNIT_TO_PIX,
-        r.y = (cb_last(f->stateHistory).position.y - 1 - camera.y) * UNIT_TO_PIX,
+    DrawRectangle(
+        (cb_last(f->stateHistory).position.x - 1 - camera.x) * UNIT_TO_PIX,
+        (cb_last(f->stateHistory).position.y - 1 - camera.y) * UNIT_TO_PIX,
         3,
-        3
-    };
-    
-    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-    // SDL_RenderFillRect(ren, &r);
+        3,
+        WHITE
+    );
 }
  
 void Fighter_DrawHitboxes(Fighter* f, RectI camera){
+    printf("Fighter_DrawHitboxes NYE\n");
+    return;
+
     Action* a = cb_last(f->stateHistory).action;
     for(int i = 0; i < sb_count(a->hitboxes); i++){
         if(a->hitboxes[i]->active != HB_ACTIVE){
@@ -260,6 +265,8 @@ void Fighter_DrawHitboxes(Fighter* f, RectI camera){
 }
 
 void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
+    printf("Fighter_DrawHurtboxes NYE\n");
+    return; 
     for(int i = 0; i < sb_count(cb_last(f->stateHistory).action->hurtboxes); i++){
         char* name = cb_last(f->stateHistory).action->name;
         // printf("%s\n", name);
@@ -284,6 +291,8 @@ void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
 }
 
 void Fighter_DrawCollisionbox(Fighter* f, RectI camera){
+    printf("Fighter_DrawCollisionbox NYE\n");
+    return; 
     RectI hbr = cb_last(f->stateHistory).action->shovebox.rect;
     if(Fighter_OnRight(f))
         hbr = Rect_Flip(hbr);
@@ -430,7 +439,8 @@ void Fighter_MoveAir(Fighter* f, StickState* ss, RectI camera){
 
     else if (
         cb_last(f->stateHistory).velocity.y >= 0 &&
-        !strcmp(cb_last(f->stateHistory).animation->name, "Jump Rise")
+        
+        TextIsEqual(cb_last(f->stateHistory).animation->name, "Jump Rise")
     ){
         // Switch animation to downward loop
         // FIXME: Do this by string?

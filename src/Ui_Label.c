@@ -18,8 +18,6 @@ UiLabel* Label_New(UiMenu* menu, char* text){
     Texture tempsurf;
 
     label->string_text = (char*)malloc(strlen(text) * sizeof(char) + 1);
-    // label->surface_text = TTF_RenderText_Blended(mmlabelfont, text, mmlWHITE);
-    // label->texture_text = SDL_CreateTextureFromSurface(label->surface_text);
     TextCopy(label->string_text, text);
     label->type = UI_TYPE_LABEL;
     sb_push(menu->elements, (UiElement*)label);
@@ -30,7 +28,6 @@ UiLabel* Label_New(UiMenu* menu, char* text){
 void Label_Draw(UiMenu* menu, UiLabel* label){
     
     
-    printf("Drawing at %d %d\n", label->position.x, label->position.y);
     DrawText(label->string_text, label->position.x, label->position.y, 20, WHITE);
 }
 
@@ -41,7 +38,6 @@ void Label_Free(UiLabel* l){
 
 Vec2I Label_Size(UiLabel* label){
     Vector2 v = MeasureTextEx(GetFontDefault(), label->string_text, 20, 0);
-    printf("Label width is %f\n", v.x);
     return (Vec2I) {v.x, v.y};
     
 }

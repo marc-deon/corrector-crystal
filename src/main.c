@@ -179,17 +179,15 @@ Match* GameInit(int p1CharaIndex, int p2CharaIndex){
 
 void CC_Render(){
     
-    // SDL_SetRenderDrawColor(0, 0, 0, 255);
-    // SDL_RenderClear(gRenderer);
-    RectI r = {
-        camera.x * UNIT_TO_PIX,
-        camera.y * UNIT_TO_PIX,
-        camera.w,
-        camera.h,
-    };
+     Rectangle r = {
+         camera.x * UNIT_TO_PIX,
+         camera.y * UNIT_TO_PIX,
+         camera.w,
+         camera.h,
+     };
 
-    // SDL_RenderCopy(background, &r, NULL);
-    
+    DrawTextureRec(background, r, (Vector2){0,0}, WHITE);
+
     // Draw sprites
     for(int i = 0; i < 2; i++){
         Player* p = &currentMatch.players[i];
@@ -202,15 +200,20 @@ void CC_Render(){
     // We keep these as two loops because we want everything to be drawn on top of sprites, regardless of player
     for(int i = 0; i < 2; i++){
         Player* p = &currentMatch.players[i];
-        // Fighter_DrawPoint(p->pointCharacter, camera);
-        // Fighter_DrawCollisionbox(p->pointCharacter, camera);
-        Fighter_DrawHurtboxes(p->pointCharacter, camera);
-        Fighter_DrawHitboxes(p->pointCharacter, camera);
+        #ifdef DRAWPOINT
+            Fighter_DrawPoint(p->pointCharacter, camera);
+        #endif
+        #ifdef DRAWCOLLISIONBOX
+            Fighter_DrawCollisionbox(p->pointCharacter, camera);
+        #endif
+        #ifdef DRAWHURTBOXES
+            Fighter_DrawHurtboxes(p->pointCharacter, camera);
+        #endif
+        #ifdef DRAWHITBOXES
+            Fighter_DrawHitboxes(p->pointCharacter, camera);
+        #endif
     }
     DrawHUD(&currentMatch);
-
-
-    // SDL_RenderPresent(gRenderer);
 }
 
 ////////////////////////////////////////////
@@ -254,28 +257,21 @@ void CC_ProcessCamera(){
 
 int CC_ProcessInput(){
 
-    UpdateInput();
-    // while(SDL_PollEvent(&event) != 0)
-    // {
-    //     if (event.type == SDL_QUIT){
-    //         return -1;
-    //     }
-    // }
 
     if(Stick_IsButtonJustDown(&p1Stick, STICK_START) || Stick_IsButtonJustDown(&p2Stick, STICK_START)){
+        printf("paused\n");
         UiMenu* menu = MakePauseMenu();
-
         currentMatch.paused = true;
         return 0;
     }
 
-    // if (QF_IsKeyJustDown(SDL_SCANCODE_F5)){
-    //     Training_SaveState();
-    // }
+    if (QF_IsKeyJustDown(KEY_F5)){
+        Training_SaveState();
+    }
     
-    // else if (QF_IsKeyJustDown(SDL_SCANCODE_F6)){
-    //     Training_LoadState();
-    // }
+    else if (QF_IsKeyJustDown(KEY_F6)){
+        Training_LoadState();
+    }
 
     for(int i = 0; i < 2; i++){
         Player* p = &currentMatch.players[i];
@@ -576,16 +572,10 @@ int main(int argc, char* args[]){
     int r,g,b;
 
     while(!WindowShouldClose()){
-        // UpdateInput();
+        UpdateInput();
         BeginDrawing();
 
-        b = (b + 1 % 255);
-        r = (r + 2 % 255);
-        g = (g + 3 % 255);
-
-        ClearBackground((Color) {r,g,b, 255});
-        // DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-        DrawFPS(0,0);
+        ClearBackground(SKYBLUE);
 
         menu = Ui_GetTopFocus();
         if(menu){
@@ -593,17 +583,19 @@ int main(int argc, char* args[]){
                 CC_Update();
                 CC_Render();
             }
-        //     else if(Menu_Input(menu, &p1Stick, &p2Stick)){
-        //         // See if we can find a Match...
-        //         UiMenu** stack = Ui_GetFocusStack();
-        //         for(int i = 0; i < sb_count(stack); i++){
-        //             if(stack[i]->type == UI_TYPE_MATCH)
-        //                 CC_Render();
-        //         }
-        //         // Regardless, draw menu on top
+            else if(Menu_Input(menu, &p1Stick, &p2Stick)){
+                // See if we can find a Match...
+                UiMenu** stack = Ui_GetFocusStack();
+                for(int i = 0; i < sb_count(stack); i++){
+                    if(stack[i]->type == UI_TYPE_MATCH)
+                        CC_Render();
+                }
+                // Regardless, draw menu on top
                 Menu_Draw(Ui_GetTopFocus());
-        //     }
+            }
         }
+
+        DrawFPS(0,0);
         EndDrawing();
     }
 

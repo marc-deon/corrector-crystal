@@ -72,7 +72,8 @@ UiMenu* MakePauseMenu(){
     menu->p1focused = mqui_as_element(butt_continue);
 
     Ui_PushFocus(menu);
-    Menu_Bake(menu, (Vec4I){0,640,50,480-50}, (Vec4I){.l=0, .r=0, .t=0, .b=0}, BAKE_TYPE_SET_SIZE, true);
+    
+    Menu_Bake(menu, (Vec4I){0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50}, (Vec4I){.l=0, .r=0, .t=0, .b=0}, BAKE_TYPE_SET_SIZE, true);
     return menu;
 
 

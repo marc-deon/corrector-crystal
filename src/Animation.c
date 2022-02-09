@@ -37,7 +37,7 @@ Animation* Animation_Create(Color colors[256], char* name, char* filename, uint 
     //     return anim;
     // }
     // anim->texture = SDL_CreateTextureFromSurface(ren, imagesurface);
-    anim->texture = &imagesurface;
+    anim->texture = imagesurface;
     // SDL_FreeSurface(imagesurface);
     // SDL_Texture* txt = anim->texture;
     
@@ -47,12 +47,13 @@ Animation* Animation_Create(Color colors[256], char* name, char* filename, uint 
     //
     for(uint i = 0; i < frameCount; i++){
         RectI* rect = malloc(sizeof(RectI));
-        rect->pos.x = i*cropRect.pos.x;
+        rect->pos.x = i*cropRect.size.x;
         rect->pos.y = cropRect.pos.y;
         rect->size.x = cropRect.size.x;
         rect->size.y = cropRect.size.y;
         sb_push(anim->spriteClips, rect);
     }
+    
 
     // Link to self by default. We can explicitly set a link later.
     anim->linksTo = anim;

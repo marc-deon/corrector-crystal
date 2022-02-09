@@ -27,7 +27,7 @@ extern Fighter p2Fighter;
 extern Texture background;
 extern Match currentMatch;
 extern bool stopGame;
-
+extern RectI camera;
 
 
 // Start SDL and create window

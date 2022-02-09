@@ -28,7 +28,6 @@ bool Stick_IsButtonJustDown(Stick* s, int button){
 }
 
 bool Stick_IsButtonJustUp(Stick* s, int button){
-    // bool value = ;
     int thisFrame = (Stick_StickStateToInt(s->buffer[0]) & button);
     int lastFrame = (Stick_StickStateToInt(s->buffer[1]) & button);
     int ret = !thisFrame && lastFrame;
@@ -42,18 +41,18 @@ bool Stick_IsButtonDown(Stick* s, int button){
 // Return an integer version of the given StickState where each button corrosponds to a bit
 int Stick_StickStateToInt(StickState ss){
     return
-        ss.up       * 0x1   |
-        ss.down     * 0x2   |
-        ss.left     * 0x4   |
-        ss.right    * 0x8   |
-        ss.a        * 0x10  |
-        ss.b        * 0x20  |
-        ss.c        * 0x40  |
-        ss.x        * 0x80  |
-        ss.y        * 0x100 |
-        ss.z        * 0x200 |
-        ss.start    * 0x400 |
-        ss.select   * 0x800
+        ss.up       * STICK_UP     |
+        ss.down     * STICK_DOWN   |
+        ss.left     * STICK_LEFT   |
+        ss.right    * STICK_RIGHT  |
+        ss.a        * STICK_A      |
+        ss.b        * STICK_B      |
+        ss.c        * STICK_C      |
+        ss.x        * STICK_X      |
+        ss.y        * STICK_Y      |
+        ss.z        * STICK_Z      |
+        ss.start    * STICK_START  |
+        ss.select   * STICK_SELECT 
     ;
 }
 
@@ -77,8 +76,8 @@ void Stick_PrintState(Stick* st){
 " ________/P‾%d\\_________ \n\
 |         %d %d          |\n\
 |     %d         %d %d %d  |\n\
-|   %d %d %d      %d %d %d   |\n\
-|                      |\n\
+|   %d   %d      %d %d %d   |\n\
+|      %d               |\n\
 |______________________|\n",
 st->playerNumber, s.select, s.start, s.up, s.x, s.y, s.z, s.left, s.down, s.right, s.a, s.b, s.c
 );
@@ -93,7 +92,6 @@ void Stick_AddState(Stick* stick, StickState state){
         stick->buffer[i] = stick->buffer[i-1];
     }
     stick->buffer[0] = state;
-
 }
 
 StickState* Stick_GetState(Stick* stick){

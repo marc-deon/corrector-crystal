@@ -43,7 +43,7 @@ UiButton* Button_New(UiMenu* menu, char* text, int fontSize){
     butt->texture_bothhover = _button_base_texture_bothhover;
     butt->texture_pressed = _button_base_texture_pressed;
 
-    butt->string_text = (char*)malloc(TextLength(text) * sizeof(char) + 1);
+    butt->string_text = (char*)malloc(TextLength(text) * sizeof(char) + 5);
     // butt->texture_text = TTF_RenderText_Blended(mmbuttfont, text, mmb_WHITE);
     // butt->texture_text = SDL_CreateTextureFromSurface(gRenderer, butt->texture_text);
     TextCopy(butt->string_text, text);
@@ -54,32 +54,32 @@ UiButton* Button_New(UiMenu* menu, char* text, int fontSize){
 }
 
 void Button_Draw(UiMenu* menu, UiButton* butt){
-    RectI rect, buttrect;
-    Texture tex = butt->texture_normal;
+    RectI buttrect;
+    Texture button_texture = butt->texture_normal;
 
     if(menu->p1focused == mqui_as_element(butt) && menu->p2focused == mqui_as_element(butt)){
-        tex = butt->texture_bothhover;
+        button_texture = butt->texture_bothhover;
     }
 
     else if(menu->p1focused == mqui_as_element (butt)){
-        tex = butt->texture_p1hover;
+        button_texture = butt->texture_p1hover;
     }
 
     else if(menu->p2focused == mqui_as_element(butt)){
-        tex = butt->texture_p2hover;
+        button_texture = butt->texture_p2hover;
     }
 
 
-    buttrect = rect = (RectI) {butt->position.x, butt->position.y, tex.width, tex.height};
+    buttrect = (RectI) {butt->position.x, butt->position.y, button_texture.width, button_texture.height};
 
     // Center words
-    Vector2 v = MeasureTextEx(GetFontDefault(), butt->string_text, FONTSIZE, 0);
-    rect = (RectI) {butt->position.x, butt->position.y, v.x, v.y};
-    rect.x = butt->position.x + buttrect.w/2 - rect.w/2;
-    rect.y = butt->position.y + buttrect.h/2 - rect.h/2;
+    // TODO: If I understand right, this assumes a single value for kerning spacing? Probably bad for some fonts
+    Vector2 v = MeasureTextEx(GetFontDefault(), butt->string_text, FONTSIZE, 2);
+    int textx = butt->position.x + buttrect.w/2 - v.x/2;
+    int texty = butt->position.y + buttrect.h/2 - v.y/2;
 
-    DrawTexture(tex, butt->position.x, butt->position.y, WHITE);
-    DrawText(butt->string_text, rect.x, rect.y, FONTSIZE, WHITE);
+    DrawTexture(button_texture, butt->position.x, butt->position.y, WHITE);
+    DrawText(butt->string_text, textx, texty, FONTSIZE, WHITE);
 }
 
 void Button_Free(UiButton* b){

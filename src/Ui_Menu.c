@@ -67,7 +67,6 @@ bool Menu_Input(UiMenu* menu, Stick* p1stick, Stick* p2stick){
             menu->p1focused = menu->p1focused->up;
         }
         else if (Stick_IsButtonJustDown(p1stick, STICK_DOWN) && menu->p1focused->down){
-            // CC_Audio_Play_SFX(kirins[kiringtone_current]);
             CC_Audio_Play_SFX(kirins[kiringtone_current]);
             kiringtone_current = (kiringtone_current+1) % kiringtone_files_len;
             menu->p1focused = menu->p1focused->down;
@@ -136,8 +135,6 @@ void Menu_Draw(UiMenu* menu){
     RectI rect;
     rect = (RectI) {0, 0, menu->background_texture.width, menu->background_texture.height};
     DrawTexture(menu->background_texture, menu->position.x, menu->position.y, WHITE);
-    printf("Drawing bg at %d %d\n", menu->position.x, menu->position.y);
-    // SDL_RenderCopy(menu->background_texture, NULL, &rect);
 
     for(int i = 0; i < sb_count(menu->elements); i++){
         switch(menu->elements[i]->type){
@@ -165,7 +162,5 @@ void Menu_Draw(UiMenu* menu){
 }
 
 void Menu_Free(UiMenu* menu){
-    // SDL_FreeSurface(menu->background_texture);
-    // SDL_DestroyTexture(menu->background_texture);
     sb_free(menu->elements);
 }

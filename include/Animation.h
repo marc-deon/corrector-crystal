@@ -7,7 +7,7 @@
 
 typedef struct animation{
     char* name;
-    Texture* texture;
+    Texture texture;
     uint currentFrame;
     uint frameCount;
     uint frameWait; // 1/frameRate. The number of frames to wait before incrementing the displayed frame. "Animated on X's".

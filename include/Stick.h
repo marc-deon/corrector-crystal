@@ -4,18 +4,23 @@
 #include "Motion.h"
 // #include "Player.h"
 
-#define STICK_UP     0x1
-#define STICK_DOWN   0x2
-#define STICK_LEFT   0x4
-#define STICK_RIGHT  0x8
-#define STICK_A      0x10
-#define STICK_B      0x20
-#define STICK_C      0x40
-#define STICK_X      0x80
-#define STICK_Y      0x100
-#define STICK_Z      0x200
-#define STICK_START  0x400
-#define STICK_SELECT 0x800
+#define STICK_UP     (1 << 0x0)
+#define STICK_DOWN   (1 << 0x1)
+#define STICK_LEFT   (1 << 0x2)
+#define STICK_RIGHT  (1 << 0x3)
+#define STICK_A      (1 << 0x4)
+#define STICK_B      (1 << 0x5)
+#define STICK_C      (1 << 0x6)
+#define STICK_X      (1 << 0x7)
+#define STICK_Y      (1 << 0x8)
+#define STICK_Z      (1 << 0x9)
+#define STICK_START  (1 << 0xa)
+#define STICK_SELECT (1 << 0xb)
+#define STICK_M1     (1 << 0xc)
+#define STICK_M2     (1 << 0xd)
+#define STICK_M3     (1 << 0xe)
+#define STICK_M4     (1 << 0xf)
+
 
 
 ////////////////////////////////////
