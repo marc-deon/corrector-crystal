@@ -1,8 +1,8 @@
 #ifndef UI_BASE
 #define UI_BASE
 
-#include "Vector2.h"
-#include "SDL2/SDL.h"
+#include "Vec2I.h"
+// #include "SDL2/SDL.h"
 #include "Stick.h"
 
 enum ui_type {
@@ -22,7 +22,7 @@ enum bake_type {
 #define ui_preamble          \
 enum ui_type type;           \
 int hcentered;               \
-Vector2 position;            \
+Vec2I position;            \
 struct ui_element* up;       \
 struct ui_element* down;     \
 struct ui_element* left;     \
@@ -51,7 +51,7 @@ typedef struct callback_function {
 #define invokep(cbfunc, p) (cbfunc.info.player=p, invoke(cbfunc))
 #define invokepa(cbfunc, p, a) (cbfunc.info.player=p, cbfunc.arg=a, invoke(cbfunc))
 
-Vector2 UiElement_Size(SDL_Renderer* ren, UiElement* elem);
+Vec2I UiElement_Size(UiElement* elem);
 void** Ui_GetFocusStack();
 
 #endif /* UI_BASE */

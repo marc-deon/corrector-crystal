@@ -15,4 +15,4 @@ struct player {
 // Find the first pattern in the stick buffer supported by the point character and return its index. Returns -1 if not found.
 int Player_GetFirstPattern(Player* p);
 
-#endif
+#endif /* PLAYER */

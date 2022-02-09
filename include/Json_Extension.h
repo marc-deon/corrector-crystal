@@ -6,8 +6,8 @@
 int json_get_default_int(const struct json_object* sourceObject, const char* key, int defaultValue);
 int json_get_int(const struct json_object* sourceObject, const char* key);
 bool json_get_default_bool(const struct json_object* sourceObject, const char* key, bool defaultValue);
-char* json_get_default_string(const struct json_object* sourceObject, const char* key, char* defaultValue);
-char* json_get_string(const struct json_object* sourceObject, const char* key);
+const char* json_get_default_string(const struct json_object* sourceObject, const char* key, char* defaultValue);
+const char* json_get_string(const struct json_object* sourceObject, const char* key);
 bool json_get_default_int_array(const struct json_object* sourceObject, const char* key, int* target, int defaultSize);
 int json_get_int_array(const struct json_object* sourceObject, const char* key, int* target);
 

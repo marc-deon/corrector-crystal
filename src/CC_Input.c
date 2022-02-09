@@ -1,7 +1,5 @@
 // SEE: https://lazyfoo.net/tutorials/SDL/18_key_states/index.php and https://lazyfoo.net/tutorials/SDL/19_gamepads_and_joysticks/index.php
 
-#ifndef CC_INPUT_C
-#define CC_INPUT_C
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include "CC_Input.h"
@@ -60,6 +58,3 @@ void UpdateInput(){
     SaveInput();
 
 }
-
-
-#endif

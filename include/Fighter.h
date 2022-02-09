@@ -1,12 +1,9 @@
-#ifndef FIGHTER_H
-#define FIGHTER_H
+#ifndef FIGHTER
+#define FIGHTER
 
 typedef struct fighter Fighter;
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-#include "Vector2.h"
+#include "Vec2I.h"
 #include "Player.h"
 #include "Hitbox.h"
 #include "Motion.h"
@@ -21,10 +18,10 @@ typedef struct fighterState{
 
     Action* action;
     Animation* animation;
-    Vector2 position;
-    Vector2 velocity;
+    Vec2I position;
+    Vec2I velocity;
     // Temporary gravity, i.e. during airdash. disabled at [6969, 6969]
-    Vector2 tempGravity;
+    Vec2I tempGravity;
 
     FighterFlags stateFlags;
     short health;
@@ -58,7 +55,7 @@ typedef struct fighter {
     int maxMeter;
     Action** actions; // Stretchy buffer
     Animation** animations; // Stretchy buffer
-    SDL_Texture* portrait;
+    Texture* portrait;
 
     // Special move inputs, listed in order of (tiebreaking) priority
     Motion** motions; // Stretchy buffer
@@ -66,16 +63,16 @@ typedef struct fighter {
 
 } Fighter;
 
-void Fighter_DrawSprite(Fighter* f, SDL_Renderer* ren, SDL_Rect camrea);
-void Fighter_DrawPoint(Fighter* f, SDL_Renderer* ren, SDL_Rect camrea);
-void Fighter_DrawHitboxes(Fighter* f, SDL_Renderer* ren, SDL_Rect camrea);
-void Fighter_DrawHurtboxes(Fighter* f, SDL_Renderer* ren, SDL_Rect camrea);
-void Fighter_DrawCollisionbox(Fighter* f, SDL_Renderer* ren, SDL_Rect camrea);
+void Fighter_DrawSprite(Fighter* f, RectI camrea);
+void Fighter_DrawPoint(Fighter* f, RectI camrea);
+void Fighter_DrawHitboxes(Fighter* f, RectI camrea);
+void Fighter_DrawHurtboxes(Fighter* f, RectI camrea);
+void Fighter_DrawCollisionbox(Fighter* f, RectI camrea);
 
 void Fighter_ChangeAnimation(Fighter* f, Animation* newAnimation);
 
-void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, SDL_Rect camera);
-void Fighter_MoveAir(Fighter* f, StickState* ss, SDL_Rect camera);
+void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, RectI camera);
+void Fighter_MoveAir(Fighter* f, StickState* ss, RectI camera);
 
 void Fighter_Land(Fighter* f);
 
@@ -90,11 +87,11 @@ bool Fighter_Grounded(Fighter* f);
 bool Fighter_Air(Fighter* f);
 bool Fighter_OnRight(Fighter* f);
 
-// Things to free: animations (and animation->spriteClips sdl_rects)
+// Things to free: animations (and animation->spriteClips RectIs)
 Fighter* Fighter_Create();
 void Fighter_Damage(Fighter* f, Action* a, bool onRight);
 void Fighter_Free(Fighter* f);
+void Fighter_Destroy(Fighter* f);
 
 
-
-#endif
+#endif /* FIGHTER */

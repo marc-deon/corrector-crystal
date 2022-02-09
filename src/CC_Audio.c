@@ -1,8 +1,6 @@
-#ifndef CC_AUDIO
-#define CC_AUDIO
 #include "CC_Audio.h"
 
-Mix_Music* currentMusic;
+Music currentMusic;
 
 char* musics[] = {
     "audio/music/vanillaSky.ogg",
@@ -85,11 +83,11 @@ char* kiringtone_files[] = {
 "audio/sfx/kiringtone-split/chunk71.wav",
 };
 
-Mix_Music* kirins[kiringtone_files_len];
+Sound kirins[kiringtone_files_len];
 int kiringtone_current = 0;
 
-Mix_Music* buttyes;
-Mix_Music* buttno;
+Sound buttyes;
+Sound buttno;
 
 
 // TODO(#5): Read audio settings from save file
@@ -99,30 +97,28 @@ float volumeVocal = 0;
 
 void CC_Audio_Init(){
     // 44100 Hz, SDL audio format, stereo, chunk size
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-    buttyes = Mix_LoadWAV("audio/Access_Denied_High_DDM16_quieter.wav");
-    buttno =  Mix_LoadWAV("audio/Cancel Action_3.wav");
+    // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    buttyes = LoadSound("audio/Access_Denied_High_DDM16_quieter.wav");
+    buttno =  LoadSound("audio/Cancel Action_3.wav");
     for(int i = 0; i < kiringtone_files_len; i++){
-        kirins[i] = Mix_LoadWAV(kiringtone_files[i]);
+        kirins[i] = LoadSound(kiringtone_files[i]);
     }
 }
 
 void CC_Audio_Play_Music(char* path){
-    currentMusic = Mix_LoadMUS(path);
-    Mix_VolumeMusic(volumeMusic);
-    Mix_PlayMusic(currentMusic, -1);
+    currentMusic = LoadMusicStream(path);
+    // Mix_VolumeMusic(volumeMusic);
+    // Mix_PlayMusic(currentMusic, -1);
 }
 
-void CC_Audio_Play_SFX(Mix_Music* sfx){
-    int channel = Mix_PlayChannel(-1, sfx, 0);
-    Mix_Volume(channel, volumeSfx);
-    Mix_GroupChannel(channel, CHANNEL_GROUP_SFX);
+void CC_Audio_Play_SFX(Sound sfx){
+    // int channel = Mix_PlayChannel(-1, sfx, 0);
+    // Mix_Volume(channel, volumeSfx);
+    // Mix_GroupChannel(channel, CHANNEL_GROUP_SFX);
 }
 
-void CC_Audio_Play_VOX(Mix_Music* vox){
-    int channel = Mix_PlayChannel(-1, vox, 0);
-    Mix_Volume(channel, volumeVocal);
-    Mix_GroupChannel(channel, CHANNEL_GROUP_VOX);
+void CC_Audio_Play_VOX(Sound vox){
+    // int channel = Mix_PlayChannel(-1, vox, 0);
+    // Mix_Volume(channel, volumeVocal);
+    // Mix_GroupChannel(channel, CHANNEL_GROUP_VOX);
 }
-
-#endif /* CC_AUDIO */

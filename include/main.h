@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef MAIN
+#define MAIN
 
 // Standard Library includes
 #include <stdio.h>
@@ -8,14 +8,11 @@
 #include <stddef.h>
 
 // External library includes
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <raylib.h>
 
 // Local includes
-#include "foo.h"
-#include "Rectangle.h"
-#include "Vector2.h"
+#include "RectI.h"
+#include "Vec2I.h"
 #include "QFramework_Input.h"
 #include "CC_Input.h"
 #include "Player.h"
@@ -25,13 +22,9 @@
 #include "CC_Consts.h"
 #include "Match.h"
 
-// This holds info about the window itself; size, position, fullscreen status, etc
-extern SDL_Window* gWindow;
-// Handles all rendering within a particular window.
-extern SDL_Renderer* gRenderer;
 extern Fighter p1Fighter;
 extern Fighter p2Fighter;
-extern SDL_Texture* background;
+extern Texture background;
 extern Match currentMatch;
 extern bool stopGame;
 
@@ -44,4 +37,4 @@ void CC_CLOSE();
 void ResetRound();
 Match* GameInit(int p1CharaIndex, int p2CharaIndex);
 
-#endif
+#endif /* MAIN */

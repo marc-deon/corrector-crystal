@@ -1,11 +1,8 @@
 
-#ifndef MAIN
-#define MAIN
-
 // TODO(#19): Free stuff (animations, motions, etc) when done.
 
 #include <assert.h>
-#include <SDL2/SDL_ttf.h>
+#include <raylib.h>
 
 #include "Action.h"
 #include "CC_Audio.h"
@@ -24,11 +21,8 @@
 
 bool stopGame = 0;
 
-SDL_Rect camera;
+RectI camera;
 Match currentMatch;
-SDL_Window* gWindow = NULL;
-SDL_Renderer* gRenderer = NULL;
-SDL_Texture* background;
 
 /*  Rollback flowchart:
 
@@ -87,45 +81,49 @@ void Training_LoadState(){
 
 bool CC_INIT(){
     bool success = true;
-    if (SDL_Init(SDL_INIT_VIDEO < 0)){
-        printf("SDL could not initialize! SDL ERROR: %S\n", SDL_GetError());
-        success = false;
-    }
-    else{
-        gWindow = SDL_CreateWindow("original content by tim",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            VIRT_SCREEN_SIZE_X,
-            VIRT_SCREEN_SIZE_Y,
-            SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE //| SDL_WINDOW_FULLSCREEN_DESKTOP
-        );
-        if (gWindow == NULL){
-            printf("Window could not be created! SDL ERROR: %S\n", SDL_GetError());
-            success = false;
-            return success;
-        }
 
-        // TODO(#20): Find a way to force 60fps, instead of doing vsync
-        gRenderer = SDL_CreateRenderer(
-            gWindow, 
-            -1, 
-            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-         );
+    InitWindow(VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y, "Corrector Raylib");
+    SetTargetFPS(60);
+    // TODO:
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
+    // SetWindowState(FLAG_FULLSCREEN_MODE);
+    
+    // if (SDL_Init(SDL_INIT_VIDEO < 0)){
+    //     printf("SDL could not initialize! SDL ERROR: %S\n", SDL_GetError());
+    //     success = false;
+    // }
+    // else{
+    //     gWindow = SDL_CreateWindow("original content by tim",
+    //         SDL_WINDOWPOS_UNDEFINED,
+    //         SDL_WINDOWPOS_UNDEFINED,
+    //         VIRT_SCREEN_SIZE_X,
+    //         VIRT_SCREEN_SIZE_Y,
+    //         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE //| SDL_WINDOW_FULLSCREEN_DESKTOP
+    //     );
+    //     if (gWindow == NULL){
+    //         printf("Window could not be created! SDL ERROR: %S\n", SDL_GetError());
+    //         success = false;
+    //         return success;
+    //     }
 
-        SDL_RenderSetLogicalSize(gRenderer, VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y);
-        SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
+    //     // TODO(#20): Find a way to force 60fps, instead of doing vsync
+    //     gRenderer = SDL_CreateRenderer(
+    //         gWindow, 
+    //         -1, 
+    //         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    //      );
+    //     SDL_RenderSetLogicalSize(VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y);
+    //     SDL_SetRenderDrawBlendMode(SDL_BLENDMODE_BLEND);
+    //     TTF_Init();
+    // }
 
-
-        TTF_Init();
-    }
-
-    if (SDL_Init(SDL_INIT_AUDIO < 0)){
-        printf("SDL could not initialize! SDL ERROR: %S\n", SDL_GetError());
-    }
-    CC_Audio_Init();
+    // if (SDL_Init(SDL_INIT_AUDIO < 0)){
+    //     printf("SDL could not initialize! SDL ERROR: %S\n", SDL_GetError());
+    // }
+    // CC_Audio_Init();
 
     // TODO(#21): Move to another file?
-    previousKeyStates = (Uint8*) calloc(285, sizeof(Uint8));
+    // previousKeyStates = (uint8_t*) calloc(285, sizeof(uint8_t));
 
 
     return success;
@@ -133,13 +131,10 @@ bool CC_INIT(){
 
 void CC_CLOSE(){
     // Destroy Window
-    SDL_DestroyWindow(gWindow);
-    gWindow = NULL;
 
     free(previousKeyStates);
 
     // Quit SDL subsystems
-    SDL_Quit();
 }
 
 void Game_PlayerInit(){
@@ -177,29 +172,29 @@ Match* GameInit(int p1CharaIndex, int p2CharaIndex){
 
     Game_DataInit(p1CharaIndex, p2CharaIndex);
 
-    Ui_Match_Init(gRenderer, &currentMatch);
+    Ui_Match_Init(&currentMatch);
     return &currentMatch;
 }
 
 
 void CC_Render(){
     
-    // SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+    // SDL_SetRenderDrawColor(0, 0, 0, 255);
     // SDL_RenderClear(gRenderer);
-    SDL_Rect r = {
+    RectI r = {
         camera.x * UNIT_TO_PIX,
         camera.y * UNIT_TO_PIX,
         camera.w,
         camera.h,
     };
 
-    SDL_RenderCopy(gRenderer, background, &r, NULL);
+    // SDL_RenderCopy(background, &r, NULL);
     
     // Draw sprites
     for(int i = 0; i < 2; i++){
         Player* p = &currentMatch.players[i];
         FighterState* fs = &cb_last(p->pointCharacter->stateHistory);
-        Fighter_DrawSprite(p->pointCharacter, gRenderer, camera);
+        Fighter_DrawSprite(p->pointCharacter, camera);
         
     }
 
@@ -207,12 +202,12 @@ void CC_Render(){
     // We keep these as two loops because we want everything to be drawn on top of sprites, regardless of player
     for(int i = 0; i < 2; i++){
         Player* p = &currentMatch.players[i];
-        // Fighter_DrawPoint(p->pointCharacter, gRenderer, camera);
-        // Fighter_DrawCollisionbox(p->pointCharacter, gRenderer, camera);
-        Fighter_DrawHurtboxes(p->pointCharacter, gRenderer, camera);
-        Fighter_DrawHitboxes(p->pointCharacter, gRenderer, camera);
+        // Fighter_DrawPoint(p->pointCharacter, camera);
+        // Fighter_DrawCollisionbox(p->pointCharacter, camera);
+        Fighter_DrawHurtboxes(p->pointCharacter, camera);
+        Fighter_DrawHitboxes(p->pointCharacter, camera);
     }
-    DrawHUD(gRenderer, &currentMatch);
+    DrawHUD(&currentMatch);
 
 
     // SDL_RenderPresent(gRenderer);
@@ -260,27 +255,27 @@ void CC_ProcessCamera(){
 int CC_ProcessInput(){
 
     UpdateInput();
-    while(SDL_PollEvent(&event) != 0)
-    {
-        if (event.type == SDL_QUIT){
-            return -1;
-        }
-    }
+    // while(SDL_PollEvent(&event) != 0)
+    // {
+    //     if (event.type == SDL_QUIT){
+    //         return -1;
+    //     }
+    // }
 
     if(Stick_IsButtonJustDown(&p1Stick, STICK_START) || Stick_IsButtonJustDown(&p2Stick, STICK_START)){
-        UiMenu* menu = MakePauseMenu(gRenderer);
+        UiMenu* menu = MakePauseMenu();
 
         currentMatch.paused = true;
         return 0;
     }
 
-    if (QF_IsKeyJustDown(SDL_SCANCODE_F5)){
-        Training_SaveState();
-    }
+    // if (QF_IsKeyJustDown(SDL_SCANCODE_F5)){
+    //     Training_SaveState();
+    // }
     
-    else if (QF_IsKeyJustDown(SDL_SCANCODE_F6)){
-        Training_LoadState();
-    }
+    // else if (QF_IsKeyJustDown(SDL_SCANCODE_F6)){
+    //     Training_LoadState();
+    // }
 
     for(int i = 0; i < 2; i++){
         Player* p = &currentMatch.players[i];
@@ -358,18 +353,18 @@ bool CC_ProcessFrame(){
         int p1delta = 0;
         int p2delta = 0;
         
-        Rectangle rect1 = Fighter_OnRight(f1) ?
+        RectI rect1 = Fighter_OnRight(f1) ?
             Rect_Flip(cb_last(f1->stateHistory).action->shovebox.rect)
             : cb_last(f1->stateHistory).action->shovebox.rect;
         rect1.pos = Vec2_Add(rect1.pos, cb_last(f1->stateHistory).position);
 
-        Rectangle rect2 = Fighter_OnRight(f2) ?
+        RectI rect2 = Fighter_OnRight(f2) ?
             Rect_Flip(cb_last(f2->stateHistory).action->shovebox.rect)
             : cb_last(f2->stateHistory).action->shovebox.rect;
         rect2.pos = Vec2_Add(rect2.pos, cb_last(f2->stateHistory).position);
 
-        Rectangle r1 = rect1;
-        Rectangle r2 = rect2;
+        RectI r1 = rect1;
+        RectI r2 = rect2;
         int dir;
         while(dir = Rect_ShortestEscape(r1, r2))
         {
@@ -434,14 +429,14 @@ bool CC_ProcessFrame(){
             Hurtbox** hurtboxes = cb_last(p->pointCharacter->opponent->stateHistory).action->hurtboxes;
             for(int hurt = 0; (!madeContact) && (hurt < sb_count(hurtboxes)); hurt++){
                 // Adjust our hitbox according to our position and side
-                Rectangle r1 = hitboxes[hit]->rect;
+                RectI r1 = hitboxes[hit]->rect;
                 if(Fighter_OnRight(p->pointCharacter))
                     r1 = Rect_Flip(r1);
                 r1.pos.x += fs->position.x;
                 r1.pos.y += fs->position.y;
 
                 // Adjust opponent's hurtbox according to their position and side
-                Rectangle r2 = hurtboxes[hurt]->rect;
+                RectI r2 = hurtboxes[hurt]->rect;
                 if(Fighter_OnRight(p->pointCharacter->opponent))
                     r2 = Rect_Flip(r2);
                 r2.pos.x += cb_last(p->pointCharacter->opponent->stateHistory).position.x;
@@ -535,7 +530,7 @@ bool CC_Update(){
 
 void ResetRound(){
     puts("Resetting round");
-    camera = (SDL_Rect) {0, STAGE_H - VIRT_SCREEN_SIZE_Y, VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y};
+    camera = (RectI) {0, STAGE_H - VIRT_SCREEN_SIZE_Y, VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y};
     cb_last(currentMatch.history).currentTime = currentMatch.maxTime;
     for(int i = 0; i < 2; i++){
         Player* p = &(currentMatch.players[i]);
@@ -568,72 +563,54 @@ void ResetRound(){
 
 }
 
-SDL_Surface* mmbg_surface;
-SDL_Texture* mmbg_texture;
+Texture mmbg_texture;
 
 int main(int argc, char* args[]){
 
     if(!CC_INIT()){ puts("Failed to initialize!"); return -1; }
     
     // Main menu
-    UiMenu* menu = MakeMainMenu(gRenderer);
-    CC_Audio_Play_Music(musics[2]);
+    UiMenu* menu = MakeMainMenu();
+    // CC_Audio_Play_Music(musics[2]);
 
-    SDL_SetRenderDrawColor(gRenderer, 0,0,0, 255);
+    int r,g,b;
 
-    stopGame = 0;
-    while(!stopGame){
+    while(!WindowShouldClose()){
+        // UpdateInput();
+        BeginDrawing();
 
-        UpdateInput();
+        b = (b + 1 % 255);
+        r = (r + 2 % 255);
+        g = (g + 3 % 255);
 
+        ClearBackground((Color) {r,g,b, 255});
+        // DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+        DrawFPS(0,0);
 
-        while(SDL_PollEvent(&event) != 0)
-        {
-            if (event.type == SDL_QUIT){
-                stopGame = 1;
-            }
-        }
-        
         menu = Ui_GetTopFocus();
-
         if(menu){
-            SDL_RenderClear(gRenderer);
-
             if (menu->type == UI_TYPE_MATCH){
                 CC_Update();
                 CC_Render();
             }
-
-            else if(Menu_Input(menu, &p1Stick, &p2Stick)){
-
-                // See if we can find a Match...
-                UiMenu** stack = Ui_GetFocusStack();
-                for(int i = 0; i < sb_count(stack); i++){
-                    if(stack[i]->type == UI_TYPE_MATCH)
-                        CC_Render();
-                }
-
-                // Regardless, draw menu on top
-
-
-                Menu_Draw(gRenderer, Ui_GetTopFocus());
-                
-            }
-            SDL_RenderPresent(gRenderer);
+        //     else if(Menu_Input(menu, &p1Stick, &p2Stick)){
+        //         // See if we can find a Match...
+        //         UiMenu** stack = Ui_GetFocusStack();
+        //         for(int i = 0; i < sb_count(stack); i++){
+        //             if(stack[i]->type == UI_TYPE_MATCH)
+        //                 CC_Render();
+        //         }
+        //         // Regardless, draw menu on top
+                Menu_Draw(Ui_GetTopFocus());
+        //     }
         }
+        EndDrawing();
     }
 
-    CC_CLOSE();
-
-    Mix_FreeChunk(buttyes);
-    Mix_FreeChunk(buttno);
-    SDL_DestroyTexture(background);
+    CloseWindow();
+    // CC_CLOSE();
 
     printf("Exitting gracefully\n");
-    SDL_Quit();
-
 
     return 0;
 }
-
-#endif /* MAIN */

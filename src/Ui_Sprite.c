@@ -1,7 +1,7 @@
 #include "Ui_Sprite.h"
 #include "stretchy_buffer.h"
 
-UiSprite* Sprite_New(SDL_Renderer* gRenderer, UiMenu* menu, char* path){
+UiSprite* Sprite_New(UiMenu* menu, char* path){
 
     UiSprite* sprite = malloc(sizeof(UiSprite));
     sprite->type = UI_TYPE_SPRITE;
@@ -11,10 +11,10 @@ UiSprite* Sprite_New(SDL_Renderer* gRenderer, UiMenu* menu, char* path){
     sprite->down = NULL;
     sprite->left = NULL;
     sprite->right = NULL;
-    sprite->position = (Vector2){0,0};
+    sprite->position = (Vec2I){0,0};
 
-    sprite->surface = IMG_Load(path);
-    sprite->texture = SDL_CreateTextureFromSurface(gRenderer, sprite->surface);
+    sprite->texture = LoadTexture(path);
+    // sprite->texture = SDL_CreateTextureFromSurface(gRenderer, sprite->surface);
 
 
     sb_push(menu->elements, (UiElement*)sprite);
@@ -22,9 +22,11 @@ UiSprite* Sprite_New(SDL_Renderer* gRenderer, UiMenu* menu, char* path){
     return sprite;
 }
 
-void Sprite_Draw(SDL_Renderer* gRenderer, UiMenu* menu, UiSprite* sprite){
-    SDL_Rect rect = (SDL_Rect){sprite->position.x, sprite->position.y, sprite->surface->w, sprite->surface->h};
-    SDL_RenderCopy(gRenderer, sprite->texture, NULL, &rect);
+void Sprite_Draw(UiMenu* menu, UiSprite* sprite){
+    // RectI rect = (RectI){sprite->position.x, sprite->position.y, sprite->texture.width, sprite->texture.height};
+    DrawTexture(sprite->texture, sprite->position.x, sprite->position.y, WHITE);
+    printf("Drawing texture at %d %d\n", sprite->position.x, sprite->position.y);
+    // SDL_RenderCopy(gRenderer, sprite->texture, NULL, &rect);
 }
 
 void Sprite_Free(UiSprite* sprite){

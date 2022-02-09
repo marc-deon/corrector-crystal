@@ -1,19 +1,18 @@
 #ifndef UI_SPRITE
 #define UI_SPRITE
-#include "SDL2/SDL_image.h"
-#include "Vector2.h"
+#include "Vec2I.h"
 #include "Ui_Types.h"
+#include <raylib.h>
 
 typedef struct ui_sprite {
     ui_preamble
 
-    SDL_Surface* surface;
-    SDL_Texture* texture;
+    Texture texture;
 
 } UiSprite;
 
-UiSprite* Sprite_New(SDL_Renderer* gRenderer, UiMenu* menu, char* path);
-void Sprite_Draw(SDL_Renderer* gRenderer, UiMenu* menu, UiSprite* butt);
+UiSprite* Sprite_New(UiMenu* menu, char* path);
+void Sprite_Draw(UiMenu* menu, UiSprite* butt);
 void Sprite_Free(UiSprite* sprite);
 
 

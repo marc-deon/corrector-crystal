@@ -1,6 +1,3 @@
-#ifndef JSON_EXTENSION_C
-#define JSON_EXTENSION_C
-
 #include <json-c/json.h>
 #include "Json_Extension.h"
 
@@ -28,7 +25,7 @@ bool json_get_default_bool(const struct json_object* sourceObject, const char* k
     }
     return defaultValue;
 }
-char* json_get_default_string(const struct json_object* sourceObject, const char* key, char* defaultValue){
+const char* json_get_default_string(const struct json_object* sourceObject, const char* key, char* defaultValue){
     struct json_object* tempObject;
     json_bool success = json_object_object_get_ex(sourceObject, key, &tempObject);
     if (success){
@@ -37,7 +34,7 @@ char* json_get_default_string(const struct json_object* sourceObject, const char
     return defaultValue;
 }
 
-char* json_get_string(const struct json_object* sourceObject, const char* key){
+const char* json_get_string(const struct json_object* sourceObject, const char* key){
     struct json_object* tempObject;
     json_object_object_get_ex(sourceObject, key, &tempObject);
     return json_object_get_string(tempObject);
@@ -74,5 +71,3 @@ int json_get_int_array(const struct json_object* sourceObject, const char* key, 
 
     return array_list_length(arrlist);
 }
-
-#endif

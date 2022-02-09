@@ -1,5 +1,3 @@
-#ifndef MATCH_C
-#define MATCH_C
 #include "Match.h"
 #include "Player.h"
 #include "stretchy_buffer.h"
@@ -74,7 +72,3 @@ int Match_CheckMatchWin(Match* m){
     i += m->currentRounds[1] == m->maxRounds * 2;
     return i;
 }
-
-
-
-#endif

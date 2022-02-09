@@ -1,8 +1,8 @@
-#ifndef MENUS_PAUSE
-#define MENUS_PAUSE
+#ifndef MENUS_PAUSE_H
+#define MENUS_PAUSE_H
 
 #include "Ui_Menu.h"
 
-UiMenu* MakePauseMenu(SDL_Renderer* gRenderer);
+UiMenu* MakePauseMenu();
 
 #endif /* MENU_SPAUSE */

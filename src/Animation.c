@@ -1,13 +1,12 @@
-#ifndef ANIMATION
-#define ANIMATION
 #include "Animation.h"
 #include "stretchy_buffer.h"
 #include "CC_Consts.h"
+#include <raylib.h>
 
 int Animation_FindIndexByName(Animation** a, int size, char* name){
     for(int i = 0; i < size; i++){
-        int result = strcmp(a[i]->name, name);
-        if(result == 0)
+        int result =  TextIsEqual(a[i]->name, name);
+        if(result)
             return i;
     }
     return -1;
@@ -18,7 +17,7 @@ void Animation_SetLink(Animation* a, Animation* link){
     a->linksTo = link;
 }
 
-Animation* Animation_Create(SDL_Color colors[256], char* name, char* filename, uint frameCount, uint frameWait, SDL_Rect cropRect, SDL_Renderer* ren, int loopStart){
+Animation* Animation_Create(Color colors[256], char* name, char* filename, uint frameCount, uint frameWait, RectI cropRect, int loopStart){
 
     // Allocate
     Animation* anim = malloc(sizeof(Animation));
@@ -30,27 +29,28 @@ Animation* Animation_Create(SDL_Color colors[256], char* name, char* filename, u
     anim->loopStart = loopStart;
 
     // Filename
-    SDL_Surface* imagesurface = IMG_Load(filename);
-    SDL_SetPaletteColors(imagesurface->format->palette, colors, 0, 255);
+    Texture imagesurface = LoadTexture(filename);
+    // SDL_SetPaletteColors(imagesurface->format->palette, colors, 0, 255);
 
-    if(imagesurface == 0){
-        printf("Image %s not loaded!\n", filename);
-        return anim;
-    }
-    anim->texture = SDL_CreateTextureFromSurface(ren, imagesurface);
-    SDL_FreeSurface(imagesurface);
-    SDL_Texture* txt = anim->texture;
+    // if(imagesurface == 0){
+    //     printf("Texture %s not loaded!\n", filename);
+    //     return anim;
+    // }
+    // anim->texture = SDL_CreateTextureFromSurface(ren, imagesurface);
+    anim->texture = &imagesurface;
+    // SDL_FreeSurface(imagesurface);
+    // SDL_Texture* txt = anim->texture;
     
 
     // spriteClips
-    anim->spriteClips = NULL;
+    anim->spriteClips = 0;
     //
     for(uint i = 0; i < frameCount; i++){
-        SDL_Rect* rect = malloc(sizeof(SDL_Rect));
-        rect->x = i*cropRect.w;
-        rect->y = cropRect.y;
-        rect->w = cropRect.w;
-        rect->h = cropRect.h;
+        RectI* rect = malloc(sizeof(RectI));
+        rect->pos.x = i*cropRect.pos.x;
+        rect->pos.y = cropRect.pos.y;
+        rect->size.x = cropRect.size.x;
+        rect->size.y = cropRect.size.y;
         sb_push(anim->spriteClips, rect);
     }
 
@@ -61,8 +61,6 @@ Animation* Animation_Create(SDL_Color colors[256], char* name, char* filename, u
 }
 
 void Animation_Free(Animation* anim){
-    SDL_DestroyTexture(anim->texture);
+    // SDL_DestroyTexture(anim->texture);
     free(anim);
 }
-
-#endif /* ANIMATION */

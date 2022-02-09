@@ -1,11 +1,8 @@
-#ifndef STICK_C_FILE
-#define STICK_C_FILE
-
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include "Stick.h"
-#include "Vector2.h"
+#include "Vec2I.h"
 #include "CC_Consts.h"
 #include "Fighter.h"
 #include <assert.h>
@@ -271,10 +268,10 @@ int Stick_GetPattern_SingleToken(StickState ss, char token, int punches, int kic
 
 
 // Use this for parenthetically grouped tokens
-// returns a vector2 where x is a 1 or 0 for find success, and y is the number of indices to move forward.
+// returns a Vec2I where x is a 1 or 0 for find success, and y is the number of indices to move forward.
 // NOTE: startIndex will be the index of '(', and should be incremented by return.y to index of ')' such that
 // the next iteration of the loop will start one character after ')'.
-Vector2 Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex, char groupEnd){
+Vec2I Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex, char groupEnd){
     int increment = 1;
     int i = startIndex+1;
     int success = true;
@@ -310,11 +307,11 @@ Vector2 Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex
         i++;
     }
 
-    Vector2 ret = {.x = success, .y = increment};
+    Vec2I ret = {.x = success, .y = increment};
     return ret;
 }
 
-Vector2 Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, int charStartIndex, int frameStartIndex, char groupEnd){
+Vec2I Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, int charStartIndex, int frameStartIndex, char groupEnd){
     int success = false;
     char* pattern = motion->pattern;
 
@@ -327,7 +324,7 @@ Vector2 Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, in
     char copy[charEndIndex-charStartIndex + 1];
 
     // Make a backup, because splitting occurs in-place
-    strcpy(copy, pattern+1);
+    TextCopy(copy, pattern+1);
 
     // First part is the buttons, second part is the frames.
     char* butts = strtok(copy, "-");
@@ -357,7 +354,7 @@ Vector2 Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, in
         }
     }
 
-    Vector2 ret = {.x = success, .y = charEndIndex-charStartIndex};
+    Vec2I ret = {.x = success, .y = charEndIndex-charStartIndex};
     return ret;
 }
 
@@ -436,7 +433,7 @@ bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt
         
         // Group token
         if (currentCharacter == '('){
-            Vector2 v = Stick_GetPattern_GroupToken(currentState, pattern, patternIndex, ')');
+            Vec2I v = Stick_GetPattern_GroupToken(currentState, pattern, patternIndex, ')');
             
             match = v.x;
             if(match){
@@ -446,7 +443,7 @@ bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt
 
         // Charge token
         else if (currentCharacter == '['){
-            Vector2 v = Stick_GetPattern_ChargeToken(p, stick, motion, patternIndex, curFrame, ']');
+            Vec2I v = Stick_GetPattern_ChargeToken(p, stick, motion, patternIndex, curFrame, ']');
             match = v.x;
             if (match){
                 patternIndex += v.y - 1;
@@ -480,5 +477,3 @@ bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt
     }
     return false;
 }
-
-#endif

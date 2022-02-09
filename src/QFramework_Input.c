@@ -1,12 +1,10 @@
-#ifndef QFRAMEWORK_INPUT_C
-#define QFRAMEWORK_INPUT_C
-
 #include "QFramework_Input.h"
 #include <stdbool.h>
+#include <stdint.h>
 
-Uint8* previousKeyStates;
-Uint8* currentKeyStates;
-SDL_Event event;
+uint8_t* previousKeyStates;
+uint8_t* currentKeyStates;
+// SDL_Event event;
 
 bool QF_IsKeyDown(uint k){
     return currentKeyStates[k];
@@ -24,7 +22,7 @@ bool QF_IsKeyJustUp(uint k){
     return !currentKeyStates[k] && previousKeyStates[k];
 }
 
-void QF_CopyKeyArray(Uint8* from, Uint8* to){
+void QF_CopyKeyArray(uint8_t* from, uint8_t* to){
     if (from == 0) 
         return;
     for(int i = 0; i < scancodeCount; i++)
@@ -32,7 +30,5 @@ void QF_CopyKeyArray(Uint8* from, Uint8* to){
 }
 
 void QF_Update(){
-    currentKeyStates = (Uint8*) SDL_GetKeyboardState(NULL);
+    // currentKeyStates = (uint8_t*) SDL_GetKeyboardState(NULL);
 }
-
-#endif

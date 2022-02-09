@@ -1,5 +1,3 @@
-#ifndef PLAYER_C
-#define PLAYER_C
 #include "Player.h"
 #include "stretchy_buffer.h"
 #include "circular_buffer.h"
@@ -51,5 +49,3 @@ int Player_GetFirstPattern(Player* p){
 
     return -1;
 }
-
-#endif

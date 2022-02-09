@@ -1,9 +1,8 @@
-#ifndef ACTION_C
-#define ACTION_C
-
+#include "qtypes.h"
 #include "Action.h"
-#include "Rectangle.h"
+#include "RectI.h"
 #include "stretchy_buffer.h"
+#include <raylib.h>
 
 uint _action_count;
 
@@ -38,22 +37,22 @@ Action* Action_Create(
     uint index,
     bool phase
 ){
-    Action* act = (Action*) calloc(1, sizeof(Action));
+    Action* act = (Action*) malloc(1 * sizeof(Action));
     act->currentFrame = 0;
     act->name = name;
     act->canLinkAfter = canLinkAfter;
     act->mustLinkAfter = mustLinkAfter;
-    act->linksTo = NULL;
-    act->linksFrom = NULL;
+    act->linksTo = 0;
+    act->linksFrom = 0;
     act->state = state;
     act->priority = priority;
     act->animation = animation;
-    act->hitboxes = NULL;
-    act->hurtboxes = NULL;
-    act->shovebox = NULLSHOVE;
+    act->hitboxes = 0;
+    act->hurtboxes = 0;
+    // act->shovebox;
     act->damage = damage;
     act->hitstun = hitstun;
-    act->audioChunk = NULL;
+    act->audioChunk = 0;
 
     act->wallSplat = wallSplat;
     act->dunk = dunk;
@@ -80,14 +79,14 @@ Action* Action_Create(
         act->overrideSelfGravity[0] = overrideSelfGravity[0];
         act->overrideSelfGravity[1] = overrideSelfGravity[1];
     } else{
-        act->overrideSelfGravity = NULL;
+        act->overrideSelfGravity = 0;
     }
     if (overrideSelfVelocity){
         act->overrideSelfVelocity = calloc(2, sizeof(int));
         act->overrideSelfVelocity[0] = overrideSelfVelocity[0];
         act->overrideSelfVelocity[1] = overrideSelfVelocity[1];
     } else{
-        act->overrideSelfVelocity = NULL;
+        act->overrideSelfVelocity = 0;
     }
     act->overrideSelfTime = overrideSelfTime;
     act->index = index;
@@ -96,7 +95,7 @@ Action* Action_Create(
 }
 
 void Action_Free(Action* act){
-    Mix_FreeChunk(act->audioChunk);
+    // Mix_FreeChunk(act->audioChunk);
     free(act->overrideSelfGravity);
     free(act->overrideSelfVelocity);
     free(act);
@@ -104,8 +103,8 @@ void Action_Free(Action* act){
 
 int Action_FindIndexByName(Action** actions, int size, char* name){
     for(int i = 0; i < size; i++){
-        int result = strcmp(actions[i]->name, name);
-        if(result == 0)
+        int result = TextIsEqual(actions[i]->name, name);
+        if(result)
             return i;
     }
     return -1;
@@ -130,4 +129,3 @@ int Action_AddHurtbox(Action* a, Hurtbox* hb){
     sb_push(a->hurtboxes, hb);
     return sb_count(a->hurtboxes)-1;
 }
-#endif

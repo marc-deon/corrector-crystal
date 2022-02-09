@@ -1,5 +1,3 @@
-#ifndef FIGHTER_READ
-#define FIGHTER_READ
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <json-c/json.h>
@@ -21,8 +19,7 @@
 // Unix only
 #include<unistd.h>
 
-extern SDL_Texture* background;
-extern SDL_Renderer* gRenderer;
+Texture background;
 extern Match currentMatch;
 
 const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_json){
@@ -140,7 +137,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 
         int shoveArray[4];
         json_get_default_int_array(action, "shovebox", shoveArray, 4);
-        Rectangle shovebox_rect;
+        RectI shovebox_rect;
         shovebox_rect.pos.x  = shoveArray[0];
         shovebox_rect.pos.y  = shoveArray[1];
         shovebox_rect.size.x = shoveArray[2];
@@ -157,7 +154,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 
         if(hitExists){
             for(int j = 0; j < json_object_array_length(ob_hitboxes); j++){
-                Rectangle rect;
+                RectI rect;
                 array_list* al = json_object_get_array(ob_hitboxes);
                 // First dig into the array of arrays...
                 array_list* rect_arr_list = json_object_get_array((const json_object*) array_list_get_idx(al, j));
@@ -187,7 +184,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 
         if(hurtExists){
             for(int j = 0; j < json_object_array_length(ob_hurtboxes); j++){
-                Rectangle rect;
+                RectI rect;
                 array_list* al = json_object_get_array(ob_hurtboxes);
                 // First dig into the array of arrays...
                 array_list* rect_arr = json_object_get_array((const json_object*) array_list_get_idx(al, j));
@@ -251,7 +248,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 }
 
 
-const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_json, SDL_Color colors[256]){
+const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_json, Color colors[256]){
         struct json_object* animations;
         json_object_object_get_ex(parsed_json, "animations", &animations);
 
@@ -267,9 +264,9 @@ const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_
             int loopStart = json_get_default_int(animation, "loopStart", 0);
             int cropInts[4]; 
             json_get_int_array(animation, "cropRect", cropInts);
-            SDL_Rect cropRect = {cropInts[0], cropInts[1], cropInts[2], cropInts[3]};
+            RectI cropRect = {cropInts[0], cropInts[1], cropInts[2], cropInts[3]};
         
-            sb_push(fighter->animations, Animation_Create(colors, name, sprite, frames, wait, cropRect, gRenderer, loopStart));
+            sb_push(fighter->animations, Animation_Create(colors, name, sprite, frames, wait, cropRect, loopStart));
         }
 
         // Now that we have the animations created, we can link them.
@@ -290,7 +287,7 @@ const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_
     return NULL;
 }
 
-void Fighter_GetPalette(struct json_object* parsed, int i, SDL_Color colors[256]){
+void Fighter_GetPalette(struct json_object* parsed, int i, Color colors[256]){
     struct json_object* palsObj;
     json_object_object_get_ex(parsed, "palettes", &palsObj);
 
@@ -314,12 +311,7 @@ void Fighter_GetPalette(struct json_object* parsed, int i, SDL_Color colors[256]
 // TODO(#9): Clean up Game_SpriteInit; it does way more than just sprites.
 void Game_SpriteInit(){
 
-    if(!background){
-        SDL_Surface* surf = IMG_Load("Graphics/Background/training-big.png");
-        background = SDL_CreateTextureFromSurface(gRenderer, surf);
-        SDL_FreeSurface(surf);
-    }
-
+    background = LoadTexture("Graphics/Background/training-big.png");
 
     char* path = "fighterData/superman.jsonc";
 
@@ -368,7 +360,7 @@ void Game_SpriteInit(){
         // Animations
 
         // 256x3/4
-        SDL_Color colors[256];
+        Color colors[256];
         Fighter_GetPalette(parsed_json, i, colors);
         
         
@@ -402,7 +394,7 @@ void Game_SpriteInit(){
             puts("Made motions");
         }
 
-        p->pointCharacter->portrait = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("Graphics/Fighter/Shoto/aoko_portrait.jpg"));
+        // p->pointCharacter->portrait = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("Graphics/Fighter/Shoto/aoko_portrait.jpg"));
 
     }
 }
@@ -434,12 +426,12 @@ void Game_Data_InitActions(Player* p){
     for(int i = 0; i < sb_count(p->pointCharacter->actions); i++){
         
         char* path = sfxPaths[rand() % 12];
-        Mix_Chunk* ch = Mix_LoadWAV(path);
-        if(!ch){
-            puts(SDL_GetError());
-            assert(0);
-        }
-        p->pointCharacter->actions[i]->audioChunk = ch;
+        // Mix_Chunk* ch = Mix_LoadWAV(path);
+        // if(!ch){
+        //     puts(SDL_GetError());
+        //     assert(0);
+        // }
+        // p->pointCharacter->actions[i]->audioChunk = ch;
     }
 }
 
@@ -470,9 +462,7 @@ const char* Fighter_ReadMotions(Fighter* fighter, struct json_object* parsed_jso
     return NULL;
 }
 
-int odifljgdfgkljdfgh = 0;
 void Fighter_Destroy(Fighter* fighter){
-    printf("freed %d\n", odifljgdfgkljdfgh++);
 
     printf("%p\n", currentMatch.players[0].pointCharacter->motions);
     printf("%p\n", currentMatch.players[1].pointCharacter->motions);
@@ -496,5 +486,3 @@ void Fighter_Destroy(Fighter* fighter){
     cb_free(fighter->stateHistory);
 
 }
-
-#endif /* FIGHTER_READ */

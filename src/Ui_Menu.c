@@ -8,8 +8,10 @@
 // Funfact: Bake is optional! If you want a "floating" layout, don't use it.
 // When baketype is BAKE_TYPE_SET_SPACING, the b component of borders is used as the spacing
 // centerInBorders only centers horizontally (for now?)
-void Menu_Bake(SDL_Renderer* ren, UiMenu* menu, Vector4 borders, Vector4 border_offset, int baketype, int centerInBorders){
+void Menu_Bake(UiMenu* menu, Vec4I borders, Vec4I border_offset, int baketype, int centerInBorders){
 
+    menu->position = (Vec2I){0,0};
+    
     // TODO(#28): Make an actual Menu type, store the borders on that, and draw children relative to it
 
     switch(baketype){
@@ -22,7 +24,7 @@ void Menu_Bake(SDL_Renderer* ren, UiMenu* menu, Vector4 borders, Vector4 border_
 
             for(int i = 0; i < count; i++){
                 UiElement* element = menu->elements[i];
-                Vector2 elSize = UiElement_Size(ren, element);
+                Vec2I elSize = UiElement_Size(element);
                 ySum += elSize.y;
                 nonCenteredWidth = max(nonCenteredWidth, (!element->hcentered) * elSize.x);
             }
@@ -35,10 +37,12 @@ void Menu_Bake(SDL_Renderer* ren, UiMenu* menu, Vector4 borders, Vector4 border_
             for(int i = 0; i < count; i++){
 
                 UiElement* element = menu->elements[i];
-                Vector2 elSize = UiElement_Size(ren, element);
+                Vec2I elSize = UiElement_Size(element);
+                printf("Elsize of %d is %d\n", i, elSize.x);
                 int x = nonCenteredWidth/2 - elSize.x/2;
                 int x2 = borderCenterX - nonCenteredWidth/2;
-                element->position = (Vector2) {.x = borders.l + border_offset.l + element->hcentered*x + centerInBorders*x2, .y = y + borders.t};
+                element->position = (Vec2I) {.x = borders.l + border_offset.l + element->hcentered*x + centerInBorders*x2, .y = y + borders.t};
+                printf("setting element %d.x to %d\n", i, element->position.x);
                 y += ySpace;
                 y += elSize.y;
             }
@@ -124,27 +128,27 @@ bool Menu_Input(UiMenu* menu, Stick* p1stick, Stick* p2stick){
     return true;
 }
 
-void Menu_Draw(SDL_Renderer* ren, UiMenu* menu){
+void Menu_Draw(UiMenu* menu){
 
     if(!menu)
         return;
 
-    if(menu->background_surface){
-        SDL_Rect rect;
-        rect = (SDL_Rect) {0, 0, menu->background_surface->w, menu->background_surface->h};
-        SDL_RenderCopy(ren, menu->background_texture, NULL, &rect);
-    }
+    RectI rect;
+    rect = (RectI) {0, 0, menu->background_texture.width, menu->background_texture.height};
+    DrawTexture(menu->background_texture, menu->position.x, menu->position.y, WHITE);
+    printf("Drawing bg at %d %d\n", menu->position.x, menu->position.y);
+    // SDL_RenderCopy(menu->background_texture, NULL, &rect);
 
     for(int i = 0; i < sb_count(menu->elements); i++){
         switch(menu->elements[i]->type){
             case UI_TYPE_BUTTON:
-                Button_Draw(ren, menu, mqui_as_button(menu->elements[i]));
+                Button_Draw(menu, mqui_as_button(menu->elements[i]));
                 break;
             case UI_TYPE_LABEL:
-                Label_Draw(ren, menu, mqui_as_label(menu->elements[i]));
+                Label_Draw(menu, mqui_as_label(menu->elements[i]));
                 break;
             case UI_TYPE_SPRITE:
-                Sprite_Draw(ren, menu, mqui_as_sprite(menu->elements[i]));
+                Sprite_Draw(menu, mqui_as_sprite(menu->elements[i]));
                 break;
 
             case UI_TYPE_MATCH:
@@ -161,7 +165,7 @@ void Menu_Draw(SDL_Renderer* ren, UiMenu* menu){
 }
 
 void Menu_Free(UiMenu* menu){
-    SDL_FreeSurface(menu->background_surface);
-    SDL_DestroyTexture(menu->background_texture);
+    // SDL_FreeSurface(menu->background_texture);
+    // SDL_DestroyTexture(menu->background_texture);
     sb_free(menu->elements);
 }

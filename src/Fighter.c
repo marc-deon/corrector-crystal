@@ -1,7 +1,3 @@
-#ifndef FIGHTER_C
-#define FIGHTER_C
-
-
 #include <SDL2/SDL.h>
 #include "Fighter.h"
 #include "CC_Consts.h"
@@ -117,13 +113,13 @@ void Fighter_StartAction(Fighter*f, Action* a, uint setMax){
         a->mustLinkAfter = setMax;
 
     // Play audio
-    Mix_Chunk* sfx = a->audioChunk;
+    Sound* sfx = a->audioChunk;
 
     if(sfx){
         // -1 for first available channel, sound to play, number of times to loop
-        int channel = Mix_PlayChannel(-1, sfx, 0);
-        Mix_Volume(channel, volumeSfx);
-        Mix_GroupChannel(channel, CHANNEL_GROUP_SFX);
+        // int channel = Mix_PlayChannel(-1, sfx, 0);
+        // Mix_Volume(channel, volumeSfx);
+        // Mix_GroupChannel(channel, CHANNEL_GROUP_SFX);
     }
     fs->action = a;
 
@@ -176,18 +172,18 @@ float Fighter_HealthPercent(Fighter* f){
     return (float)cb_last(f->stateHistory).health / f->maxHealth;
 }
 
-void Fighter_DrawSprite(Fighter* f, SDL_Renderer* ren, SDL_Rect camera){
+void Fighter_DrawSprite(Fighter* f, RectI camera){
     int count = cb_count(f->stateHistory);
     FighterState* fs = &(cb_last(f->stateHistory));
 
     Animation* curAnim = fs->animation;
     
     Animation* an = fs->animation;
-    SDL_Rect** sc = fs->animation->spriteClips; 
+    RectI** sc = fs->animation->spriteClips; 
     
-    SDL_Rect* currentClip = curAnim->spriteClips[fs->animation->currentFrame / curAnim->frameWait];
+    RectI* currentClip = curAnim->spriteClips[fs->animation->currentFrame / curAnim->frameWait];
 
-    SDL_Rect targetRect = {
+    RectI targetRect = {
         (fs->position.x - camera.x) * UNIT_TO_PIX - currentClip->w/2,
         (fs->position.y - camera.y) * UNIT_TO_PIX - currentClip->h,
         currentClip->w,
@@ -196,7 +192,7 @@ void Fighter_DrawSprite(Fighter* f, SDL_Renderer* ren, SDL_Rect camera){
 
     bool flip = Fighter_OnRight(f);
     
-    SDL_RenderCopyEx(ren, fs->animation->texture, currentClip, &targetRect, 0, 0, SDL_FLIP_HORIZONTAL * flip);
+    // SDL_RenderCopyEx(ren, fs->animation->texture, currentClip, &targetRect, 0, 0, SDL_FLIP_HORIZONTAL * flip);
 
     // Advance the frame
     assert(f && "no fighter");
@@ -228,98 +224,98 @@ void Fighter_ChangeAnimation(Fighter* f, Animation* newAnimation){
     }
 }
 
-void Fighter_DrawPoint(Fighter* f, SDL_Renderer* ren, SDL_Rect camera){
-    SDL_Rect r ={
+void Fighter_DrawPoint(Fighter* f, RectI camera){
+    RectI r ={
         r.x = (cb_last(f->stateHistory).position.x - 1 - camera.x) * UNIT_TO_PIX,
         r.y = (cb_last(f->stateHistory).position.y - 1 - camera.y) * UNIT_TO_PIX,
         3,
         3
     };
     
-    SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-    SDL_RenderFillRect(ren, &r);
+    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
+    // SDL_RenderFillRect(ren, &r);
 }
  
-void Fighter_DrawHitboxes(Fighter* f, SDL_Renderer* ren, SDL_Rect camera){
+void Fighter_DrawHitboxes(Fighter* f, RectI camera){
     Action* a = cb_last(f->stateHistory).action;
     for(int i = 0; i < sb_count(a->hitboxes); i++){
         if(a->hitboxes[i]->active != HB_ACTIVE){
             continue;
         }
 
-        Rectangle hbr = a->hitboxes[i]->rect;
+        RectI hbr = a->hitboxes[i]->rect;
         if(Fighter_OnRight(f))
             hbr = Rect_Flip(hbr);
-        SDL_Rect r = {
+        RectI r = {
             (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
             (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
             hbr.size.x * UNIT_TO_PIX,
             hbr.size.y * UNIT_TO_PIX
         };
-        SDL_SetRenderDrawColor(ren, 255, 0, 0, 128);
-        SDL_RenderFillRect(ren, &r);
-        SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-        SDL_RenderDrawRect(ren, &r);
+        // SDL_SetRenderDrawColor(ren, 255, 0, 0, 128);
+        // SDL_RenderFillRect(ren, &r);
+        // SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+        // SDL_RenderDrawRect(ren, &r);
     }
 }
 
-void Fighter_DrawHurtboxes(Fighter* f, SDL_Renderer* ren, SDL_Rect camera){
+void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
     for(int i = 0; i < sb_count(cb_last(f->stateHistory).action->hurtboxes); i++){
         char* name = cb_last(f->stateHistory).action->name;
         // printf("%s\n", name);
         int count = sb_count(cb_last(f->stateHistory).action->hurtboxes);
         FighterState last = cb_last(f->stateHistory);
         Action* act = last.action;
-        Rectangle hbr = act->hurtboxes[i]->rect;
+        RectI hbr = act->hurtboxes[i]->rect;
         if(Fighter_OnRight(f))
             hbr = Rect_Flip(hbr);
 
-        SDL_Rect r = {
+        RectI r = {
             (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
             (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
             hbr.size.x * UNIT_TO_PIX,
             hbr.size.y * UNIT_TO_PIX
         };
-        SDL_SetRenderDrawColor(ren, 0, 255, 0, 128);
-        SDL_RenderFillRect(ren, &r);
-        SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
-        SDL_RenderDrawRect(ren, &r);
+        // SDL_SetRenderDrawColor(ren, 0, 255, 0, 128);
+        // SDL_RenderFillRect(ren, &r);
+        // SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
+        // SDL_RenderDrawRect(ren, &r);
     }
 }
 
-void Fighter_DrawCollisionbox(Fighter* f, SDL_Renderer* ren, SDL_Rect camera){
-    Rectangle hbr = cb_last(f->stateHistory).action->shovebox.rect;
+void Fighter_DrawCollisionbox(Fighter* f, RectI camera){
+    RectI hbr = cb_last(f->stateHistory).action->shovebox.rect;
     if(Fighter_OnRight(f))
         hbr = Rect_Flip(hbr);
-    SDL_Rect r = {
+    RectI r = {
         (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
         (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
         (hbr.size.x) * UNIT_TO_PIX,
         (hbr.size.y) * UNIT_TO_PIX
     };
-    SDL_SetRenderDrawColor(ren, 255, 255, 255, 128);
-    SDL_RenderFillRect(ren, &r);
-    SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-    SDL_RenderDrawRect(ren, &r);
+    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 128);
+    // SDL_RenderFillRect(ren, &r);
+    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
+    // SDL_RenderDrawRect(ren, &r);
 }
 
 
 #define UNSHOVE 1
 
 
-void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, SDL_Rect camera){
+void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, RectI camera){
     ///////////////////////////////////////
     // Unshove if overlapping with opponent
 
     FighterState* fs = &cb_last(f->stateHistory);
     FighterState* os = &cb_last(f->opponent->stateHistory);
 
-    Rectangle rect1 = Fighter_OnRight(f) ?
+    RectI rect1 = Fighter_OnRight(f) ?
         Rect_Flip(fs->action->shovebox.rect)
         : fs->action->shovebox.rect;
     rect1.pos = Vec2_Add(rect1.pos, fs->position);
 
-    Rectangle rect2 = Fighter_OnRight(f->opponent) ?
+    RectI rect2 = Fighter_OnRight(f->opponent) ?
         Rect_Flip(cb_last(f->opponent->stateHistory).action->shovebox.rect)
         : cb_last(f->opponent->stateHistory).action->shovebox.rect;
     rect2.pos = Vec2_Add(rect2.pos, cb_last(f->opponent->stateHistory).position);
@@ -389,7 +385,7 @@ void Fighter_Land(Fighter* f){
     }
 }
 
-void Fighter_MoveAir(Fighter* f, StickState* ss, SDL_Rect camera){
+void Fighter_MoveAir(Fighter* f, StickState* ss, RectI camera){
 
     FighterState* fs = &cb_last(f->stateHistory);
     FighterState* os = &cb_last(f->opponent->stateHistory);
@@ -460,6 +456,3 @@ void Fighter_UpdateSubstate(Fighter* f){
         fs->subframe--;
     }
 }
-
-
-#endif

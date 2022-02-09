@@ -1,5 +1,3 @@
-#ifndef HITBOX_C
-#define HITBOX_C
 #include <stdlib.h>
 #include <stdio.h>
 #include "Hitbox.h"
@@ -10,7 +8,7 @@ Hurtbox NULLHURT;
 
 Shovebox NULLSHOVE = {.rect = {0,0,0,0}};
 
-Hitbox* Hitbox_Create(Rectangle rect, ushort activeOnFrame, ushort offOnFrame){
+Hitbox* Hitbox_Create(RectI rect, ushort activeOnFrame, ushort offOnFrame){
     Hitbox* hb = (Hitbox*)malloc(sizeof(Hitbox));
     hb->rect = rect;
     hb->activeOnFrame = activeOnFrame;
@@ -20,12 +18,12 @@ Hitbox* Hitbox_Create(Rectangle rect, ushort activeOnFrame, ushort offOnFrame){
     hb->currentFrame = 0;
 }
 
-Hurtbox* Hurtbox_Create(Rectangle rect){
+Hurtbox* Hurtbox_Create(RectI rect){
     Hurtbox* hb = (Hurtbox*)malloc(sizeof(Hitbox));
     hb->rect = rect;
     return hb;
 }
-Shovebox Shovebox_Create(Rectangle rect){
+Shovebox Shovebox_Create(RectI rect){
     Shovebox sb;
     sb.rect = rect;
     return sb;
@@ -45,5 +43,3 @@ void Hitbox_UpdateTimer(Hitbox* hb){
 
     hb->currentFrame ++;
 }
-
-#endif

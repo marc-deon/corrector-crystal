@@ -1,24 +1,23 @@
-#ifndef TESTMENUS
-#define TESTMENUS
+#ifndef TESTMENUS_H
+#define TESTMENUS_H
 #include "Ui_Base.h"
 #include "Ui_Types.h"
 #include "Ui_Sprite.h"
-#include "SDL2/SDL.h"
+// #include "SDL2/SDL.h"
 
-UiMenu* MakeMainMenu(SDL_Renderer* gRenderer);
+UiMenu* MakeMainMenu();
 UiMenu* MakeArcadeMenu();
 UiMenu* MakeVersusMenu();
 UiMenu* MakeTrainingMenu();
 UiMenu* MakeReplaysMenu();
 UiMenu* MakeOptionsMenu();
-extern SDL_Renderer* gRenderer;
 void cb_back();
 
-extern SDL_Texture* mainMenuButtonBg;
-extern SDL_Texture* mainMenuButtonTextTextures[5];
-extern SDL_Rect mainMenuButtonRects[5];
-extern SDL_Surface* mainMenuButtonSurfaces[5];
-extern SDL_Texture* mainMenuGrillTexture;
-extern SDL_Rect mainMenuGrillRect;
+extern Texture mainMenuButtonBg;
+extern Texture mainMenuButtonTextTextures[5];
+extern RectI mainMenuButtonRects[5];
+extern Texture mainMenuButtonSurfaces[5];
+extern Texture mainMenuGrillTexture;
+extern RectI mainMenuGrillRect;
 
 #endif /* TESTMENUS */

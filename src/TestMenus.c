@@ -1,20 +1,18 @@
 #include "TestMenus.h"
 #include <stdlib.h>
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-#include <SDL2/SDL_ttf.h>
 #include "main.h"
+#include <raylib.h>
 
 // SDL_Texture* mainMenuButtonBg;
-SDL_Texture* mainMenuButtonTextTextures[5];
-SDL_Rect mainMenuButtonRects[5];
-SDL_Surface* mainMenuButtonTextSurfaces[5];
-SDL_Texture* mainMenuGrillTexture;
-SDL_Rect mainMenuGrillRect;
+Texture mainMenuButtonTextTextures[5];
+RectI mainMenuButtonRects[5];
+Texture mainMenuButtonTextSurfaces[5];
+Texture mainMenuGrillTexture;
+RectI mainMenuGrillRect;
 
 #pragma region Button Callbacks
 void cb_arcade(){
-    MakeArcadeMenu(gRenderer);
+    MakeArcadeMenu();
 }
 
 void cb_versus(){
@@ -72,23 +70,20 @@ void cb_character_select(CallbackInfo info){
     if (playerCharaIndices[0] != -1 && playerCharaIndices[1] != -1){
         while(Ui_GetTopFocus())
             Ui_PopFocus();
-        Ui_Match* m = GameInit(playerCharaIndices[0], playerCharaIndices[1]);
+        UiMenu* m = mqui_as_menu(GameInit(playerCharaIndices[0], playerCharaIndices[1]));
         Ui_PushFocus(m);
     }
 }
 
 // TODO: Add rects for portraits on left and right, read textures from file as neccesary
-UiMenu* MakeArcadeMenu(SDL_Renderer* gRenderer){
+UiMenu* MakeArcadeMenu(){
     playerCharaIndices[0] = -1;
     playerCharaIndices[1] = -1;
     UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->background_surface = NULL;
-    menu->background_texture = NULL;
     menu->elements = 0;
     menu->on_cancel = (CallbackFunction){cb_arcade_back};
 
-    menu->background_surface = IMG_Load("Graphics/Ui/menubg.png");
-    menu->background_texture = SDL_CreateTextureFromSurface(gRenderer, menu->background_surface);
+    menu->background_texture = LoadTexture("Graphics/Ui/menubg.png");
 
     /*
         Shoto    Guile  Cannon
@@ -105,34 +100,30 @@ UiMenu* MakeArcadeMenu(SDL_Renderer* gRenderer){
     int ys[3];
 
 
-    SDL_Surface* surface_norm = IMG_Load("Graphics/Ui/charaselebutton-base1.png");
-    SDL_Texture* texture_norm = SDL_CreateTextureFromSurface(gRenderer, surface_norm);
-    SDL_Surface* surface_p1sel = IMG_Load("Graphics/Ui/charaselebutton-base2.png");
-    SDL_Texture* texture_p1sel = SDL_CreateTextureFromSurface(gRenderer, surface_p1sel);
-    SDL_Surface* surface_p2sel = IMG_Load("Graphics/Ui/charaselebutton-base3.png");
-    SDL_Texture* texture_p2sel = SDL_CreateTextureFromSurface(gRenderer, surface_p2sel);
-    SDL_Surface* surface_bothsel = IMG_Load("Graphics/Ui/charaselebutton-base4.png");
-    SDL_Texture* texture_bothsel = SDL_CreateTextureFromSurface(gRenderer, surface_bothsel);
+    Texture surface_norm = LoadTexture("Graphics/Ui/charaselebutton-base1.png");
+    Texture surface_p1sel = LoadTexture("Graphics/Ui/charaselebutton-base2.png");
+    Texture surface_p2sel = LoadTexture("Graphics/Ui/charaselebutton-base3.png");
+    Texture surface_bothsel = LoadTexture("Graphics/Ui/charaselebutton-base4.png");
 
 
-    UiButton* butt_shoto    = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_shoto  = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-1.png");
-    UiButton* butt_guile    = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_guile  = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-2.png");
-    UiButton* butt_cannon   = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_cannon = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-3.png");
-    UiButton* butt_grappler = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_grappler   = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-4.png");
-    UiButton* butt_random   = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_random = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-0.png");
-    UiButton* butt_axl      = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_axl    = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-5.png");
-    UiButton* butt_pixie    = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_pixie  = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-6.png");
-    UiButton* butt_puppet   = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_puppet = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-7.png");
-    UiButton* butt_stance   = Button_New(gRenderer, menu, "", 32);
-    UiSprite* sprite_stance = Sprite_New(gRenderer, menu, "Graphics/Ui/charaselebutton-8.png");
+    UiButton* butt_shoto    = Button_New(menu, "", 32);
+    UiSprite* sprite_shoto  = Sprite_New(menu, "Graphics/Ui/charaselebutton-1.png");
+    UiButton* butt_guile    = Button_New(menu, "", 32);
+    UiSprite* sprite_guile  = Sprite_New(menu, "Graphics/Ui/charaselebutton-2.png");
+    UiButton* butt_cannon   = Button_New(menu, "", 32);
+    UiSprite* sprite_cannon = Sprite_New(menu, "Graphics/Ui/charaselebutton-3.png");
+    UiButton* butt_grappler = Button_New(menu, "", 32);
+    UiSprite* sprite_grappler   = Sprite_New(menu, "Graphics/Ui/charaselebutton-4.png");
+    UiButton* butt_random   = Button_New(menu, "", 32);
+    UiSprite* sprite_random = Sprite_New(menu, "Graphics/Ui/charaselebutton-0.png");
+    UiButton* butt_axl      = Button_New(menu, "", 32);
+    UiSprite* sprite_axl    = Sprite_New(menu, "Graphics/Ui/charaselebutton-5.png");
+    UiButton* butt_pixie    = Button_New(menu, "", 32);
+    UiSprite* sprite_pixie  = Sprite_New(menu, "Graphics/Ui/charaselebutton-6.png");
+    UiButton* butt_puppet   = Button_New(menu, "", 32);
+    UiSprite* sprite_puppet = Sprite_New(menu, "Graphics/Ui/charaselebutton-7.png");
+    UiButton* butt_stance   = Button_New(menu, "", 32);
+    UiSprite* sprite_stance = Sprite_New(menu, "Graphics/Ui/charaselebutton-8.png");
 
     UiButton* butts[3][3] = {
         {butt_shoto, butt_guile, butt_cannon},
@@ -162,14 +153,10 @@ UiMenu* MakeArcadeMenu(SDL_Renderer* gRenderer){
             butts[y][x]->position.y = ys[y];
             sprites[y][x]->position.x = xs[x] + 2;
             sprites[y][x]->position.y = ys[y] + 2;
-            butts[y][x]->surface_normal = surface_norm;
-            butts[y][x]->texture_normal = texture_norm;
-            butts[y][x]->texture_p1hover = texture_p1sel;
-            butts[y][x]->surface_p1hover = surface_p1sel;
-            butts[y][x]->texture_p2hover = texture_p2sel;
-            butts[y][x]->surface_p2hover = surface_p2sel;
-            butts[y][x]->texture_bothhover = texture_bothsel;
-            butts[y][x]->surface_bothhover = surface_bothsel;
+            butts[y][x]->texture_normal = surface_norm;
+            butts[y][x]->texture_p1hover = surface_p1sel;
+            butts[y][x]->texture_p2hover = surface_p2sel;
+            butts[y][x]->texture_bothhover = surface_bothsel;
 
             butts[y][x]->left  = x > 0 ? mqui_as_element(butts[y][x-1]) : 0;
             butts[y][x]->right = x < 2 ? mqui_as_element(butts[y][x+1]) : 0;
@@ -184,53 +171,42 @@ UiMenu* MakeArcadeMenu(SDL_Renderer* gRenderer){
     return menu;
 }
 
-UiMenu* MakeVersusMenu(SDL_Renderer* gRenderer){
+UiMenu* MakeVersusMenu(){
     UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->background_surface = NULL;
-    menu->background_texture = NULL;
     menu->elements = 0; 
 
     return Ui_PushFocus(menu);
 }
 
-UiMenu* MakeTrainingMenu(SDL_Renderer* gRenderer){
+UiMenu* MakeTrainingMenu(){
     UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->background_surface = NULL;
-    menu->background_texture = NULL;
     menu->elements = 0;
 
     return Ui_PushFocus(menu);
 }
 
-UiMenu* MakeReplaysMenu(SDL_Renderer* gRenderer){
+UiMenu* MakeReplaysMenu(){
     UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->background_surface = NULL;
-    menu->background_texture = NULL;
     menu->elements = 0;
 }
 
-UiMenu* MakeOptionsMenu(SDL_Renderer* gRenderer){
+UiMenu* MakeOptionsMenu(){
     UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->background_surface = NULL;
-    menu->background_texture = NULL;
     menu->elements = 0;
 
     return Ui_PushFocus(menu);
 }
 
-UiMenu* MakeMainMenu(SDL_Renderer* gRenderer){
-    SDL_Surface* surf;
+UiMenu* MakeMainMenu(){
+    Texture surf;
 
     UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->background_surface = NULL;
-    menu->background_texture = NULL;
     menu->p1focused = NULL;
     menu->p2focused = NULL;
     menu->on_cancel = (CallbackFunction){cb_back};
     menu->elements = NULL;
 
-    menu->background_surface = IMG_Load("Graphics/Ui/mainbg.png");
-    menu->background_texture = SDL_CreateTextureFromSurface(gRenderer, menu->background_surface);
+    menu->background_texture = LoadTexture("Graphics/Ui/mainbg.png");
 
     // TODO(#27): Find a way to:
     // 1) Automatically space these with each other and with the borders
@@ -238,13 +214,13 @@ UiMenu* MakeMainMenu(SDL_Renderer* gRenderer){
     // Maybe use a Menu_Bake()?
     // Maybe find the bounding box of everything that's not centered, then use that to figure out where everything that is centered goes?
     int i = 0;
-    UiElement* title         = mqui_as_element(Label_New (gRenderer, menu, "--Main--")); i++;
-    UiElement* butt_arcade   = mqui_as_element(Button_New(gRenderer, menu, "Arcade"  , 32)); i++;
-    UiElement* butt_versus   = mqui_as_element(Button_New(gRenderer, menu, "Versus"  , 32)); i++;
-    UiElement* butt_training = mqui_as_element(Button_New(gRenderer, menu, "Training", 32)); i++;
-    UiElement* butt_replays  = mqui_as_element(Button_New(gRenderer, menu, "Replays" , 32)); i++;
-    UiElement* butt_options  = mqui_as_element(Button_New(gRenderer, menu, "Options" , 32)); i++;
-    UiElement* butt_quit     = mqui_as_element(Button_New(gRenderer, menu, "quit"    , 32)); i++;
+    UiElement* title         = mqui_as_element(Label_New (menu, "--Main--")); i++;
+    UiElement* butt_arcade   = mqui_as_element(Button_New(menu, "Arcade"  , 32)); i++;
+    UiElement* butt_versus   = mqui_as_element(Button_New(menu, "Versus"  , 32)); i++;
+    UiElement* butt_training = mqui_as_element(Button_New(menu, "Training", 32)); i++;
+    UiElement* butt_replays  = mqui_as_element(Button_New(menu, "Replays" , 32)); i++;
+    UiElement* butt_options  = mqui_as_element(Button_New(menu, "Options" , 32)); i++;
+    UiElement* butt_quit     = mqui_as_element(Button_New(menu, "quit"    , 32)); i++;
     
     butt_arcade->down = butt_versus;
     mqui_as_button(butt_arcade)->on_confirm = (CallbackFunction){cb_arcade};    
@@ -270,6 +246,6 @@ UiMenu* MakeMainMenu(SDL_Renderer* gRenderer){
 
     menu->p1focused = butt_arcade;
     Ui_PushFocus(menu);
-    Menu_Bake(gRenderer, menu, (Vector4){0,640,0,480}, (Vector4){.l=4, .r=4, .t=4, .b=4}, BAKE_TYPE_SET_SIZE, false);
+    Menu_Bake(menu, (Vec4I){0,640,0,480}, (Vec4I){.l=4, .r=4, .t=4, .b=4}, BAKE_TYPE_SET_SIZE, false);
     return menu;
 }

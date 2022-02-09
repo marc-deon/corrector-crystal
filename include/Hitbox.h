@@ -1,7 +1,7 @@
-#ifndef HITBOX_H
-#define HITBOX_H
+#ifndef HITBOX
+#define HITBOX
 #include <stdbool.h>
-#include "Rectangle.h"
+#include "RectI.h"
 
 
 #define HB_ACTIVE   1
@@ -11,7 +11,7 @@
 typedef unsigned short ushort;
 
 typedef struct hitbox {
-    Rectangle rect;
+    RectI rect;
     
     // 1 when active; 0 when not yet active; -1 when disabled.
     char active; 
@@ -23,20 +23,20 @@ typedef struct hitbox {
 } Hitbox;
 
 typedef struct hurtbox{
-    Rectangle rect;
+    RectI rect;
 } Hurtbox;
 
 typedef struct shovebox{
-    Rectangle rect;
+    RectI rect;
 } Shovebox;
 
 extern Hitbox NULLHIT;
 extern Hurtbox NULLHURT;
 extern Shovebox NULLSHOVE;
 
-Hitbox* Hitbox_Create(Rectangle rect, ushort activeOnFrame, ushort offOnFrame);
-Hurtbox* Hurtbox_Create(Rectangle rect);
-Shovebox Shovebox_Create(Rectangle rect);
+Hitbox* Hitbox_Create(RectI rect, ushort activeOnFrame, ushort offOnFrame);
+Hurtbox* Hurtbox_Create(RectI rect);
+Shovebox Shovebox_Create(RectI rect);
 
 Hitbox Hitbox_Flip(Hitbox hb);
 Hurtbox Hurtbox_Flip(Hurtbox hb);
@@ -46,4 +46,4 @@ void Hitbox_Activate(Hitbox* hb);
 void Hitbox_Deactivate(Hitbox* hb);
 void Hitbox_UpdateTimer(Hitbox* hb);
 
-#endif
+#endif /* HITBOX */

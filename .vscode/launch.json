@@ -4,8 +4,9 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
-            "name": "(gdb) Launch",
+            "name": "Fugg :DDDD",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/corrector_crystal",
@@ -21,7 +22,27 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
+                
             ]
         }
+        // {
+        //     "name": "(gdb) Launch",
+        //     "type": "cppdbg",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/corrector_crystal",
+        //     "args": [],
+        //     "stopAtEntry": false,
+        //     "cwd": "${workspaceFolder}",
+        //     "environment": [],
+        //     "externalConsole": false,
+        //     "MIMode": "gdb",
+        //     "setupCommands": [
+        //         {
+        //             "description": "Enable pretty-printing for gdb",
+        //             "text": "-enable-pretty-printing",
+        //             "ignoreFailures": true
+        //         }
+        //     ]
+        // }
     ]
 }

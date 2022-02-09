@@ -1,5 +1,5 @@
-#ifndef ACTION_H
-#define ACTION_H
+#ifndef CC_ACTION_H
+#define CC_ACTION_H
 
 #include <stdlib.h>
 
@@ -63,7 +63,7 @@ typedef struct action {
 
     unsigned short index;
 
-    Mix_Chunk* audioChunk;
+    Sound* audioChunk;
 
     bool wallSplat;
     bool dunk;
@@ -140,4 +140,4 @@ void Action_SetLinkTo(Action* a, Action* link);
 void Action_SetLinkFrom(Action* a, Action* link);
 void Action_Free(Action* act);
 
-#endif
+#endif /* CC_ACTION */

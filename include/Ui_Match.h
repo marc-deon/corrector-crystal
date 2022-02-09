@@ -13,13 +13,12 @@ typedef Match Ui_Match;
 
 void Ui_Match_MakeColors();
 bool Ui_Match_MakeFonts();
-bool Ui_Match_MakeNames(SDL_Renderer* ren, char* p1Name, char* p2Name);
+bool Ui_Match_MakeNames(char* p1Name, char* p2Name);
 
 extern TTF_Font* nameFont;
-extern SDL_Color WHITE;
 
-bool Ui_Match_Init(SDL_Renderer* ren, Match* m);
+bool Ui_Match_Init(Match* m);
 
-void DrawHUD(SDL_Renderer* ren, Match* m);
-void DrawHUD_Training(SDL_Renderer* ren, Match* m);
+void DrawHUD(Match* m);
+void DrawHUD_Training(Match* m);
 #endif

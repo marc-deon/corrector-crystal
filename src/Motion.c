@@ -1,5 +1,3 @@
-#ifndef MOTION
-#define MOTION
 #include "Motion.h"
 
 Motion* Motion_Create(int priority, int airOk, char* name, char* pattern, Action* action, uint bufferSize){
@@ -12,5 +10,3 @@ Motion* Motion_Create(int priority, int airOk, char* name, char* pattern, Action
     m->bufferSize = bufferSize;
     return m;
 }
-
-#endif /* MOTION */

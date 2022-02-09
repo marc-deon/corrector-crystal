@@ -1,40 +1,37 @@
 #include "Ui_Label.h"
 #include "stretchy_buffer.h"
 #include <string.h>
-#include "SDL_ttf.h"
-#include "SDL2/SDL.h"
+#include <raylib.h>
+#include <stdio.h>
 
+Font mmlabelfont;
+const Color mmlWHITE = (Color){255, 255, 255, 255};
 
-TTF_Font* mmlabelfont = NULL;
-const SDL_Color mmlWHITE = (SDL_Color){255, 255, 255, 255};
-
-UiLabel* Label_New(SDL_Renderer* gRenderer, UiMenu* menu, char* text){
-    if (!mmlabelfont){
-        mmlabelfont = TTF_OpenFont("Graphics/Fonts/Recursive-Bold.ttf", 32);
-        
-    }
+UiLabel* Label_New(UiMenu* menu, char* text){
+    mmlabelfont = LoadFont("Graphics/Fonts/Recursive-Bold.ttf");
+    
 
     UiLabel* label = malloc(sizeof(UiLabel));
     label->hcentered = 1;
     label->up = label->down = label->left = label->right = NULL;
 
-    SDL_Surface* tempsurf;
+    Texture tempsurf;
 
     label->string_text = (char*)malloc(strlen(text) * sizeof(char) + 1);
-    label->surface_text = TTF_RenderText_Blended(mmlabelfont, text, mmlWHITE);
-    label->texture_text = SDL_CreateTextureFromSurface(gRenderer, label->surface_text);
-    strcpy(label->string_text, text);
+    // label->surface_text = TTF_RenderText_Blended(mmlabelfont, text, mmlWHITE);
+    // label->texture_text = SDL_CreateTextureFromSurface(label->surface_text);
+    TextCopy(label->string_text, text);
     label->type = UI_TYPE_LABEL;
     sb_push(menu->elements, (UiElement*)label);
 
     return label;
 }
 
-void Label_Draw(SDL_Renderer* gRenderer, UiMenu* menu, UiLabel* label){
-    SDL_Rect rect;
-
-    rect = (SDL_Rect) {label->position.x, label->position.y, label->surface_text->w, label->surface_text->h};
-    SDL_RenderCopy(gRenderer, label->texture_text, NULL, &rect);
+void Label_Draw(UiMenu* menu, UiLabel* label){
+    
+    
+    printf("Drawing at %d %d\n", label->position.x, label->position.y);
+    DrawText(label->string_text, label->position.x, label->position.y, 20, WHITE);
 }
 
 void Label_Free(UiLabel* l){
@@ -42,6 +39,9 @@ void Label_Free(UiLabel* l){
     free(l);
 }
 
-Vector2 Label_Size(SDL_Renderer* ren, UiLabel* label){
-    return (Vector2) {label->surface_text->w, label->surface_text->h};
+Vec2I Label_Size(UiLabel* label){
+    Vector2 v = MeasureTextEx(GetFontDefault(), label->string_text, 20, 0);
+    printf("Label width is %f\n", v.x);
+    return (Vec2I) {v.x, v.y};
+    
 }

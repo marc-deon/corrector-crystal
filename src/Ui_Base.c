@@ -41,14 +41,14 @@ void Ui_CloseTop(){
     free(frame);
 }
 
-Vector2 UiElement_Size(SDL_Renderer* ren, UiElement* elem){
-    Vector2 size = (Vector2){-1, -1};
+Vec2I UiElement_Size(UiElement* elem){
+    Vec2I size = (Vec2I){-1, -1};
     switch(elem->type){
         case UI_TYPE_BUTTON:
-            size = Button_Size(ren, mqui_as_button(elem));
+            size = Button_Size(mqui_as_button(elem));
             break;
         case UI_TYPE_LABEL:
-            size = Label_Size(ren, mqui_as_label(elem));
+            size = Label_Size(mqui_as_label(elem));
             break;
     }
     return size;
