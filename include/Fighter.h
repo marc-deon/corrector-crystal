@@ -46,6 +46,7 @@ typedef struct fighter {
     uint owner;
     Fighter* opponent;
     char* name;
+    Color palette[256];
     uint paletteNumber;
     
     uint maxJumps;
@@ -55,7 +56,7 @@ typedef struct fighter {
     int maxMeter;
     Action** actions; // Stretchy buffer
     Animation** animations; // Stretchy buffer
-    Texture* portrait;
+    Texture portrait;
 
     // Special move inputs, listed in order of (tiebreaking) priority
     Motion** motions; // Stretchy buffer

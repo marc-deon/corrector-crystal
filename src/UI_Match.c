@@ -2,8 +2,10 @@
 #include "Ui_Match.h"
 #include "stretchy_buffer.h"
 #include "circular_buffer.h"
+#include <raylib.h>
 
-// These must be declared in the C file, for reasons.
+#define TIMERFONTSIZE 30
+#define NAMEFONTSIZE 18
 
 TTF_Font* clockFont;
 TTF_Font* nameFont;
@@ -38,6 +40,11 @@ RectI p2HealthRectOver;
 
 SDL_Color winColor = {40, 184, 72, 255};
 SDL_Color loseColor = {184, 40, 40, 255};
+
+Texture p1wing;
+Texture p2wing;
+Texture p1nameplate;
+Texture p2nameplate;
 
 void Ui_Match_MakeRects(){
     p1HealthRectUnder.x = 50; 
@@ -87,58 +94,15 @@ void Ui_Match_MakeRects(){
     p2HealthRectOver.x =  VIRT_SCREEN_SIZE_X - 50 - 220;
     p2HealthRectOver.y = 10;
     p2HealthRectOver.h = 40;
-
-    
-
 }
 
 void Ui_Match_MakeColors(){
 }
 
 bool Ui_Match_MakeFonts(){
-
-    // nameFont = TTF_OpenFont("Graphics/Fonts/BadScript-Regular.ttf", 20);
-    // if(!nameFont)
-    // {
-    //     printf("Invalid font! %s (%d)\n", __FILE__, __LINE__);
-    //     return false;
-    // }
-    // clockFont = TTF_OpenFont("Graphics/Fonts/FrederickatheGreat-Regular.ttf", 80);
-    // if(!clockFont){
-    //     printf("Invalid font! %s (%d)\n", __FILE__, __LINE__);
-    //     return false;
-    // }
-    // debugFont = TTF_OpenFont("Graphics/Fonts/Recursive-Bold.ttf", 20);
-    // if(!debugFont){
-    //     printf("Invalid font! %s (%d)\n", __FILE__, __LINE__);
-    //     return false;
-    // }
     return true;
-
 }
 bool Ui_Match_MakeNames(char* p1Name, char* p2Name){
-    
-
-    // SDL_Surface* p1NameSurface = TTF_RenderText_Blended(nameFont, p1Name, WHITE);
-    
-
-    p1NameRect.x = 10;
-    p1NameRect.y = 45;
-    // p1NameRect.w = p1NameSurface->w;
-    // p1NameRect.h = p1NameSurface->h;
-
-    // SDL_Surface* p2NameSurface = TTF_RenderText_Blended(nameFont, p2Name, WHITE);
-    
-
-    // p2NameRect.x = VIRT_SCREEN_SIZE_X - p2NameSurface->w - 10;
-    p2NameRect.y = 45;
-    // p2NameRect.w = p2NameSurface->w;
-    // p2NameRect.h = p2NameSurface->h;
-
-    
-    // // p1NameTexture = SDL_CreateTextureFromSurface(ren, p1NameSurface);
-    // // p2NameTexture = SDL_CreateTextureFromSurface(ren, p2NameSurface);
-    
     return true;
 }
 
@@ -147,6 +111,28 @@ bool Ui_Match_Init(Match* m){
 
     Fighter* f1 = m->players[0].pointCharacter;
     Fighter* f2 = m->players[1].pointCharacter;
+
+    p1wing = LoadTexture("Graphics/Ui/wing-2-feather-left.png");
+    p2wing = LoadTexture("Graphics/Ui/wing-2-feather-right.png");
+
+    Image img;
+
+    img = LoadImage("Graphics/Ui/NamePalettePlate.png");
+    ImageColorReplace(&img, (Color){255,0,0,  255}, f1->palette[1]);
+    ImageColorReplace(&img, (Color){0,255,0,  255}, f1->palette[2]);
+    ImageColorReplace(&img, (Color){0,0,255,  255}, f1->palette[3]);
+    ImageColorReplace(&img, (Color){255,0,255,255}, f1->palette[4]);
+    p1nameplate = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    img = LoadImage("Graphics/Ui/NamePalettePlate.png");
+    ImageColorReplace(&img, (Color){255,0,0,  255}, f1->palette[1]);
+    ImageColorReplace(&img, (Color){0,255,0,  255}, f1->palette[2]);
+    ImageColorReplace(&img, (Color){0,0,255,  255}, f1->palette[3]);
+    ImageColorReplace(&img, (Color){255,0,255,255}, f1->palette[4]);
+    ImageFlipHorizontal(&img);
+    p2nameplate = LoadTextureFromImage(img);
+    UnloadImage(img);
 
     Ui_Match_MakeColors();
 
@@ -160,45 +146,62 @@ bool Ui_Match_Init(Match* m){
     return true;
 }
 
+
+
 void DrawHUD(Match* m){
 
-    // uint time  = cb_last(m->history).currentTime;
-    // Player* p1 = &m->players[0];
-    // Player* p2 = &m->players[1];
+    uint time  = cb_last(m->history).currentTime / 60;
+    Player* p1 = &m->players[0];
+    Player* p2 = &m->players[1];
 
-    // #pragma region Health bars
-    // p1HealthRectOver.w = 220 * -Fighter_HealthPercent(p1->pointCharacter);
-    // p2HealthRectOver.w = 220 * Fighter_HealthPercent(p2->pointCharacter);
-    
-    // SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-    // SDL_RenderFillRect(ren, &p1HealthRectUnder);
-    // SDL_RenderFillRect(ren, &p2HealthRectUnder);
+    short p1health = cb_last(p1->pointCharacter->stateHistory).health;
+    short p2health = cb_last(p2->pointCharacter->stateHistory).health;
 
-    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-    // SDL_RenderFillRect(ren, &p1HealthRectOver);
-    // SDL_RenderFillRect(ren, &p2HealthRectOver);
-    // #pragma endregion
+    const float widthFactor = 0.39f;
+    const portraitSize = 48;
 
-    // #pragma region Health advantage
+    const int maxWidth = VIRT_SCREEN_SIZE_X * widthFactor - portraitSize;
+    const int height = 30;
+    const Vector2 p1nameOffset = {68, 2};
+    const Vector2 p2nameOffset = {59, 2};
 
-    // if (Fighter_HealthPercent(p1->pointCharacter) >= Fighter_HealthPercent(p2->pointCharacter))
-    //     SDL_SetRenderDrawColor(ren, winColor.r, winColor.g, winColor.b, 255);
-    // else
-    //     SDL_SetRenderDrawColor(ren, loseColor.r, loseColor.g, loseColor.b, 255);
+    int width; 
 
-    // SDL_RenderFillRect(ren, &p1AdvantageRect);
-    
+    DrawCircle(VIRT_SCREEN_SIZE_X/2, 25, 25, WHITE);
 
-    // if (Fighter_HealthPercent(p1->pointCharacter) <= Fighter_HealthPercent(p2->pointCharacter))
-    //     SDL_SetRenderDrawColor(ren, winColor.r, winColor.g, winColor.b, 255);
-    // else
-    //     SDL_SetRenderDrawColor(ren, loseColor.r, loseColor.g, loseColor.b, 255);
 
-    // SDL_RenderFillRect(ren, &p2AdvantageRect);
-    // #pragma endregion
+    // Draw P1 healthbar
+    DrawRectangle(portraitSize + 0, 10, maxWidth, height, GRAY);
+    width = maxWidth * p1health / (float)(p1->pointCharacter->maxHealth);
+    DrawRectangle(portraitSize + maxWidth-width, 10, width, height, WHITE);
+
+    // Draw p2 Healthbar
+    DrawRectangle(VIRT_SCREEN_SIZE_X * (1-widthFactor), 10, maxWidth, height, GRAY);
+    width = maxWidth * p2health / (float)(p2->pointCharacter->maxHealth);
+    DrawRectangle(VIRT_SCREEN_SIZE_X * (1-widthFactor), 10, width, height, WHITE);
+
+    // Draw timer
+    DrawTexture(p1wing, VIRT_SCREEN_SIZE_X/2 - p1wing.width/2, 6, p1health < p2health ? DARKGRAY : WHITE);
+    DrawTexture(p2wing, VIRT_SCREEN_SIZE_X/2 - p2wing.width/2, 6, p2health < p1health ? DARKGRAY : WHITE);
+    const char* times = TextFormat("%d", time);
+    Vector2 v = MeasureTextEx(GetFontDefault(), times, TIMERFONTSIZE, 2);
+    DrawText(times, VIRT_SCREEN_SIZE_X/2 - v.x/2, 25 - v.y/2, TIMERFONTSIZE, BLACK);
+
+    // Draw Names
+    DrawTexture(p1nameplate, 0, 55, WHITE);
+    // DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X - p2nameplate.width, 55, WHITE);
+    DrawText(p1->pointCharacter->name, 5+p1nameOffset.x, 55+p1nameOffset.y, NAMEFONTSIZE, WHITE);
+    v = MeasureTextEx(GetFontDefault(), p2->pointCharacter->name, NAMEFONTSIZE, 2);
+    DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X-p2nameplate.width, 55, WHITE);
+    DrawText(p2->pointCharacter->name, VIRT_SCREEN_SIZE_X - v.x - 5 - p2nameOffset.x, 55 + p2nameOffset.y, NAMEFONTSIZE, WHITE);
 
     // #pragma region Portaits
     
+    DrawTexture(p1->pointCharacter->portrait, 0, 0, WHITE);
+    DrawTexture(p2->pointCharacter->portrait, VIRT_SCREEN_SIZE_X - p2->pointCharacter->portrait.width, 0, WHITE);
+    
+
+
     // SDL_RenderCopyEx(ren, p1->pointCharacter->portrait, NULL, &p1PortraitRect, 0, 0, 0);
     // SDL_RenderCopyEx(ren, p2->pointCharacter->portrait, NULL, &p2PortraitRect, 0, 0, SDL_FLIP_HORIZONTAL);
     // #pragma endregion

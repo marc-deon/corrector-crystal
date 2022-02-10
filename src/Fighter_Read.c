@@ -362,8 +362,11 @@ void Game_SpriteInit(){
         // 256x3/4
         Color colors[256];
         Fighter_GetPalette(parsed_json, i, colors);
-        
-        
+
+        memcpy(p->pointCharacter->palette, colors, 256 * 4);
+        printf("366 col %d %d %d %d\n", colors[1].r, colors[1].g, colors[1].b, colors[1].a);
+        printf("367 col %d %d %d %d\n", p->pointCharacter->palette[1].r, p->pointCharacter->palette[1].g, p->pointCharacter->palette[1].b, p->pointCharacter->palette[1].a);
+
 
 
         const char* result = Fighter_ReadAnimations(p->pointCharacter, parsed_json, colors);
@@ -394,8 +397,7 @@ void Game_SpriteInit(){
             puts("Made motions");
         }
 
-        // p->pointCharacter->portrait = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("Graphics/Fighter/Shoto/aoko_portrait.jpg"));
-
+        p->pointCharacter->portrait = LoadTexture("Graphics/Fighter/Shoto/aoko_portrait.png");
     }
 }
 

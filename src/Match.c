@@ -3,12 +3,7 @@
 #include "stretchy_buffer.h"
 #include "circular_buffer.h"
 
-// matchTime gets decremented every frame; it starts at matchRealTimeMax * 60
-// #define matchRealTimeMax 60 // Time in seconds
-// uint matchTime = matchRealTimeMax * 60; // Time in frames
-
-
-#define SECONDS_PER_ROUND 48
+#define SECONDS_PER_ROUND 60
 #define FRAMES_PER_SECOND 60
 #define MAX_ROUNDS 2
 

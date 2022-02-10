@@ -84,48 +84,9 @@ bool CC_INIT(){
 
     InitWindow(VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y, "Corrector Raylib");
     SetTargetFPS(60);
-    // TODO:
+    // TODO: Render to a texture, then stretch that texture to window size
     SetWindowState(FLAG_WINDOW_RESIZABLE);
-    // SetWindowState(FLAG_FULLSCREEN_MODE);
-    
-    // if (SDL_Init(SDL_INIT_VIDEO < 0)){
-    //     printf("SDL could not initialize! SDL ERROR: %S\n", SDL_GetError());
-    //     success = false;
-    // }
-    // else{
-    //     gWindow = SDL_CreateWindow("original content by tim",
-    //         SDL_WINDOWPOS_UNDEFINED,
-    //         SDL_WINDOWPOS_UNDEFINED,
-    //         VIRT_SCREEN_SIZE_X,
-    //         VIRT_SCREEN_SIZE_Y,
-    //         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE //| SDL_WINDOW_FULLSCREEN_DESKTOP
-    //     );
-    //     if (gWindow == NULL){
-    //         printf("Window could not be created! SDL ERROR: %S\n", SDL_GetError());
-    //         success = false;
-    //         return success;
-    //     }
-
-    //     // TODO(#20): Find a way to force 60fps, instead of doing vsync
-    //     gRenderer = SDL_CreateRenderer(
-    //         gWindow, 
-    //         -1, 
-    //         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-    //      );
-    //     SDL_RenderSetLogicalSize(VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y);
-    //     SDL_SetRenderDrawBlendMode(SDL_BLENDMODE_BLEND);
-    //     TTF_Init();
-    // }
-
-    // if (SDL_Init(SDL_INIT_AUDIO < 0)){
-    //     printf("SDL could not initialize! SDL ERROR: %S\n", SDL_GetError());
-    // }
-    // CC_Audio_Init();
-
-    // TODO(#21): Move to another file?
-    // previousKeyStates = (uint8_t*) calloc(285, sizeof(uint8_t));
-
-
+   
     return success;
 }
 
