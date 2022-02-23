@@ -63,7 +63,7 @@ typedef struct action {
 
     unsigned short index;
 
-    Sound* audioChunk;
+    Sound audioChunk;
 
     bool wallSplat;
     bool dunk;

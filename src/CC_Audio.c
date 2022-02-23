@@ -5,7 +5,13 @@ Music currentMusic;
 char* musics[] = {
     "audio/music/vanillaSky.ogg",
     "audio/music/bluescreen.flac",
-    "audio/music/melee.ogg"
+    "audio/music/melee.ogg",
+    "audio/music/Rez_and_Kenet_-_Unreeeal_superhero_3.xm",
+    "audio/music/01 - LaCrême, Matild - Fuis-Moi, Je Te Suis (Original Mix).mp3",
+    "audio/music/mini1111.xm",
+    "audio/music/starpathandmotherchip_etherwind.xm",
+    "audio/music/4mat_-_eternity.xm"
+
 };
 
 char* kiringtone_files[] = {
@@ -92,33 +98,39 @@ Sound buttno;
 
 // TODO(#5): Read audio settings from save file
 float volumeMusic = 0;
-float volumeSfx = 100;
+float volumeSfx = 0;
 float volumeVocal = 0;
 
-void CC_Audio_Init(){
-    // 44100 Hz, SDL audio format, stereo, chunk size
-    // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+bool CC_Audio_Init(){
+    InitAudioDevice();
+    if (IsAudioDeviceReady()){
+        printf("Audio ready\n");
+    }
+    else{
+        printf("Audio borked\n");
+        return false;
+    }
     buttyes = LoadSound("audio/Access_Denied_High_DDM16_quieter.wav");
     buttno =  LoadSound("audio/Cancel Action_3.wav");
     for(int i = 0; i < kiringtone_files_len; i++){
         kirins[i] = LoadSound(kiringtone_files[i]);
     }
+    return true;
 }
 
 void CC_Audio_Play_Music(char* path){
     currentMusic = LoadMusicStream(path);
-    // Mix_VolumeMusic(volumeMusic);
-    // Mix_PlayMusic(currentMusic, -1);
+    PlayMusicStream(currentMusic);
+    SetMusicVolume(currentMusic, volumeMusic/100);
+    printf("is music playing? %d\n", IsMusicStreamPlaying(currentMusic));
 }
 
 void CC_Audio_Play_SFX(Sound sfx){
-    // int channel = Mix_PlayChannel(-1, sfx, 0);
-    // Mix_Volume(channel, volumeSfx);
-    // Mix_GroupChannel(channel, CHANNEL_GROUP_SFX);
+    SetSoundVolume(sfx, volumeSfx/100);
+    PlaySound(sfx);
 }
 
 void CC_Audio_Play_VOX(Sound vox){
-    // int channel = Mix_PlayChannel(-1, vox, 0);
-    // Mix_Volume(channel, volumeVocal);
-    // Mix_GroupChannel(channel, CHANNEL_GROUP_VOX);
+    SetSoundVolume(vox, volumeVocal/100);
+    PlaySound(vox);
 }

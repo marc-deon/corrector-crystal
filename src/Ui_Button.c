@@ -44,8 +44,6 @@ UiButton* Button_New(UiMenu* menu, char* text, int fontSize){
     butt->texture_pressed = _button_base_texture_pressed;
 
     butt->string_text = (char*)malloc(TextLength(text) * sizeof(char) + 5);
-    // butt->texture_text = TTF_RenderText_Blended(mmbuttfont, text, mmb_WHITE);
-    // butt->texture_text = SDL_CreateTextureFromSurface(gRenderer, butt->texture_text);
     TextCopy(butt->string_text, text);
     butt->type = UI_TYPE_BUTTON;
     sb_push(menu->elements, (UiElement*)butt);

@@ -30,6 +30,9 @@ RectI CreateReactangle(int x, int y, int w, int h);
 // Return a copy of the given RectI with x and width negated.
 RectI Rect_Flip(RectI rect);
 
+// Alternative version of above that maintains positive width.
+RectI Rect_Flip_Draw(RectI rect);
+
 // Return true or false if RectIs overlap.
 bool Rect_Overlap(RectI r1, RectI r2);
 

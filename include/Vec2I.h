@@ -1,6 +1,12 @@
 #ifndef VEC2I_H
 #define VEC2I_H
 
+// Return the lesser of two inputs
+#define min(a,b) (a < b ? a : b)
+
+// Return the greater of two inputs
+#define max(a,b) (a > b ? a : b)
+
 typedef struct vec2I {
     int x;
     int y;

@@ -3,7 +3,6 @@
 #include "Ui_Base.h"
 #include "Ui_Types.h"
 #include "Ui_Sprite.h"
-// #include "SDL2/SDL.h"
 
 UiMenu* MakeMainMenu();
 UiMenu* MakeArcadeMenu();

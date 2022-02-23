@@ -13,19 +13,18 @@ RectI CreateReactangle(int x, int y, int w, int h){
 }
 
 RectI Rect_Flip(RectI rect){
-    RectI nr;
-    nr.pos.x = -rect.pos.x;
-    nr.pos.y = rect.pos.y;
-    nr.size.x = -rect.size.x;
-    nr.size.y = rect.size.y;
+    RectI nr = rect;
+    nr.pos.x  *= -1;
+    nr.size.x *= -1;
     return nr;
 }
 
-// Return the lesser of two inputs
-#define min(a,b) (a < b ? a : b)
-
-// Return the greater of two inputs
-#define max(a,b) (a > b ? a : b)
+RectI Rect_Flip_Draw(RectI rect){
+    RectI nr = rect;
+    nr.pos.x  = - rect.pos.x - rect.w;
+    // nr.size.x *= -1;
+    return nr;
+}
 
 bool Rect_Overlap(RectI rect1, RectI rect2){
     // This math assumes [left x, top y, right x, bottom y],

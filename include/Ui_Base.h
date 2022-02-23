@@ -2,7 +2,6 @@
 #define UI_BASE
 
 #include "Vec2I.h"
-// #include "SDL2/SDL.h"
 #include "Stick.h"
 
 enum ui_type {
@@ -11,18 +10,25 @@ enum ui_type {
     UI_TYPE_BUTTON,
     UI_TYPE_SPRITE,
     UI_TYPE_MENU,
-    UI_TYPE_MATCH
+    UI_TYPE_MATCH,
+    UI_TYPE_LIST,
+    UI_TYPE_PREVIEW
 };
 
 enum bake_type {
-    BAKE_TYPE_SET_SIZE,
-    BAKE_TYPE_SET_SPACING
+    BAKE_TYPE_DEFAULT,
+    BAKE_TYPE_FLOATING,
+    BAKE_TYPE_SET_X_SIZE,
+    BAKE_TYPE_SET_X_SPACING,
+    BAKE_TYPE_SET_Y_SIZE,
+    BAKE_TYPE_SET_Y_SPACING,
 };
 
 #define ui_preamble          \
 enum ui_type type;           \
 int hcentered;               \
-Vec2I position;            \
+int vcentered;               \
+Vec2I position;              \
 struct ui_element* up;       \
 struct ui_element* down;     \
 struct ui_element* left;     \

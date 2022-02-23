@@ -89,7 +89,7 @@ bool Fighter_Air(Fighter* f);
 bool Fighter_OnRight(Fighter* f);
 
 // Things to free: animations (and animation->spriteClips RectIs)
-Fighter* Fighter_Create();
+Fighter* Fighter_Create(char* path);
 void Fighter_Damage(Fighter* f, Action* a, bool onRight);
 void Fighter_Free(Fighter* f);
 void Fighter_Destroy(Fighter* f);

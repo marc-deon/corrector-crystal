@@ -12,6 +12,8 @@ Match Match_Init(){
     m.type = UI_TYPE_MATCH;
     m.paused = false;
     
+    
+
     m.maxTime = FRAMES_PER_SECOND * SECONDS_PER_ROUND;
     m.maxRounds = MAX_ROUNDS;
     m.currentRounds[0] = m.currentRounds[1] = 0;

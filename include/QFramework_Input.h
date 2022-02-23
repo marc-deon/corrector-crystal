@@ -1,13 +1,10 @@
 #ifndef QFRAMEWORK_INPUT_H
 #define QFRAMEWORK_INPUT_H
 
-// #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include "qtypes.h"
 
-// Event handler
-// extern SDL_Event event;
 
 #define scancodeCount 285
 extern uint8_t* previousKeyStates;

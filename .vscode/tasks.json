@@ -6,7 +6,7 @@
         {
             "label": "cmake make run",
             "type": "shell",
-            "command": "cmake -DCMAKE_BUILD_TYPE=Debug . && make && clear && ./corrector_crystal",
+            "command": "cmake -DCMAKE_BUILD_TYPE=Debug . && make && clear",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

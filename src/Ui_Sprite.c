@@ -14,8 +14,6 @@ UiSprite* Sprite_New(UiMenu* menu, char* path){
     sprite->position = (Vec2I){0,0};
 
     sprite->texture = LoadTexture(path);
-    // sprite->texture = SDL_CreateTextureFromSurface(gRenderer, sprite->surface);
-
 
     sb_push(menu->elements, (UiElement*)sprite);
 
@@ -23,10 +21,8 @@ UiSprite* Sprite_New(UiMenu* menu, char* path){
 }
 
 void Sprite_Draw(UiMenu* menu, UiSprite* sprite){
-    // RectI rect = (RectI){sprite->position.x, sprite->position.y, sprite->texture.width, sprite->texture.height};
     DrawTexture(sprite->texture, sprite->position.x, sprite->position.y, WHITE);
     printf("Drawing texture at %d %d\n", sprite->position.x, sprite->position.y);
-    // SDL_RenderCopy(gRenderer, sprite->texture, NULL, &rect);
 }
 
 void Sprite_Free(UiSprite* sprite){

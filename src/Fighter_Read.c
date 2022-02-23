@@ -1,5 +1,3 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
 #include <json-c/json.h>
 
 #include "Fighter_Read.h"
@@ -20,7 +18,7 @@
 #include<unistd.h>
 
 Texture background;
-extern Match currentMatch;
+// extern Match currentMatch;
 
 const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_json){
     struct json_object* actions;
@@ -309,11 +307,9 @@ void Fighter_GetPalette(struct json_object* parsed, int i, Color colors[256]){
 }
 
 // TODO(#9): Clean up Game_SpriteInit; it does way more than just sprites.
-void Game_SpriteInit(){
+void Fighter_SpriteInit(Fighter* f, char* path){
 
-    background = LoadTexture("Graphics/Background/training-big.png");
-
-    char* path = "fighterData/superman.jsonc";
+    // background = LoadTexture("Graphics/Background/training-big.png");
 
     FILE* fp;
     fp = fopen(path, "r");
@@ -341,35 +337,29 @@ void Game_SpriteInit(){
     struct json_object* motions;
 
 
-    for(int i = 0; i < 2; i++){
+    // for(int i = 0; i < 2; i++){
 
-        Player* p = &currentMatch.players[i];
+        // Player* p = &currentMatch.players[i];
 
         //////////
         // General
-        p->pointCharacter->name = json_get_string(parsed_json, "name");
-        printf("chara %d named %s\n", i, p->pointCharacter->name);
-        p->pointCharacter->maxJumps = json_get_int(parsed_json, "maxJumps");
-        p->pointCharacter->maxHealth = json_get_int(parsed_json, "maxHealth");
-        p->pointCharacter->maxMeter = json_get_int(parsed_json, "maxMeter");
-        p->pointCharacter->maxMana = json_get_int(parsed_json, "maxMana");
-        p->pointCharacter->gravity = json_get_int(parsed_json, "gravity");
-        printf("Max jumps are read as %d\n", p->pointCharacter->maxJumps);
+        f->name = json_get_string(parsed_json, "name");
+        f->maxJumps = json_get_int(parsed_json, "maxJumps");
+        f->maxHealth = json_get_int(parsed_json, "maxHealth");
+        f->maxMeter = json_get_int(parsed_json, "maxMeter");
+        f->maxMana = json_get_int(parsed_json, "maxMana");
+        f->gravity = json_get_int(parsed_json, "gravity");
         
         /////////////
         // Animations
 
         // 256x3/4
         Color colors[256];
-        Fighter_GetPalette(parsed_json, i, colors);
+        Fighter_GetPalette(parsed_json, 0, colors);
 
-        memcpy(p->pointCharacter->palette, colors, 256 * 4);
-        printf("366 col %d %d %d %d\n", colors[1].r, colors[1].g, colors[1].b, colors[1].a);
-        printf("367 col %d %d %d %d\n", p->pointCharacter->palette[1].r, p->pointCharacter->palette[1].g, p->pointCharacter->palette[1].b, p->pointCharacter->palette[1].a);
+        memcpy(f->palette, colors, 256 * 4);
 
-
-
-        const char* result = Fighter_ReadAnimations(p->pointCharacter, parsed_json, colors);
+        const char* result = Fighter_ReadAnimations(f, parsed_json, colors);
         if(result){
             printf("Error: %s", result);
             return;
@@ -379,7 +369,7 @@ void Game_SpriteInit(){
 
         //////////
         // Actions
-        result = Fighter_ReadActions(p->pointCharacter, parsed_json);
+        result = Fighter_ReadActions(f, parsed_json);
         if(result){
             printf("Error: %s", result);
             return;
@@ -389,7 +379,7 @@ void Game_SpriteInit(){
 
         //////////
         // Motions
-        result = Fighter_ReadMotions(p->pointCharacter, parsed_json);
+        result = Fighter_ReadMotions(f, parsed_json);
         if(result){
             printf("Error: %s", result);
             return;
@@ -397,8 +387,8 @@ void Game_SpriteInit(){
             puts("Made motions");
         }
 
-        p->pointCharacter->portrait = LoadTexture("Graphics/Fighter/Shoto/aoko_portrait.png");
-    }
+        f->portrait = LoadTexture("Graphics/Fighter/Shoto/aoko_portrait.png");
+    // }
 }
 
 
@@ -428,12 +418,8 @@ void Game_Data_InitActions(Player* p){
     for(int i = 0; i < sb_count(p->pointCharacter->actions); i++){
         
         char* path = sfxPaths[rand() % 12];
-        // Mix_Chunk* ch = Mix_LoadWAV(path);
-        // if(!ch){
-        //     puts(SDL_GetError());
-        //     assert(0);
-        // }
-        // p->pointCharacter->actions[i]->audioChunk = ch;
+        // TODO: Actual SFX
+        p->pointCharacter->actions[i]->audioChunk = LoadSound(path);
     }
 }
 
@@ -466,11 +452,6 @@ const char* Fighter_ReadMotions(Fighter* fighter, struct json_object* parsed_jso
 
 void Fighter_Destroy(Fighter* fighter){
 
-    printf("%p\n", currentMatch.players[0].pointCharacter->motions);
-    printf("%p\n", currentMatch.players[1].pointCharacter->motions);
-
-    // free(fighter->name);
-    // SDL_DestroyTexture(fighter->portrait);
 
     //// Stretchy buffers
     for(int i = 0; i < sb_count(fighter->actions); i++)

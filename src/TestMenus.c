@@ -3,7 +3,6 @@
 #include "main.h"
 #include <raylib.h>
 
-// SDL_Texture* mainMenuButtonBg;
 Texture mainMenuButtonTextTextures[5];
 RectI mainMenuButtonRects[5];
 Texture mainMenuButtonTextSurfaces[5];
@@ -246,6 +245,6 @@ UiMenu* MakeMainMenu(){
 
     menu->p1focused = butt_arcade;
     Ui_PushFocus(menu);
-    Menu_Bake(menu, (Vec4I){0,640,0,480}, (Vec4I){.l=4, .r=4, .t=4, .b=4}, BAKE_TYPE_SET_SIZE, false);
+    Menu_Bake(menu, (Vec4I){0,640,0,480}, (Vec4I){.l=4, .r=4, .t=4, .b=4}, BAKE_TYPE_SET_Y_SIZE, false);
     return menu;
 }

@@ -14,4 +14,8 @@
 #define mqui_as_menu(a) ((UiMenu*)(a))
 #define mqui_as_match(a) ((UiMatch*)(a))
 
+#define add_element(parent, child) (sb_push(parent->elements, mqui_as_element(child)))
+
+#define mqui_rect(a) a->position.x, a->position.y, UiElement_Size(a).x, UiElement_Size(a).y
+
 #endif /* UI_TYPES */

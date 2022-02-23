@@ -5,7 +5,6 @@
 
 uint8_t* previousKeyStates;
 uint8_t* currentKeyStates;
-// SDL_Event event;
 
 bool QF_IsKeyDown(uint k){
     // return currentKeyStates[k];
@@ -35,5 +34,4 @@ void QF_CopyKeyArray(uint8_t* from, uint8_t* to){
 }
 
 void QF_Update(){
-    // currentKeyStates = (uint8_t*) SDL_GetKeyboardState(NULL);
 }

@@ -52,7 +52,7 @@ Action* Action_Create(
     // act->shovebox;
     act->damage = damage;
     act->hitstun = hitstun;
-    act->audioChunk = 0;
+    act->audioChunk.frameCount = 0;
 
     act->wallSplat = wallSplat;
     act->dunk = dunk;

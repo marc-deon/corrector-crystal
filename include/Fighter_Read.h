@@ -6,10 +6,11 @@
 
 // typedef struct Player;
 
-void Game_SpriteInit();
+void Fighter_SpriteInit();
 
 // Call this from main
 void Game_Data_InitActions(Player* p);
+
 
 // Call these internally
 const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_json, Color colors[256]);

@@ -7,9 +7,6 @@
 #define TIMERFONTSIZE 30
 #define NAMEFONTSIZE 18
 
-TTF_Font* clockFont;
-TTF_Font* nameFont;
-TTF_Font* debugFont;
 
 Texture clockTexture;
 
@@ -37,9 +34,6 @@ RectI p2MeterRect;
 
 RectI p1HealthRectOver;
 RectI p2HealthRectOver;
-
-SDL_Color winColor = {40, 184, 72, 255};
-SDL_Color loseColor = {184, 40, 40, 255};
 
 Texture p1wing;
 Texture p2wing;
@@ -158,7 +152,7 @@ void DrawHUD(Match* m){
     short p2health = cb_last(p2->pointCharacter->stateHistory).health;
 
     const float widthFactor = 0.39f;
-    const portraitSize = 48;
+    const int portraitSize = 48;
 
     const int maxWidth = VIRT_SCREEN_SIZE_X * widthFactor - portraitSize;
     const int height = 30;
@@ -199,124 +193,7 @@ void DrawHUD(Match* m){
     
     DrawTexture(p1->pointCharacter->portrait, 0, 0, WHITE);
     DrawTexture(p2->pointCharacter->portrait, VIRT_SCREEN_SIZE_X - p2->pointCharacter->portrait.width, 0, WHITE);
-    
 
-
-    // SDL_RenderCopyEx(ren, p1->pointCharacter->portrait, NULL, &p1PortraitRect, 0, 0, 0);
-    // SDL_RenderCopyEx(ren, p2->pointCharacter->portrait, NULL, &p2PortraitRect, 0, 0, SDL_FLIP_HORIZONTAL);
-    // #pragma endregion
-
-    // #pragma region Super meters
-    
-
-    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-
-    // SDL_RenderFillRect(ren, &p1MeterRect);
-    // SDL_RenderFillRect(ren, &p2MeterRect);
-
-
-    // #pragma endregion
-
-    // // TODO(#15): Meters in UI
-    // #pragma region Magic meters
-
-    // SDL_SetRenderDrawColor(ren, 129, 40, 184, 255);
-    // // SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-    // SDL_RenderDrawLine(ren, 70, VIRT_SCREEN_SIZE_Y - 10 - 20, 170, VIRT_SCREEN_SIZE_Y - 10); // Diag
-    // SDL_RenderDrawLine(ren, 95, VIRT_SCREEN_SIZE_Y - 10 - 20, 170, VIRT_SCREEN_SIZE_Y - 15); // Diag
-    // SDL_RenderDrawLine(ren, 120, VIRT_SCREEN_SIZE_Y - 10 - 20, 170, VIRT_SCREEN_SIZE_Y - 20); // Diag
-    // SDL_RenderDrawLine(ren, 145, VIRT_SCREEN_SIZE_Y - 10 - 20, 170, VIRT_SCREEN_SIZE_Y - 25); // Diag
-    // SDL_RenderDrawLine(ren, 170, VIRT_SCREEN_SIZE_Y - 10, 170, VIRT_SCREEN_SIZE_Y - 30); // Vert
-    // SDL_RenderDrawLine(ren, 170, VIRT_SCREEN_SIZE_Y - 30, 70, VIRT_SCREEN_SIZE_Y - 10 - 20); // Horz
-
-    // #pragma endregion
-
-    // #pragma region Color palette, name, winmarks, etc
-    // // TODO(#16): Color palette in UI
-    // // SDL_RenderCopy(ren, p1NameTexture, NULL, &p1NameRect);
-    // // SDL_RenderCopy(ren, p2NameTexture, NULL, &p2NameRect);
-    // // TODO(#17): Winmarks, etc in UI
-    
-    
-    // // SDL_SetRenderDrawColor(ren, winColor.r, winColor.g, winColor.b, 255);
-    // // P1 wins
-    // for(int i = 0; i < m->currentRounds[0]; i++){
-    //     RectI r;
-
-    //     r.x =VIRT_SCREEN_SIZE_X/2 - 50 - i*20;
-    //     r.y = 60;
-    //     r.w = 10;
-    //     r.h = 30;
-    //     // SDL_RenderFillRect(ren, &r);
-    // }
-
-    // // P2 wins
-    // for(int i = 0; i < m->currentRounds[1]; i++){
-    //     // RectI r;
-    //     r.x = VIRT_SCREEN_SIZE_X/2 + 40 + i*20;
-    //     r.y = 60;
-    //     r.w = 10;
-    //     r.h = 30;
-    //     // SDL_RenderFillRect(ren, &r);
-    // }
-
-    // // SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-    // // P1 empty wins
-    // for(int i = 0; i < m->maxRounds; i++){
-    //     RectI r;
-
-    //     r.x =VIRT_SCREEN_SIZE_X/2 - 50 - i*20;
-    //     r.y = 60;
-    //     r.w = 10;
-    //     r.h = 30;
-    //     // SDL_RenderDrawRect(ren, &r);
-    // }
-
-    // // P2 empty wins
-    // for(int i = 0; i < m->maxRounds; i++){
-    //     // RectI r;
-    //     r.x = VIRT_SCREEN_SIZE_X/2 + 40 + i*20;
-    //     r.y = 60;
-    //     r.w = 10;
-    //     r.h = 30;
-    //     // SDL_RenderDrawRect(ren, &r);
-    // }
-
-    #pragma endregion
-    
-    #pragma region Timer
-
-    // time/=60;
-    
-    // Pad
-    // "12\0"
-    // char timeStr[3];
-
-    // if (time > 9)
-    //     snprintf(timeStr, 3, "%d", (int)time);
-    // else
-    //     snprintf(timeStr, 3, "0%d", (int)time);
-
-
-    // No memeory leaks allowed!
-    // if(clockTexture){
-    //     SDL_FreeSurface(clockTexture);
-    // }
-    // if(clockTexture){
-        // Don't do this. This isn't real.
-        // SDL_FreeTexture(clockTexture);
-        // SDL_DestroyTexture(clockTexture);
-    // }
-    // clockTexture = TTF_RenderText_Blended(clockFont, timeStr, WHITE);
-    // clockTexture = SDL_CreateTextureFromSurface(ren, clockTexture);
-
-    // RectI timerRect = {VIRT_SCREEN_SIZE_X/2 - clockTexture->w/2, 0, clockTexture->w, clockTexture->h};
-    // RectI timerBgRect = {VIRT_SCREEN_SIZE_X/2 - 80/2, 0, 80, 80};
-    
-    // SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-    // SDL_RenderFillRect(ren, &timerBgRect);
-
-    // SDL_RenderCopy(ren, clockTexture, NULL, &timerRect);
     #pragma endregion
 
     #pragma region Optional
@@ -328,66 +205,6 @@ void DrawHUD(Match* m){
 void DrawHUD_Training(Match* m){
     // TODO(#18): P2 training gui
     #pragma region Action names
-    // if(p1ActionSurface)
-    //     SDL_FreeSurface(p1ActionSurface);
     
-    // if(p1ActionTexture)
-    //     SDL_DestroyTexture(p1ActionTexture);
-
-
-    // // Display "ID: Action Name"
-    // // p1
-    // {
-    // char* name = cb_last(m->players[0].pointCharacter->stateHistory).action->name;
-    // char num[strlen(name)+5+2+2];
-    // char state = Fighter_Air(m->players[0].pointCharacter) ? 'a' : 'g';
-
-
-    // int state2 = cb_last(m->players[0].pointCharacter->stateHistory).stateFlags;
-    // sprintf(num, "%d %c %d: %s", state2, state, cb_last(m->players[0].pointCharacter->stateHistory).action->index, name);
-    
-    // p1ActionSurface = TTF_RenderText_Blended(debugFont, num, WHITE);
-
-    // p1ActionRect.x = 10;
-    // p1ActionRect.y = 90;
-
-    // p1ActionRect.w = p1ActionSurface->w;
-    // p1ActionRect.h = p1ActionSurface->h;
-
-    // p1ActionTexture = SDL_CreateTextureFromSurface(ren, p1ActionSurface);
-
-    // SDL_RenderCopy(ren, p1ActionTexture, NULL, &p1ActionRect);
-    // }
-
-    // // p2
-    // {
-    // char* name = cb_last(m->players[1].pointCharacter->stateHistory).action->name;
-    // char num[strlen(name)+5];
-    // sprintf(num, "%d: %s", cb_last(m->players[1].pointCharacter->stateHistory).action->index, name);
-    
-    // p2ActionSurface = TTF_RenderText_Blended(debugFont, num, WHITE);
-
-    // p2ActionRect.x = VIRT_SCREEN_SIZE_X - 10 - p2ActionSurface->w;
-    // p2ActionRect.y = 90;
-
-    // p2ActionRect.w = p2ActionSurface->w;
-    // p2ActionRect.h = p2ActionSurface->h;
-
-    // p2ActionTexture = SDL_CreateTextureFromSurface(ren, p2ActionSurface);
-
-    // SDL_RenderCopy(ren, p2ActionTexture, NULL, &p2ActionRect);
-    // }
-
-    // For reference
-    /*
-    SDL_Surface* p1NameSurface = TTF_RenderText_Blended(nameFont, p1Name, WHITE);
-    
-    p1NameRect.x = 10;
-    p1NameRect.y = 45;
-    p1NameRect.w = p1NameSurface->w;
-    p1NameRect.h = p1NameSurface->h;
-    
-    p1NameTexture = SDL_CreateTextureFromSurface(ren, p1NameSurface);
-    */
    #pragma endregion
 }

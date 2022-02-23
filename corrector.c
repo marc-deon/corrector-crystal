@@ -1,5 +1,11 @@
-
 // TODO(#19): Free stuff (animations, motions, etc) when done.
+
+#define DRAWPOINT
+#define DRAWCOLLISIONBOX
+#define DRAWHURTBOXES
+#define DRAWHITBOXES
+
+int asamiya = 0;
 
 #include <assert.h>
 #include <raylib.h>
@@ -80,29 +86,40 @@ void Training_LoadState(){
 #define sign(i) (i > 0 | -(i<0))
 
 bool CC_INIT(){
-    bool success = true;
+    bool videoSuccess;
+    bool audioSuccess;
 
     InitWindow(VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y, "Corrector Raylib");
     SetTargetFPS(60);
     // TODO: Render to a texture, then stretch that texture to window size
     SetWindowState(FLAG_WINDOW_RESIZABLE);
-   
-    return success;
+
+
+    videoSuccess = IsWindowReady();
+    audioSuccess = CC_Audio_Init();
+
+    if(videoSuccess){
+        printf("Video init error: %d\n", videoSuccess);
+    }
+
+    if(videoSuccess){
+        printf("Audio init error: %d\n", audioSuccess);
+    }
+
+    return videoSuccess & audioSuccess;
 }
 
 void CC_CLOSE(){
     // Destroy Window
 
     free(previousKeyStates);
-
-    // Quit SDL subsystems
 }
 
 void Game_PlayerInit(){
     currentMatch.players[0].stick =          &p1Stick;
-    currentMatch.players[0].pointCharacter = Fighter_Create();
+    currentMatch.players[0].pointCharacter = Fighter_Create("fighterData/superman.jsonc");
     currentMatch.players[1].stick =          &p2Stick;
-    currentMatch.players[1].pointCharacter = Fighter_Create();
+    currentMatch.players[1].pointCharacter = Fighter_Create("fighterData/superman.jsonc");
 }
 
 
@@ -125,11 +142,13 @@ void Game_DataInit(){
 
 
 Match* GameInit(int p1CharaIndex, int p2CharaIndex){
+    background = LoadTexture("Graphics/Background/training-big.png");
+    
     currentMatch = Match_Init();
 
     Game_PlayerInit();
 
-    Game_SpriteInit(p1CharaIndex, p2CharaIndex);
+    // Fighter_SpriteInit(p1CharaIndex, p2CharaIndex);
 
     Game_DataInit(p1CharaIndex, p2CharaIndex);
 
@@ -184,14 +203,6 @@ void CC_Render(){
 //                                        //
 //                                        //
 ////////////////////////////////////////////
-
-int min(int x, int y){
-    return x < y ? x : y;
-}
-
-int max(int x, int y){
-    return x > y ? x : y;
-}
 
 void CC_ProcessCamera(){
     camera.x = 0; 
@@ -522,17 +533,21 @@ void ResetRound(){
 
 Texture mmbg_texture;
 
+float pitch;
+
 int main(int argc, char* args[]){
 
     if(!CC_INIT()){ puts("Failed to initialize!"); return -1; }
     
     // Main menu
     UiMenu* menu = MakeMainMenu();
-    // CC_Audio_Play_Music(musics[2]);
+    CC_Audio_Play_Music(musics[7]);
 
     int r,g,b;
 
     while(!WindowShouldClose()){
+
+        UpdateMusicStream(currentMusic);
         UpdateInput();
         BeginDrawing();
 

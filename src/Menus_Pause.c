@@ -44,8 +44,6 @@ UiMenu* MakePauseMenu(){
     // Background should be the size of the screen and have a negative position so that it covers the whole screen
     menu->background_texture = LoadTexture("Graphics/Ui/pausebg.png");
     
-    // menu->background_texture = SDL_CreateTextureFromSurface(menu->background_texture);
-
     int i = 0;
     Label_New (menu, "--Pause--"); i++;
     UiButton* butt_continue = Button_New(menu, "Continue", 20); i++;
@@ -73,7 +71,7 @@ UiMenu* MakePauseMenu(){
 
     Ui_PushFocus(menu);
     
-    Menu_Bake(menu, (Vec4I){0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50}, (Vec4I){.l=0, .r=0, .t=0, .b=0}, BAKE_TYPE_SET_SIZE, true);
+    Menu_Bake(menu, (Vec4I){0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50}, (Vec4I){.l=0, .r=0, .t=0, .b=0}, BAKE_TYPE_SET_Y_SIZE, true);
     return menu;
 
 

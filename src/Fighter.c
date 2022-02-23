@@ -12,14 +12,15 @@ int sign(int x){
     return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
 
-Fighter* Fighter_Create(){
+Fighter* Fighter_Create(char* path){
     Fighter* f = (Fighter*)malloc(1 * sizeof(Fighter));
     f->name = "UNINITIALIZED FIGHTER";
     f->actions = NULL;
     f->animations = NULL;
     f->motions = NULL;
     f->stateHistory = NULL;
-    // f->gravityEvery = 2;
+    
+    Fighter_SpriteInit(f, path);
 
     return f;
 }
@@ -113,13 +114,9 @@ void Fighter_StartAction(Fighter*f, Action* a, uint setMax){
         a->mustLinkAfter = setMax;
 
     // Play audio
-    Sound* sfx = a->audioChunk;
-
-    if(sfx){
-        // -1 for first available channel, sound to play, number of times to loop
-        // int channel = Mix_PlayChannel(-1, sfx, 0);
-        // Mix_Volume(channel, volumeSfx);
-        // Mix_GroupChannel(channel, CHANNEL_GROUP_SFX);
+    Sound sfx = a->audioChunk;
+    if(sfx.frameCount){
+        CC_Audio_Play_SFX(sfx);
     }
     fs->action = a;
 
@@ -239,9 +236,6 @@ void Fighter_DrawPoint(Fighter* f, RectI camera){
 }
  
 void Fighter_DrawHitboxes(Fighter* f, RectI camera){
-    printf("Fighter_DrawHitboxes NYE\n");
-    return;
-
     Action* a = cb_last(f->stateHistory).action;
     for(int i = 0; i < sb_count(a->hitboxes); i++){
         if(a->hitboxes[i]->active != HB_ACTIVE){
@@ -249,24 +243,22 @@ void Fighter_DrawHitboxes(Fighter* f, RectI camera){
         }
 
         RectI hbr = a->hitboxes[i]->rect;
-        if(Fighter_OnRight(f))
-            hbr = Rect_Flip(hbr);
-        RectI r = {
+        // Since we can't *Draw* with negative width, we need to do this
+        if (Fighter_OnRight(f)){
+            hbr = Rect_Flip_Draw(hbr);
+        }
+        DrawRectangle(
             (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
             (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
             hbr.size.x * UNIT_TO_PIX,
-            hbr.size.y * UNIT_TO_PIX
-        };
-        // SDL_SetRenderDrawColor(ren, 255, 0, 0, 128);
-        // SDL_RenderFillRect(ren, &r);
-        // SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-        // SDL_RenderDrawRect(ren, &r);
+            hbr.size.y * UNIT_TO_PIX,
+            (Color){255, 0, 0, 127}
+        );
+
     }
 }
 
 void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
-    printf("Fighter_DrawHurtboxes NYE\n");
-    return; 
     for(int i = 0; i < sb_count(cb_last(f->stateHistory).action->hurtboxes); i++){
         char* name = cb_last(f->stateHistory).action->name;
         // printf("%s\n", name);
@@ -274,38 +266,33 @@ void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
         FighterState last = cb_last(f->stateHistory);
         Action* act = last.action;
         RectI hbr = act->hurtboxes[i]->rect;
-        if(Fighter_OnRight(f))
-            hbr = Rect_Flip(hbr);
-
-        RectI r = {
+        // Since we can't *Draw* with negative width, we need to do this
+        if (Fighter_OnRight(f)){
+            hbr = Rect_Flip_Draw(hbr);
+        }
+        DrawRectangle(
             (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
             (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
             hbr.size.x * UNIT_TO_PIX,
-            hbr.size.y * UNIT_TO_PIX
-        };
-        // SDL_SetRenderDrawColor(ren, 0, 255, 0, 128);
-        // SDL_RenderFillRect(ren, &r);
-        // SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
-        // SDL_RenderDrawRect(ren, &r);
+            hbr.size.y * UNIT_TO_PIX,
+            (Color){0, 255, 0, 127}
+        );
     }
 }
 
 void Fighter_DrawCollisionbox(Fighter* f, RectI camera){
-    printf("Fighter_DrawCollisionbox NYE\n");
-    return; 
     RectI hbr = cb_last(f->stateHistory).action->shovebox.rect;
-    if(Fighter_OnRight(f))
-        hbr = Rect_Flip(hbr);
-    RectI r = {
+    // Since we can't *Draw* with negative width, we need to do this
+    if (Fighter_OnRight(f)){
+        hbr = Rect_Flip_Draw(hbr);
+    }
+    DrawRectangle(
         (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
         (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
         (hbr.size.x) * UNIT_TO_PIX,
-        (hbr.size.y) * UNIT_TO_PIX
-    };
-    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 128);
-    // SDL_RenderFillRect(ren, &r);
-    // SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-    // SDL_RenderDrawRect(ren, &r);
+        (hbr.size.y) * UNIT_TO_PIX,
+        (Color){255, 255, 255, 127}
+    );
 }
 
 

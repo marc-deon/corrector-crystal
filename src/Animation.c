@@ -2,6 +2,7 @@
 #include "stretchy_buffer.h"
 #include "CC_Consts.h"
 #include <raylib.h>
+#include <stdio.h>
 
 int Animation_FindIndexByName(Animation** a, int size, char* name){
     for(int i = 0; i < size; i++){
@@ -28,19 +29,34 @@ Animation* Animation_Create(Color colors[256], char* name, char* filename, uint 
     anim->frameWait = frameWait;
     anim->loopStart = loopStart;
 
-    // Filename
-    Texture imagesurface = LoadTexture(filename);
-    // SDL_SetPaletteColors(imagesurface->format->palette, colors, 0, 255);
+    // TODO: Palette stuff needs to be done in a shader instead
 
-    // if(imagesurface == 0){
-    //     printf("Texture %s not loaded!\n", filename);
-    //     return anim;
-    // }
-    // anim->texture = SDL_CreateTextureFromSurface(ren, imagesurface);
-    anim->texture = imagesurface;
-    // SDL_FreeSurface(imagesurface);
-    // SDL_Texture* txt = anim->texture;
+    // Load image
+    // Image img = LoadImage(filename);
     
+    // // Load images's base palette
+    // int colorCount;
+    // Color* baseColors = LoadImagePalette(img, 256, &colorCount);
+    // // Color* baseColors = LoadImageColors(img);
+
+    // // For each base color, replace with new color
+    // // NOTE: This may require some shenanigans... or we use shaders later. Probably shaders.
+    // for(int i = 0; i < colorCount; i++){
+    //     ImageColorReplace(&img, baseColors[i], colors[i]);
+    // }
+
+    // // Convert image to texture
+    // Texture imagesurface = LoadTextureFromImage(img);
+
+    // // Unload image
+    // UnloadImage(img);
+
+    printf("Loading anim from sheet %s\n", filename);
+    Texture t = LoadTexture(filename);
+    
+    anim->texture = t;
+    
+
 
     // spriteClips
     anim->spriteClips = 0;
@@ -62,6 +78,5 @@ Animation* Animation_Create(Color colors[256], char* name, char* filename, uint 
 }
 
 void Animation_Free(Animation* anim){
-    // SDL_DestroyTexture(anim->texture);
     free(anim);
 }

@@ -28,11 +28,9 @@ extern Texture background;
 extern Match currentMatch;
 extern bool stopGame;
 extern RectI camera;
+extern int asamiya;
 
-
-// Start SDL and create window
 bool CC_INIT();
-// Free media and shut down SDL
 void CC_CLOSE();
 void ResetRound();
 Match* GameInit(int p1CharaIndex, int p2CharaIndex);

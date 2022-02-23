@@ -1,5 +1,3 @@
-// SEE: https://lazyfoo.net/tutorials/SDL/18_key_states/index.php and https://lazyfoo.net/tutorials/SDL/19_gamepads_and_joysticks/index.php
-
 #include <stdio.h>
 #include "CC_Input.h"
 #include "QFramework_Input.h"
@@ -17,9 +15,6 @@ void SaveInput(){
 
 
 void UpdateInput(){
-    // If input breaks, try uncommenting this.
-    // SDL_PollEvent(event);
-
     // Get New
     QF_Update();
     
