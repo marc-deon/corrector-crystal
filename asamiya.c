@@ -53,6 +53,7 @@ UiList* List_New(){
 UiPreview* Preview_New(){
     UiPreview* p = malloc(sizeof(UiPreview));
     p->type = UI_TYPE_PREVIEW;
+    p->position = (Vec2I) {6969, 6969};
     return p;
 }
 
@@ -166,7 +167,7 @@ UiElement* FindWidgetByPosition(Vector2 pos){
 
 void SetupRaylib(){
     // SetTraceLogLevel(LOG_DEBUG);
-    SetTargetFPS(60);
+    SetTargetFPS(1);
     InitWindow(1280, 720, "Asamiya Character Creater");
 }
 
@@ -221,7 +222,7 @@ void SetupData(){
     );
 
     printf("root rect %d %d %d %d\n", mqui_rect(root));
-    exit(0);
+    // exit(0);
 }
 
 void main(){
@@ -243,6 +244,7 @@ void main(){
 
     while(!WindowShouldClose()){
         BeginDrawing();
+        printf("Begin\n");
         ClearBackground(BLACK);
 
         float dir;
@@ -255,7 +257,7 @@ void main(){
         // Menu_Draw(buttlist);
         // int buttheight = UiElement_Size(mqui_as_element(buttlist)).y+5;
         // List_Draw(&shoppingList, (Vector2){5, buttheight});
-
+        printf("End\n");
         EndDrawing();
     }
 

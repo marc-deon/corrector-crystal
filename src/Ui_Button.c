@@ -76,6 +76,8 @@ void Button_Draw(UiMenu* menu, UiButton* butt){
     int textx = butt->position.x + buttrect.w/2 - v.x/2;
     int texty = butt->position.y + buttrect.h/2 - v.y/2;
 
+    printf("butt with parent %p at %d, %d\n", menu, butt->position.x, butt->position.y);
+
     DrawTexture(button_texture, butt->position.x, butt->position.y, WHITE);
     DrawText(butt->string_text, textx, texty, FONTSIZE, WHITE);
 }
