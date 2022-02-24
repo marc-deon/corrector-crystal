@@ -186,17 +186,18 @@ void SetupData(){
 
 
     root          = Menu_New(BAKE_TYPE_SET_X_SIZE);
-    
+    root->position = (Vec2I) {0,0};
+
     leftPane      = Menu_New(BAKE_TYPE_SET_Y_SPACING);
     leftTabs      = Menu_New(BAKE_TYPE_SET_X_SIZE);
-    buttAct       = Button_New(leftTabs, "Act", 20);
-    buttAnim      = Button_New(leftTabs, "Anim", 20);
+    buttAct       = Button_New("Act", 20);
+    buttAnim      = Button_New("Anim", 20);
     aList         = List_New();
     preview       = Preview_New();
     rightPane     = Menu_New(BAKE_TYPE_SET_Y_SPACING);
     rightTabs     = Menu_New(BAKE_TYPE_SET_X_SIZE);
-    buttInspector = Button_New(rightTabs, "Inspector", 20);
-    buttHitboxes  = Button_New(rightTabs, "Hitboxes", 20);
+    buttInspector = Button_New("Inspector", 20);
+    buttHitboxes  = Button_New("Hitboxes", 20);
     rList         = List_New();
 
     
@@ -212,16 +213,22 @@ void SetupData(){
             add_element(rightTabs, buttHitboxes);
         add_element(rightPane, rList);
 
-    // borders, borderoffset, type, centerall
-    Menu_Bake(root,
-        (Vec4I) {0, 0, 1280, 720},
-        (Vec4I) {0,0,0,0},
-        BAKE_TYPE_SET_X_SIZE,
-        false
-    );
+    root->size = (Vec2I){1280, 720}; // Set size
+    leftPane->size  = (Vec2I) {}; // Set spacing
+    leftTabs->size  = (Vec2I) {ui_w(buttAct) + ui_w(buttAnim), ui_h(buttAct)}; // Set size
+    rightPane->size = (Vec2I) {}; // Set spacing
+    rightTabs->size = (Vec2I) {ui_w(buttAct) + ui_w(buttInspector), ui_h(buttHitboxes)}; // Set size
+
+    Menu_Bake(root, true);
+    // Menu_Bake(root,
+    //     (Vec4I) {0, 0, 1280, 720},
+    //     (Vec4I) {0,0,0,0},
+    //     BAKE_TYPE_SET_X_SIZE,
+    //     false
+    // );
 
     printf("root rect %d %d %d %d\n", mqui_rect(root));
-    exit(0);
+    // exit(0);
 }
 
 void main(){
@@ -232,14 +239,7 @@ void main(){
     asamiya_f = Fighter_Create("fighterData/superman.jsonc");
     cb_tab_act();
 
-    UiMenu* buttlist = Menu_New(BAKE_TYPE_FLOATING);
-
-    Button_New(buttlist, "Actions", -1);
-    Button_New(buttlist, "Animations", -1);
-
-    shoppingList.maxHeight = 720 - 10 - 5 - UiElement_Size(mqui_as_element(buttlist)).y;
-
-    Menu_Bake(buttlist, (Vec4I){.b = 5}, (Vec4I){.l=5, .t=5, .r=0, .b=0}, BAKE_TYPE_SET_X_SPACING, false);
+    // Menu_Bake(buttlist, (Vec4I){.b = 5}, (Vec4I){.l=5, .t=5, .r=0, .b=0}, BAKE_TYPE_SET_X_SPACING, false);
 
     while(!WindowShouldClose()){
         BeginDrawing();

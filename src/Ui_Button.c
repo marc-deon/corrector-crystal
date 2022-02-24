@@ -16,7 +16,7 @@ Texture _button_base_texture_p2hover;
 Texture _button_base_texture_bothhover;
 Texture _button_base_texture_pressed;
 
-UiButton* Button_New(UiMenu* menu, char* text, int fontSize){
+UiButton* Button_New(char* text, int fontSize){
     mmbuttfont = GetFontDefault();
 
     _button_base_texture_normal = LoadTexture("Graphics/Ui/button1.png");
@@ -46,8 +46,6 @@ UiButton* Button_New(UiMenu* menu, char* text, int fontSize){
     butt->string_text = (char*)malloc(TextLength(text) * sizeof(char) + 5);
     TextCopy(butt->string_text, text);
     butt->type = UI_TYPE_BUTTON;
-    sb_push(menu->elements, (UiElement*)butt);
-
     return butt;
 }
 
@@ -75,6 +73,8 @@ void Button_Draw(UiMenu* menu, UiButton* butt){
     Vector2 v = MeasureTextEx(GetFontDefault(), butt->string_text, FONTSIZE, 2);
     int textx = butt->position.x + buttrect.w/2 - v.x/2;
     int texty = butt->position.y + buttrect.h/2 - v.y/2;
+
+    printf("%s at %d %d\n", butt->string_text, butt->position.x, butt->position.y);
 
     DrawTexture(button_texture, butt->position.x, butt->position.y, WHITE);
     DrawText(butt->string_text, textx, texty, FONTSIZE, WHITE);

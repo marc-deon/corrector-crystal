@@ -6,45 +6,21 @@
 #include <stdio.h>
 
 Vec2I Menu_Size(UiMenu* menu){
-    
-    int minx = INT_MAX;
-    int maxx = INT_MIN;
-    int miny = INT_MAX;
-    int maxy = INT_MIN;
-
-    for (size_t i = 0; i < sb_count(menu->elements); i++)
-    {
-        UiElement* elem = menu->elements[i];
-        minx = min(elem->position.x, minx);
-        miny = min(elem->position.y, miny);
-
-        maxx = max(elem->position.x + UiElement_Size(elem).x, maxx);
-        maxy = max(elem->position.y + UiElement_Size(elem).y, maxy);
-    }
-    return (Vec2I){maxx-minx, maxy-miny};
+    return menu->size;
 }
 
-// When baketype is BAKE_TYPE_SET_SPACING, the b component of borders is used as the spacing
 // centerInBorders only centers horizontally if baketype vertical, or vertically if baketype is horizontal
-void Menu_Bake(UiMenu* menu, Vec4I borders, Vec4I border_offset, int baketype, int centerInBorders){
+void Menu_Bake(UiMenu* menu, int centerInBorders){
 
-    if(baketype == BAKE_TYPE_DEFAULT)
-        baketype = menu->bakeType;
-
-    menu->position = (Vec2I){0,0};
     int count = sb_count(menu->elements);
-    int ySpace;
     int nonCenteredWidth = 0;
-    int borderCenterX;
-    int xSpace;
     int nonCenteredHeight = 0;
-    int borderCenterY;
-    int ySum = 0;
-    int xSum = 0;
+    int borderCenter;
 
-    // TODO(#28): Make an actual Menu type, store the borders on that, and draw children relative to it
+    int space;
+    int sum = 0;
 
-    switch(baketype){
+    switch(menu->bakeType){
         // With a given total size, we need to calculate the spacing.
         case BAKE_TYPE_SET_Y_SIZE:
 
@@ -52,19 +28,16 @@ void Menu_Bake(UiMenu* menu, Vec4I borders, Vec4I border_offset, int baketype, i
                 UiElement* element = menu->elements[i];
 
                 if(element->type == UI_TYPE_MENU){
-                    Vec4I subbord = borders;
-                    subbord.t -= ySum;
-                    printf("baking sub with %d %d %d %d\n", borders.l, borders.r, borders.t, borders.b, borders);
-                    Menu_Bake(mqui_as_menu(element), borders, (Vec4I) {.t = ySum}, mqui_as_menu(element)->bakeType, false);
+
+                    Menu_Bake(element, false);
                 }
 
-                Vec2I elSize = UiElement_Size(element);
-                ySum += elSize.y;
-                nonCenteredWidth = max(nonCenteredWidth, (!element->hcentered) * elSize.x);
+                sum += ui_h(element);
+                nonCenteredWidth = max(nonCenteredWidth, (!element->hcentered) * ui_w(element));
             }
 
-            ySpace = ((borders.b - borders.t - border_offset.b - border_offset.t) - ySum) / (count-1);
-            borderCenterX = (borders.r - borders.l + border_offset.l - border_offset.r)/2;
+            space = ((ui_h(menu) - menu->margin.b - menu->margin.t) - sum) / (count-1);
+            borderCenter = (ui_w(menu) + menu->margin.l - menu->margin.r)/2;
             break;
 
         // With a given total size, we need to calculate the spacing.
@@ -74,123 +47,89 @@ void Menu_Bake(UiMenu* menu, Vec4I borders, Vec4I border_offset, int baketype, i
                 UiElement* element = menu->elements[i];
 
                 if(element->type == UI_TYPE_MENU){
-                    Vec4I subbord = borders;
-                    subbord.t -= xSum;
-                    Menu_Bake(mqui_as_menu(element), borders, (Vec4I) {.l = ySum}, mqui_as_menu(element)->bakeType, false);
                 }
 
-                Vec2I elSize = UiElement_Size(element);
-                xSum += elSize.x;
-                nonCenteredHeight = max(nonCenteredHeight, (!element->vcentered) * elSize.y);
+                sum += ui_w(element);
+                nonCenteredHeight = max(nonCenteredHeight, (!element->hcentered) * ui_h(element));
             }
 
-            xSpace = ((borders.r - borders.l - border_offset.r - border_offset.l) - xSum) / (count-1);
-            borderCenterY = (borders.r - borders.l + border_offset.l - border_offset.r)/2;
+            space = ((ui_h(menu) - menu->margin.b - menu->margin.t) - sum) / (count-1);
+            borderCenter = (ui_w(menu) + menu->margin.t - menu->margin.b)/2;
             break;
 
         case BAKE_TYPE_SET_Y_SPACING:
-            // With a given spacing, we need to calculate the bounding box (borders).
-            ySpace = borders.b;
-
-
-            borders.t = 0;
-            borders.b = (count-1) * ySpace + ySum + border_offset.t + border_offset.t;
-            borders.l = 0;
-
             // We'll use the max element width as width, for now
-            int maxwidth = 0;
+            int maxWidth = 0;
+            int heightSum = (count - 1) * space;
+
             for (size_t i = 0; i < count; i++){
                 UiElement* element = menu->elements[i];
 
                 if(element->type == UI_TYPE_MENU){
-                    int subbake = mqui_as_menu(element)->bakeType;
-                    if(subbake == BAKE_TYPE_SET_X_SPACING || subbake == BAKE_TYPE_SET_Y_SPACING){
-                        printf("Baking recursive menus with set spacing is unsupported %d\n", __LINE__);
-                        exit(-1);
-                    }
-
-                    Vec4I subbord = borders;
-                    subbord.t -= ySum;
-                    printf("ysum %d\n", ySum);
-                    printf("baking sub with %d %d %d %d\n", subbord.l, subbord.r, subbord.t, subbord.b);
-                    Menu_Bake(mqui_as_menu(element), subbord, (Vec4I){0,0,0,0}, mqui_as_menu(element)->bakeType, false);
-                    printf(("post-bake %d %d %d %d\n"), element->position.x, element->position.y, UiElement_Size(element).x, UiElement_Size(element).y);
-                    // exit(0);
-                    maxwidth = max(maxwidth, UiElement_Size(element).x);
                 }
-                else
-                    maxwidth = max(maxwidth, UiElement_Size(element).x);
+                else{
+                    maxWidth = max(maxWidth, ui_w(element));
+                    heightSum += ui_h(element);
+                }
             }
-            borders.r = maxwidth;
-
+            menu->size.x = maxWidth;
+            menu->size.y = heightSum;
             break;
 
         case BAKE_TYPE_SET_X_SPACING:
-            // With a given spacing, we need to calculate the bounding box (borders).
-            xSpace = borders.r;
-
-            borders.l = 0;
-            borders.r = (count-1) * xSpace + xSum + border_offset.l + border_offset.l;
-
-            // We'll use the max element width as width, for now
+            // We'll use the max element height as height, for now
             int maxHeight = 0;
+            int widthSum = (count - 1) * space;
+
             for (size_t i = 0; i < count; i++){
                 UiElement* element = menu->elements[i];
 
                 if(element->type == UI_TYPE_MENU){
-                    // if(mqui_as_menu(element)->bakeType == BAKE_TYPE_SET_X_SPACING || mqui_as_menu(element)->bakeType == BAKE_TYPE_SET_Y_SPACING){
-                        printf("Baking recursive menus with set spacing is unsupported\n");
-                        exit(-1);
-                    // }
-
-                    Vec4I subbord = borders;
-                    subbord.t -= xSum;
-                    // Menu_Bake(mqui_as_menu(element), borders, (Vec4I) {.l = ySum}, mqui_as_menu(element)->bakeType, false);
                 }
-
-                else
-                    maxHeight = max(maxHeight, UiElement_Size(menu->elements[i]).y);
+                else{
+                    maxHeight = max(maxHeight, ui_h(element));
+                    widthSum += ui_w(element);
+                }
             }
-            borders.t = 0;
-            borders.b = maxHeight;
-
+            menu->size.y = maxHeight;
+            menu->size.x = widthSum;
             break;
+
     }
 
 
-    switch (baketype)
+    switch (menu->bakeType)
     {
         case BAKE_TYPE_SET_Y_SIZE:
         case BAKE_TYPE_SET_Y_SPACING:
-            int y = border_offset.t;
             for(int i = 0; i < count; i++){
 
                 UiElement* element = menu->elements[i];
-                Vec2I elSize = UiElement_Size(element);
-                int x = nonCenteredWidth/2 - elSize.x/2;
-                int x2 = borderCenterX - nonCenteredWidth/2;
-                element->position = (Vec2I) {.x = borders.l + border_offset.l + element->hcentered*x + centerInBorders*x2, .y = y + borders.t};
-                if(element->type == UI_TYPE_MENU){
-                    printf("%d asd pos %d %d\n", __LINE__, element->position.x, element->position.y);
-                    // exit(0);
-                }
-                y += ySpace;
-                y += elSize.y;
+
+                // Offset applied to center this element along all other sibling elements
+                int xIfElementCentered = nonCenteredWidth/2 - ui_w(element)/2;
+                // Offset applied to center this element with respect to the borders
+                int xIfCenteredInBorders = borderCenter - nonCenteredWidth/2;
+
+                // Position relative to parent
+                element->position.x = element->hcentered*xIfElementCentered + centerInBorders * xIfCenteredInBorders;
+                element->position.y = i * (ui_h(element) + space);
             }
             break;
             
         case BAKE_TYPE_SET_X_SIZE:
         case BAKE_TYPE_SET_X_SPACING:
-            int x = border_offset.l;
             for(int i = 0; i < count; i++){
-
                 UiElement* element = menu->elements[i];
-                Vec2I elSize = UiElement_Size(element);
-                int y = nonCenteredHeight/2 - elSize.y/2;
-                int y2 = borderCenterY - nonCenteredHeight/2;
-                element->position = (Vec2I) {.y = borders.t + border_offset.t + element->vcentered*y + centerInBorders*y2, .x = x + borders.l};
-                x += xSpace;
-                x += elSize.x;
+
+                // Offset applied to center this element along all other sibling elements
+                int yIfElementCentered = nonCenteredHeight/2 - ui_h(element)/2;
+                // Offset applied to center this element with respect to the borders
+                int yIfCenteredInBorders = borderCenter - nonCenteredHeight/2;
+
+                // Position relative to parent
+                element->position.y = element->vcentered*yIfElementCentered + centerInBorders * yIfCenteredInBorders;
+                element->position.x = i * (ui_w(element) + space);
             }
             break;
             
@@ -283,6 +222,7 @@ void Menu_Draw(UiMenu* menu){
     for(int i = 0; i < sb_count(menu->elements); i++){
         UiElement* element = menu->elements[i];
 
+        // TODO: Add a cascading offset to all of these
         switch(menu->elements[i]->type){
             case UI_TYPE_BUTTON:
                 Button_Draw(menu, mqui_as_button(element));
@@ -324,8 +264,8 @@ void Menu_Free(UiMenu* menu){
 
 UiMenu* Menu_New(int baketype){
     UiMenu* m = malloc(sizeof(UiMenu));
-    m->position.x = -1;
-    m->position.y = -1;
+    m->position = (Vec2I) {-1,-1};
+    m->size = (Vec2I) {-1,-1};
     m->bakeType = baketype;
     m->on_cancel.function = NULL;
     m->p1focused = 0;
@@ -333,5 +273,6 @@ UiMenu* Menu_New(int baketype){
     m->elements = NULL;
     m->type = UI_TYPE_MENU;
     m->hcentered = 0;
+    m->spacing = 0;
     return m;
 }

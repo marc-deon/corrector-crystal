@@ -561,7 +561,7 @@ int main(int argc, char* args[]){
             }
             else if(Menu_Input(menu, &p1Stick, &p2Stick)){
                 // See if we can find a Match...
-                UiMenu** stack = Ui_GetFocusStack();
+                UiMenu** stack = mqui_as_menu(Ui_GetFocusStack());
                 for(int i = 0; i < sb_count(stack); i++){
                     if(stack[i]->type == UI_TYPE_MATCH)
                         CC_Render();

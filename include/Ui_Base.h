@@ -58,6 +58,11 @@ typedef struct callback_function {
 #define invokepa(cbfunc, p, a) (cbfunc.info.player=p, cbfunc.arg=a, invoke(cbfunc))
 
 Vec2I UiElement_Size(UiElement* elem);
+# define ui_x(e) (e->position.x)
+# define ui_y(e) (e->position.y)
+# define ui_w(e) (UiElement_Size(mqui_as_element(e)).x)
+# define ui_h(e) (UiElement_Size(mqui_as_element(e)).y)
+
 void** Ui_GetFocusStack();
 
 #endif /* UI_BASE */

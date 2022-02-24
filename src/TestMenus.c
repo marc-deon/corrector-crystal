@@ -78,7 +78,7 @@ void cb_character_select(CallbackInfo info){
 UiMenu* MakeArcadeMenu(){
     playerCharaIndices[0] = -1;
     playerCharaIndices[1] = -1;
-    UiMenu* menu = malloc(sizeof(UiMenu));
+    UiMenu* menu = Menu_New(BAKE_TYPE_FLOATING);
     menu->elements = 0;
     menu->on_cancel = (CallbackFunction){cb_arcade_back};
 
@@ -105,23 +105,32 @@ UiMenu* MakeArcadeMenu(){
     Texture surface_bothsel = LoadTexture("Graphics/Ui/charaselebutton-base4.png");
 
 
-    UiButton* butt_shoto    = Button_New(menu, "", 32);
+    UiButton* butt_shoto    = Button_New("", 32);
+    add_element(menu, butt_shoto);
     UiSprite* sprite_shoto  = Sprite_New(menu, "Graphics/Ui/charaselebutton-1.png");
-    UiButton* butt_guile    = Button_New(menu, "", 32);
+    UiButton* butt_guile    = Button_New("", 32);
+    add_element(menu, butt_guile);
     UiSprite* sprite_guile  = Sprite_New(menu, "Graphics/Ui/charaselebutton-2.png");
-    UiButton* butt_cannon   = Button_New(menu, "", 32);
+    UiButton* butt_cannon   = Button_New("", 32);
+    add_element(menu, butt_cannon);
     UiSprite* sprite_cannon = Sprite_New(menu, "Graphics/Ui/charaselebutton-3.png");
-    UiButton* butt_grappler = Button_New(menu, "", 32);
+    UiButton* butt_grappler = Button_New("", 32);
+    add_element(menu, butt_grappler);
     UiSprite* sprite_grappler   = Sprite_New(menu, "Graphics/Ui/charaselebutton-4.png");
-    UiButton* butt_random   = Button_New(menu, "", 32);
+    UiButton* butt_random   = Button_New("", 32);
+    add_element(menu, butt_random);
     UiSprite* sprite_random = Sprite_New(menu, "Graphics/Ui/charaselebutton-0.png");
-    UiButton* butt_axl      = Button_New(menu, "", 32);
+    UiButton* butt_axl      = Button_New("", 32);
+    add_element(menu, butt_axl);
     UiSprite* sprite_axl    = Sprite_New(menu, "Graphics/Ui/charaselebutton-5.png");
-    UiButton* butt_pixie    = Button_New(menu, "", 32);
+    UiButton* butt_pixie    = Button_New("", 32);
+    add_element(menu, butt_pixie);
     UiSprite* sprite_pixie  = Sprite_New(menu, "Graphics/Ui/charaselebutton-6.png");
-    UiButton* butt_puppet   = Button_New(menu, "", 32);
+    UiButton* butt_puppet   = Button_New("", 32);
+    add_element(menu, butt_puppet);
     UiSprite* sprite_puppet = Sprite_New(menu, "Graphics/Ui/charaselebutton-7.png");
-    UiButton* butt_stance   = Button_New(menu, "", 32);
+    UiButton* butt_stance   = Button_New("", 32);
+    add_element(menu, butt_stance);
     UiSprite* sprite_stance = Sprite_New(menu, "Graphics/Ui/charaselebutton-8.png");
 
     UiButton* butts[3][3] = {
@@ -171,27 +180,23 @@ UiMenu* MakeArcadeMenu(){
 }
 
 UiMenu* MakeVersusMenu(){
-    UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->elements = 0; 
+    UiMenu* menu = Menu_New(BAKE_TYPE_FLOATING);
 
     return Ui_PushFocus(menu);
 }
 
 UiMenu* MakeTrainingMenu(){
-    UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->elements = 0;
+    UiMenu* menu = Menu_New(BAKE_TYPE_FLOATING);
 
     return Ui_PushFocus(menu);
 }
 
 UiMenu* MakeReplaysMenu(){
-    UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->elements = 0;
+    UiMenu* menu = Menu_New(BAKE_TYPE_SET_Y_SPACING);
 }
 
 UiMenu* MakeOptionsMenu(){
-    UiMenu* menu = malloc(sizeof(UiMenu));
-    menu->elements = 0;
+    UiMenu* menu = Menu_New(BAKE_TYPE_SET_Y_SPACING);
 
     return Ui_PushFocus(menu);
 }
@@ -199,7 +204,7 @@ UiMenu* MakeOptionsMenu(){
 UiMenu* MakeMainMenu(){
     Texture surf;
 
-    UiMenu* menu = malloc(sizeof(UiMenu));
+    UiMenu* menu = Menu_New(BAKE_TYPE_SET_Y_SIZE);
     menu->p1focused = NULL;
     menu->p2focused = NULL;
     menu->on_cancel = (CallbackFunction){cb_back};
@@ -214,12 +219,18 @@ UiMenu* MakeMainMenu(){
     // Maybe find the bounding box of everything that's not centered, then use that to figure out where everything that is centered goes?
     int i = 0;
     UiElement* title         = mqui_as_element(Label_New (menu, "--Main--")); i++;
-    UiElement* butt_arcade   = mqui_as_element(Button_New(menu, "Arcade"  , 32)); i++;
-    UiElement* butt_versus   = mqui_as_element(Button_New(menu, "Versus"  , 32)); i++;
-    UiElement* butt_training = mqui_as_element(Button_New(menu, "Training", 32)); i++;
-    UiElement* butt_replays  = mqui_as_element(Button_New(menu, "Replays" , 32)); i++;
-    UiElement* butt_options  = mqui_as_element(Button_New(menu, "Options" , 32)); i++;
-    UiElement* butt_quit     = mqui_as_element(Button_New(menu, "quit"    , 32)); i++;
+    UiElement* butt_arcade   = mqui_as_element(Button_New("Arcade"  , 32)); i++;
+    add_element(menu, butt_arcade);
+    UiElement* butt_versus   = mqui_as_element(Button_New("Versus"  , 32)); i++;
+    add_element(menu, butt_versus);
+    UiElement* butt_training = mqui_as_element(Button_New("Training", 32)); i++;
+    add_element(menu, butt_training);
+    UiElement* butt_replays  = mqui_as_element(Button_New("Replays" , 32)); i++;
+    add_element(menu, butt_replays);
+    UiElement* butt_options  = mqui_as_element(Button_New("Options" , 32)); i++;
+    add_element(menu, butt_options);
+    UiElement* butt_quit     = mqui_as_element(Button_New("quit"    , 32)); i++;
+    add_element(menu, butt_quit);
     
     butt_arcade->down = butt_versus;
     mqui_as_button(butt_arcade)->on_confirm = (CallbackFunction){cb_arcade};    
@@ -245,6 +256,9 @@ UiMenu* MakeMainMenu(){
 
     menu->p1focused = butt_arcade;
     Ui_PushFocus(menu);
-    Menu_Bake(menu, (Vec4I){0,640,0,480}, (Vec4I){.l=4, .r=4, .t=4, .b=4}, BAKE_TYPE_SET_Y_SIZE, false);
+
+    menu->size = (Vec2I) {1280, 720};
+    menu->margin = (Vec4I) {4, 4, 4, 4};
+    Menu_Bake(menu, false);
     return menu;
 }

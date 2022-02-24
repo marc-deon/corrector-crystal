@@ -26,7 +26,7 @@ typedef struct ui_button {
 
 } UiButton;
 
-UiButton* Button_New(UiMenu* menu, char* text, int fontSize);
+UiButton* Button_New(char* text, int fontSize);
 void Button_Draw(UiMenu* menu, UiButton* butt);
 void Button_Free(UiButton*);
 Vec2I Button_Size(UiButton* butt);
