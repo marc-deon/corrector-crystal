@@ -12,7 +12,7 @@ typedef struct ui_sprite {
 } UiSprite;
 
 UiSprite* Sprite_New(UiMenu* menu, char* path);
-void Sprite_Draw(UiMenu* menu, UiSprite* butt);
+void Sprite_Draw(UiMenu* menu, UiSprite* butt, Vec2I offset);
 void Sprite_Free(UiSprite* sprite);
 
 

@@ -5,14 +5,14 @@
 #include "Stick.h"
 
 enum ui_type {
-    UI_TYPE_NONE,
-    UI_TYPE_LABEL,
-    UI_TYPE_BUTTON,
-    UI_TYPE_SPRITE,
-    UI_TYPE_MENU,
-    UI_TYPE_MATCH,
-    UI_TYPE_LIST,
-    UI_TYPE_PREVIEW
+    UI_TYPE_NONE,   // 0
+    UI_TYPE_LABEL,  // 1 
+    UI_TYPE_BUTTON, // 2
+    UI_TYPE_SPRITE, // 3
+    UI_TYPE_MENU,   // 4
+    UI_TYPE_MATCH,  // 5
+    UI_TYPE_LIST,   // 6
+    UI_TYPE_PREVIEW // 7
 };
 
 enum bake_type {
@@ -24,8 +24,11 @@ enum bake_type {
     BAKE_TYPE_SET_Y_SPACING,
 };
 
+extern int uiidcount;
+
 #define ui_preamble          \
 enum ui_type type;           \
+int id;                      \
 int hcentered;               \
 int vcentered;               \
 Vec2I position;              \

@@ -1,14 +1,21 @@
 // TODO(#19): Free stuff (animations, motions, etc) when done.
 
-#define DRAWPOINT
-#define DRAWCOLLISIONBOX
-#define DRAWHURTBOXES
-#define DRAWHITBOXES
+// #define DRAWPOINT
+// #define DRAWCOLLISIONBOX
+// #define DRAWHURTBOXES
+// #define DRAWHITBOXES
 
 int asamiya = 0;
 
 #include <assert.h>
 #include <raylib.h>
+
+#define PLATFORM_DESKTOP
+#if defined(PLATFORM_DESKTOP)
+    #define GLSL_VERSION            330
+#else   // PLATFORM_RPI, PLATFORM_ANDROID, PLATFORM_WEB
+    #define GLSL_VERSION            100
+#endif
 
 #include "Action.h"
 #include "CC_Audio.h"
@@ -29,6 +36,10 @@ bool stopGame = 0;
 
 RectI camera;
 Match currentMatch;
+
+const int maxpal = 31;
+int p1Pal = 9;
+int p2Pal = 18;
 
 /*  Rollback flowchart:
 
@@ -118,8 +129,12 @@ void CC_CLOSE(){
 void Game_PlayerInit(){
     currentMatch.players[0].stick =          &p1Stick;
     currentMatch.players[0].pointCharacter = Fighter_Create("fighterData/superman.jsonc");
+    void* parsed = Fighter_GetParsedJson("fighterData/superman.jsonc");
+    Fighter_GetPalette(currentMatch.players[0].pointCharacter, p1Pal);
     currentMatch.players[1].stick =          &p2Stick;
     currentMatch.players[1].pointCharacter = Fighter_Create("fighterData/superman.jsonc");
+
+    Fighter_GetPalette(currentMatch.players[1].pointCharacter, p2Pal);
 }
 
 
@@ -244,6 +259,27 @@ int CC_ProcessInput(){
     else if (QF_IsKeyJustDown(KEY_F6)){
         Training_LoadState();
     }
+
+
+    int oldPal[2] = {p1Pal, p2Pal};
+    p1Pal += QF_IsKeyJustDown(KEY_RIGHT_BRACKET) - QF_IsKeyJustDown(KEY_LEFT_BRACKET);
+    p1Pal = (maxpal + p1Pal) % maxpal;
+    p2Pal += QF_IsKeyJustDown(KEY_APOSTROPHE) - QF_IsKeyJustDown(KEY_SEMICOLON);
+    p2Pal = (maxpal + p2Pal) % maxpal;
+
+    // if (p1Pal != oldPal[0]){
+    //     void* parsed = Fighter_GetParsedJson("fighterData/superman.jsonc");
+    //     Fighter_GetPalette(currentMatch.players[0].pointCharacter, parsed, p1Pal);
+    // }
+
+    if (p2Pal != oldPal[1]){
+        void* parsed = Fighter_GetParsedJson("fighterData/superman.jsonc");
+        Fighter_GetPalette(currentMatch.players[1].pointCharacter, p2Pal);
+    }
+
+
+
+
 
     for(int i = 0; i < 2; i++){
         Player* p = &currentMatch.players[i];
@@ -567,7 +603,7 @@ int main(int argc, char* args[]){
                         CC_Render();
                 }
                 // Regardless, draw menu on top
-                Menu_Draw(Ui_GetTopFocus());
+                Menu_Draw(Ui_GetTopFocus(), (Vec2I){0,0});
             }
         }
 

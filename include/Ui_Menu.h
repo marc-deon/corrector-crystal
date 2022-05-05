@@ -26,7 +26,7 @@ UiMenu* Ui_PushFocus(UiMenu* focus);
 
 void Ui_CloseTop();
 void Menu_Bake(UiMenu* Menu, int centerInBorders);
-void Menu_Draw(UiMenu* Menu);
+void Menu_Draw(UiMenu* Menu, Vec2I offset);
 bool Menu_Input(UiMenu* menu, Stick* p1stick, Stick* p2stick);
 void Menu_Free(UiMenu* menu);
 UiMenu* Menu_New(int baketype);

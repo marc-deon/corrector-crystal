@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
-// Unix only
-#include<unistd.h>
+#include <unistd.h> // Unix only: getcwd
 
 Texture background;
 // extern Match currentMatch;
@@ -217,18 +217,18 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
                 sb_free(a->linksTo);
                 a->linksTo = NULL;
 
-                printf("%s links to", a->name);
+                // printf("%s links to", a->name);
                 for(int j = 0; j < length; j++){
                     char* linkName = (char *) json_object_get_string(json_object_array_get_idx(nameArray, j));
-                    printf("... %s", linkName);
+                    // printf("... %s", linkName);
                     if (linkName){
                         int index = Action_FindIndexByName(fighter->actions, sb_count(fighter->actions), linkName);
-                        printf("%s\n", linkName);
+                        // printf("%s\n", linkName);
                         assert(index >= 0 && "Could not find action by name");
                         sb_push(a->linksTo, fighter->actions[index]);
                     }
                 }
-                printf(".\n");
+                // printf(".\n");
             }
         }
 
@@ -246,7 +246,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 }
 
 
-const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_json, Color colors[256]){
+const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_json){
         struct json_object* animations;
         json_object_object_get_ex(parsed_json, "animations", &animations);
 
@@ -264,13 +264,13 @@ const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_
             json_get_int_array(animation, "cropRect", cropInts);
             RectI cropRect = {cropInts[0], cropInts[1], cropInts[2], cropInts[3]};
         
-            sb_push(fighter->animations, Animation_Create(colors, name, sprite, frames, wait, cropRect, loopStart));
+            sb_push(fighter->animations, Animation_Create(name, sprite, frames, wait, cropRect, loopStart));
         }
 
         // Now that we have the animations created, we can link them.
         for(int i = 0; i < sb_count(fighter->animations); i++){
             struct json_object* animation = json_object_array_get_idx(animations, i);
-            char* linkName = json_get_default_string(animation, "link", NULL);
+            char* linkName = json_get_default_string(animation, "linksTo", NULL);
 
             // If we don't link to anything, skip.
             if(!linkName)
@@ -285,32 +285,30 @@ const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_
     return NULL;
 }
 
-void Fighter_GetPalette(struct json_object* parsed, int i, Color colors[256]){
-    struct json_object* palsObj;
-    json_object_object_get_ex(parsed, "palettes", &palsObj);
+void Fighter_GetPalette(Fighter* f, int palIndex){
+    FILE* fp;
+    fp = fopen("fighterData/superman.pal", "rb");
+    
+    fseek(fp, palIndex * 256 * 4, SEEK_SET);
 
-    array_list* pals = json_object_get_array(palsObj);
-    void* pal = array_list_get_idx(pals,i);
+    // Read the json file into a char array
+    int buffer[256 * 4];
+    fread(buffer, 256 * 4, 1, fp);
+    fclose(fp);
 
-    int size = json_object_array_length(pal);
+    memcpy(f->palette, buffer, 256 * 4);
 
-    for (i = 1; i < size; i++){
-        json_object* tuplet = json_object_array_get_idx(pal, i);
-        colors[i].r = json_object_get_int(json_object_array_get_idx(tuplet, 0));
-        colors[i].g = json_object_get_int(json_object_array_get_idx(tuplet, 1));
-        colors[i].b = json_object_get_int(json_object_array_get_idx(tuplet, 2));
-        colors[i].a = 255;
-        if (json_object_array_length(tuplet) >= 4){
-            colors[i].a = json_object_get_int(json_object_array_get_idx(tuplet, 3));
-        }
-    }
+    Image imBlank = GenImageColor(256, 1, BLANK);
+    for(int x = 0; x < 256; x++)
+        ImageDrawPixel(&imBlank, x, 0, f->palette[x]);
+    UnloadTexture(f->paletteTexture);
+    f->paletteTexture = LoadTextureFromImage(imBlank);
+    UnloadImage(imBlank);
+    int shaderPalLoc = GetShaderLocation(f->fighterShader, "palette");
+    SetShaderValueTexture(f->fighterShader, shaderPalLoc, f->paletteTexture);
 }
 
-// TODO(#9): Clean up Game_SpriteInit; it does way more than just sprites.
-void Fighter_SpriteInit(Fighter* f, char* path){
-
-    // background = LoadTexture("Graphics/Background/training-big.png");
-
+struct json_object* Fighter_GetParsedJson(char* path){
     FILE* fp;
     fp = fopen(path, "r");
     if(!fp){
@@ -332,63 +330,61 @@ void Fighter_SpriteInit(Fighter* f, char* path){
     fclose(fp);
 
     struct json_object* parsed_json = json_tokener_parse(buffer);
+    return parsed_json;
+
+}
+
+// TODO(#9): Clean up Game_SpriteInit; it does way more than just sprites.
+void Fighter_SpriteInit(Fighter* f, char* path){
+
+
+    struct json_object* parsed_json = Fighter_GetParsedJson(path);
 
     struct json_object* actions;
     struct json_object* motions;
 
 
-    // for(int i = 0; i < 2; i++){
+    //////////
+    // General
+    f->name = json_get_string(parsed_json, "name");
+    f->maxJumps = json_get_int(parsed_json, "maxJumps");
+    f->maxHealth = json_get_int(parsed_json, "maxHealth");
+    f->maxMeter = json_get_int(parsed_json, "maxMeter");
+    f->maxMana = json_get_int(parsed_json, "maxMana");
+    f->gravity = json_get_int(parsed_json, "gravity");
+    
+    /////////////
+    // Animations
 
-        // Player* p = &currentMatch.players[i];
+    const char* result = Fighter_ReadAnimations(f, parsed_json);
+    if(result){
+        printf("Error: %s", result);
+        return;
+    } else{
+        puts("Made animations");
+    }
 
-        //////////
-        // General
-        f->name = json_get_string(parsed_json, "name");
-        f->maxJumps = json_get_int(parsed_json, "maxJumps");
-        f->maxHealth = json_get_int(parsed_json, "maxHealth");
-        f->maxMeter = json_get_int(parsed_json, "maxMeter");
-        f->maxMana = json_get_int(parsed_json, "maxMana");
-        f->gravity = json_get_int(parsed_json, "gravity");
-        
-        /////////////
-        // Animations
+    //////////
+    // Actions
+    result = Fighter_ReadActions(f, parsed_json);
+    if(result){
+        printf("Error: %s", result);
+        return;
+    } else{
+        puts("Made actions");
+    }
 
-        // 256x3/4
-        Color colors[256];
-        Fighter_GetPalette(parsed_json, 0, colors);
+    //////////
+    // Motions
+    result = Fighter_ReadMotions(f, parsed_json);
+    if(result){
+        printf("Error: %s", result);
+        return;
+    } else{
+        puts("Made motions");
+    }
 
-        memcpy(f->palette, colors, 256 * 4);
-
-        const char* result = Fighter_ReadAnimations(f, parsed_json, colors);
-        if(result){
-            printf("Error: %s", result);
-            return;
-        } else{
-            puts("Made animations");
-        }
-
-        //////////
-        // Actions
-        result = Fighter_ReadActions(f, parsed_json);
-        if(result){
-            printf("Error: %s", result);
-            return;
-        } else{
-            puts("Made actions");
-        }
-
-        //////////
-        // Motions
-        result = Fighter_ReadMotions(f, parsed_json);
-        if(result){
-            printf("Error: %s", result);
-            return;
-        } else{
-            puts("Made motions");
-        }
-
-        f->portrait = LoadTexture("Graphics/Fighter/Shoto/aoko_portrait.png");
-    // }
+    f->portrait = LoadTexture("Graphics/Fighter/Shoto/aoko_portrait.png");
 }
 
 
@@ -433,12 +429,12 @@ const char* Fighter_ReadMotions(Fighter* fighter, struct json_object* parsed_jso
 
         struct json_object* motion = json_object_array_get_idx(motions, i);
 
-        char* name       = json_get_string(motion, "name");
-        char* pattern    = json_get_string(motion, "pattern");
-        int priority     = json_get_int(motion, "priority");
-        bool airOk       = json_get_default_bool(motion, "airOk", false);
-        char* actionName = json_get_default_string(motion, "action", name);
-        int bufferSize   = json_get_default_int(motion, "bufferSize", 0);
+        const char* name        = json_get_string(motion, "name");
+        const char* pattern     = json_get_string(motion, "pattern");
+        int priority            = json_get_int(motion, "priority");
+        bool airOk              = json_get_default_bool(motion, "airOk", false);
+        const char* actionName  = json_get_default_string(motion, "action", name);
+        int bufferSize          = json_get_default_int(motion, "bufferSize", 0);
 
         int len = sb_count(fighter->actions);
         int j = Action_FindIndexByName(fighter->actions, len, actionName);

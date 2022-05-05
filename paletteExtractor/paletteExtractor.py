@@ -1,25 +1,16 @@
 #!/usr/bin/python
 
-########################################################
-# This program takes any number of directories as input.
-# For each directory, it will stack all png images in the directory on top of one another.
-# (NOTE: each image is intended to be the same size; if they are not, then this will likely crash.)
-# From this stack, it will find the bounding box of non-transparent pixels.
-# The images are then cropped to that bounding box, concatanated horizontally,
-# and the result is saved with the width of the box in the filename.
-#
-# Written 2020-7-20 by someone who doesn't believe in copyright.
-
 from os import listdir
 from os.path import isfile, join
 from sys import argv
 import PIL
 from PIL import Image
 
-def Main():
+def Main(i):
+    inpath = f"aokopals/{i:02}"
 
-    red = PIL.Image.open("red.png")
-    blueTrue = PIL.Image.open("blue.png")
+    red = PIL.Image.open("red.png") # Official paletted version
+    blueTrue = PIL.Image.open(inpath + ".png") # Bootleg rgb to palettize
     redTrue = red.convert("RGBA")
     blue = blueTrue.convert("P")
 
@@ -61,10 +52,32 @@ def Main():
 
     red.palette.palette = bytes(redpalba)
 
-    red.palette.save("redalt.txt")
+    red.palette.save(inpath + ".txt")
 
 
 
 
-Main()
+for i in range(34):
+    Main(i)
 
+
+def Post(i):
+    f = open(f"aokopals/{i:02}.txt", 'r')
+    lines = f.readlines()[2:]
+    f.close()
+    f = open(f"aokopals/{i:02}.txt", 'w')
+    f.write("[")
+
+    for line in lines:
+        line = line.strip()
+        line = line.split(" ")
+        r,g,b = line[1:]
+        f.write(f"[{r:>3}, {g:>3}, {b:>3}],")
+
+    f.write("],")
+    f.write("\n")
+
+
+
+for i in range(34):
+    Post(i)

@@ -18,7 +18,7 @@ typedef struct animation{
 
 int Animation_FindIndexByName(Animation** a, int size, char* name);
 void Animation_SetLink(Animation* a, Animation* link);
-Animation* Animation_Create(Color colors[256], char* name, char* filename, uint frameCount, uint frameWait, RectI cropRect, int loopStart);
+Animation* Animation_Create(char* name, char* filename, uint frameCount, uint frameWait, RectI cropRect, int loopStart);
 void Animation_Free(Animation* anim);
 
 #endif /* ANIMATION */

@@ -7,6 +7,8 @@
 
 typedef struct ui_button {
     ui_preamble
+    int fontSize;
+
     CallbackFunction on_confirm;
     CallbackFunction on_hold_left;
     CallbackFunction on_hold_right;
@@ -27,7 +29,7 @@ typedef struct ui_button {
 } UiButton;
 
 UiButton* Button_New(char* text, int fontSize);
-void Button_Draw(UiMenu* menu, UiButton* butt);
+void Button_Draw(UiMenu* menu, UiButton* butt, Vec2I offset);
 void Button_Free(UiButton*);
 Vec2I Button_Size(UiButton* butt);
 

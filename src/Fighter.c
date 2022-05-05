@@ -8,9 +8,18 @@
 #include "CC_Audio.h"
 #include "Action.h"
 
+float fighterDrawScale = 1;
+// bool shaderLoaded = false;
+
+
+int selectedBoxIdx = -1;
+enum boxtype selectedBoxType = boxtype_none;
+
 int sign(int x){
     return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
+
+
 
 Fighter* Fighter_Create(char* path){
     Fighter* f = (Fighter*)malloc(1 * sizeof(Fighter));
@@ -19,8 +28,16 @@ Fighter* Fighter_Create(char* path){
     f->animations = NULL;
     f->motions = NULL;
     f->stateHistory = NULL;
+
+    f->opponent = NULL;
     
     Fighter_SpriteInit(f, path);
+    f->fighterShader = LoadShader(0, "testshader.fs");
+
+    // if(!shaderLoaded){
+    //     fighterShader = LoadShader(0, "testshader.fs");
+    //     shaderLoaded = true;
+    // }
 
     return f;
 }
@@ -34,6 +51,9 @@ bool Fighter_Air(Fighter* f){
 }
 
 bool Fighter_OnRight(Fighter* f){
+
+    if (!f->opponent)
+        return false;
 
     FighterState* sh = f->opponent->stateHistory;
     FighterState ls = cb_last(sh);
@@ -53,13 +73,10 @@ bool Fighter_OnRight(Fighter* f){
 
 void Fighter_Damage(Fighter* f, Action* a, bool onRight){
     if(!a){
-        // puts("No a?");
         return;
     }
 
     int right = onRight ? 1 : -1;
-
-    printf("%s hit by %s (hs:%d)\n", f->name, a->name, a->hitstun);
     
     FighterState* fs = &cb_last(f->stateHistory);
     int staggerIndex    = Action_FindIndexByName(f->actions, sb_count(f->actions), "Stagger");
@@ -87,7 +104,6 @@ void Fighter_Damage(Fighter* f, Action* a, bool onRight){
     }
     if(a->hardKnockdown){
         fs->stateFlags = fs->stateFlags | FF_HARD_KD;
-        // fs->subframe = a->hitStop;
     }
     if(fs->stateFlags & FF_AIR){
         Fighter_StartActionIndex(f, airStaggerIndex, a->hitstun);
@@ -180,27 +196,43 @@ void Fighter_DrawSprite(Fighter* f, RectI camera){
     
     RectI* ricc = curAnim->spriteClips[fs->animation->currentFrame / curAnim->frameWait];
     
-    Rectangle currentClip = {
-         ricc->x,ricc->y, ricc->w, ricc->h
-    };
+    Rectangle currentClip = { ricc->x, ricc->y, ricc->w, ricc->h };
 
-    Vector2 target = {
-        (fs->position.x - camera.x) * UNIT_TO_PIX - currentClip.width/2,
-        (fs->position.y - camera.y) * UNIT_TO_PIX - currentClip.height
-    };
 
     int flip = Fighter_OnRight(f);
-    currentClip.width *= -1            * ((flip == 1) - (flip == 0));
-    currentClip.x += currentClip.width * ((flip == 1));
+    currentClip.width *= !flip - flip;
+    currentClip.x += currentClip.width * flip;
+    
+    Rectangle targetRect = {
+        .x = (fs->position.x - camera.x) * UNIT_TO_PIX - abs(currentClip.width)/2 * fighterDrawScale,
+        .y = (fs->position.y - camera.y) * UNIT_TO_PIX - abs(currentClip.height) * fighterDrawScale,
+        .width  = abs(currentClip.width) * fighterDrawScale,
+        .height = abs(currentClip.height) * fighterDrawScale
+        };
 
-    DrawTextureRec(fs->animation->texture, currentClip, target, WHITE);
+
+    BeginShaderMode(f->fighterShader);
+    // int shaderPalLoc = GetShaderLocation(f->fighterShader, "palette");
+    // SetShaderValueTexture(f->fighterShader, shaderPalLoc, f->paletteTexture);
+    // Draw a part of a texture defined by a rectangle with 'pro' parameters
+    DrawTexturePro(
+        fs->animation->texture, // Texture
+        currentClip,            // Source rect
+        targetRect,             // Destination rect
+        (Vector2){0,0},         // Origin
+        0,                      // Rotation
+        WHITE                   // Tint
+    );
+    EndShaderMode();
+
+    // fs->animation->texture.width = abs(fs->animation->texture.width);
 
     // Advance the frame
     assert(f && "no fighter");
     assert(f->stateHistory && "no history");
     assert(&(cb_last(f->stateHistory)) && "no 0th");
 
-    if(!currentMatch.history->hitStop && !currentMatch.paused){
+    if(!cb_last(currentMatch.history).hitStop && !currentMatch.paused){
         fs->animation->currentFrame++;
     }
 
@@ -220,15 +252,15 @@ void Fighter_ChangeAnimation(Fighter* f, Animation* newAnimation){
         cb_last(f->stateHistory).animation->currentFrame = cb_last(f->stateHistory).animation->frameWait * newAnimation->loopStart;
     }
     else{
-        cb_last(f->stateHistory).animation->currentFrame = 0;
         cb_last(f->stateHistory).animation = newAnimation;
+        cb_last(f->stateHistory).animation->currentFrame = 0;
     }
 }
 
 void Fighter_DrawPoint(Fighter* f, RectI camera){
     DrawRectangle(
-        (cb_last(f->stateHistory).position.x - 1 - camera.x) * UNIT_TO_PIX,
-        (cb_last(f->stateHistory).position.y - 1 - camera.y) * UNIT_TO_PIX,
+        (cb_last(f->stateHistory).position.x * fighterDrawScale - 1 - camera.x) * UNIT_TO_PIX,
+        (cb_last(f->stateHistory).position.y * fighterDrawScale - 1 - camera.y) * UNIT_TO_PIX,
         3,
         3,
         WHITE
@@ -237,6 +269,7 @@ void Fighter_DrawPoint(Fighter* f, RectI camera){
  
 void Fighter_DrawHitboxes(Fighter* f, RectI camera){
     Action* a = cb_last(f->stateHistory).action;
+    
     for(int i = 0; i < sb_count(a->hitboxes); i++){
         if(a->hitboxes[i]->active != HB_ACTIVE){
             continue;
@@ -247,14 +280,18 @@ void Fighter_DrawHitboxes(Fighter* f, RectI camera){
         if (Fighter_OnRight(f)){
             hbr = Rect_Flip_Draw(hbr);
         }
-        DrawRectangle(
-            (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
-            (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
-            hbr.size.x * UNIT_TO_PIX,
-            hbr.size.y * UNIT_TO_PIX,
-            (Color){255, 0, 0, 127}
-        );
 
+        int selected = selectedBoxType == boxtype_none || (selectedBoxType == boxtype_hit && (selectedBoxIdx == i || selectedBoxIdx < 0));
+        int opac = 127 * selected + 64 * !selected;
+        opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_hit);
+
+        DrawRectangle(
+            ((hbr.pos.x + cb_last(f->stateHistory).position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+            ((hbr.pos.y + cb_last(f->stateHistory).position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+            hbr.size.x * UNIT_TO_PIX * fighterDrawScale,
+            hbr.size.y * UNIT_TO_PIX * fighterDrawScale,
+            (Color){255, 0, 0, opac}
+        );
     }
 }
 
@@ -270,12 +307,17 @@ void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
         if (Fighter_OnRight(f)){
             hbr = Rect_Flip_Draw(hbr);
         }
+
+        int selected = selectedBoxType == boxtype_none || (selectedBoxType == boxtype_hurt && (selectedBoxIdx == i || selectedBoxIdx < 0));
+        int opac = 127 * selected + 64 * !selected;
+        opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_hurt);
+
         DrawRectangle(
-            (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
-            (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
-            hbr.size.x * UNIT_TO_PIX,
-            hbr.size.y * UNIT_TO_PIX,
-            (Color){0, 255, 0, 127}
+            ((hbr.pos.x + cb_last(f->stateHistory).position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+            ((hbr.pos.y + cb_last(f->stateHistory).position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+            hbr.size.x * UNIT_TO_PIX * fighterDrawScale,
+            hbr.size.y * UNIT_TO_PIX * fighterDrawScale,
+            (Color){0, 255, 0, opac}
         );
     }
 }
@@ -286,12 +328,17 @@ void Fighter_DrawCollisionbox(Fighter* f, RectI camera){
     if (Fighter_OnRight(f)){
         hbr = Rect_Flip_Draw(hbr);
     }
+
+    int selected = selectedBoxType == boxtype_none || selectedBoxType == boxtype_shove;
+    int opac = 127 * selected + 64 * !selected;
+    opac += 100 * selectedBoxType == boxtype_shove;
+
     DrawRectangle(
-        (hbr.pos.x + cb_last(f->stateHistory).position.x - camera.x) * UNIT_TO_PIX,
-        (hbr.pos.y + cb_last(f->stateHistory).position.y - camera.y) * UNIT_TO_PIX,
-        (hbr.size.x) * UNIT_TO_PIX,
-        (hbr.size.y) * UNIT_TO_PIX,
-        (Color){255, 255, 255, 127}
+        ((hbr.pos.x + cb_last(f->stateHistory).position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+        ((hbr.pos.y + cb_last(f->stateHistory).position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+        (hbr.size.x) * UNIT_TO_PIX * fighterDrawScale,
+        (hbr.size.y) * UNIT_TO_PIX * fighterDrawScale,
+        (Color){255, 255, 255, opac}
     );
 }
 

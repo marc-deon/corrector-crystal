@@ -22,12 +22,6 @@ Match Match_Init(){
 
     m.history = cb_init(m.history, MAX_REWIND);
     cb_push(m.history, (MatchState){});
-    /*Expanded*/
-
-    // stb__cbinitf(m.history, MAX_REWIND, sizeof(*(m.history)));
-    // m.history = &(m.history)[((long int *) (void *) (m.history) - 3)[1]-(MAX_REWIND)];
-    
-    /*        */
 
     cb_last(m.history).currentTime = m.maxTime; 
     cb_last(m.history).hitStop = 0;

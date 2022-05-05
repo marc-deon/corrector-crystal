@@ -5,9 +5,6 @@
 #include "Ui_Types.h"
 
 
-// TODO: Variable font size
-#define FONTSIZE 20
-
 Font mmbuttfont;
 
 Texture _button_base_texture_normal;
@@ -19,15 +16,18 @@ Texture _button_base_texture_pressed;
 UiButton* Button_New(char* text, int fontSize){
     mmbuttfont = GetFontDefault();
 
-    _button_base_texture_normal = LoadTexture("Graphics/Ui/button1.png");
-    _button_base_texture_p1hover = LoadTexture("Graphics/Ui/button2.png");
-    _button_base_texture_p2hover = LoadTexture("Graphics/Ui/button2.png");
-    _button_base_texture_bothhover = LoadTexture("Graphics/Ui/button2.png");
+    _button_base_texture_normal = LoadTexture("Graphics/Ui/asabutton1.png");
 
-    _button_base_texture_pressed = LoadTexture("Graphics/Ui/button3.png");
+    _button_base_texture_p1hover = LoadTexture("Graphics/Ui/asabutton2.png");
+    _button_base_texture_p2hover = LoadTexture("Graphics/Ui/asabutton2.png");
+    _button_base_texture_bothhover = LoadTexture("Graphics/Ui/asabutton2.png");
+
+    _button_base_texture_pressed = LoadTexture("Graphics/Ui/asabutton3.png");
 
     UiButton* butt = malloc(sizeof(UiButton));
+    butt->id = uiidcount++;
     butt->hcentered = 0;
+    butt->vcentered = 0;
     butt->up    = NULL;
     butt->down  = NULL;
     butt->left  = NULL;
@@ -43,13 +43,15 @@ UiButton* Button_New(char* text, int fontSize){
     butt->texture_bothhover = _button_base_texture_bothhover;
     butt->texture_pressed = _button_base_texture_pressed;
 
+    butt->fontSize = fontSize;
+
     butt->string_text = (char*)malloc(TextLength(text) * sizeof(char) + 5);
     TextCopy(butt->string_text, text);
     butt->type = UI_TYPE_BUTTON;
     return butt;
 }
 
-void Button_Draw(UiMenu* menu, UiButton* butt){
+void Button_Draw(UiMenu* menu, UiButton* butt, Vec2I offset){
     RectI buttrect;
     Texture button_texture = butt->texture_normal;
 
@@ -66,18 +68,16 @@ void Button_Draw(UiMenu* menu, UiButton* butt){
     }
 
 
-    buttrect = (RectI) {butt->position.x, butt->position.y, button_texture.width, button_texture.height};
+    buttrect = (RectI) {butt->position.x + offset.x, butt->position.y + offset.y, button_texture.width, button_texture.height};
+    // printf("but %d at %d %d\n", butt->id, buttrect.x, buttrect.y);
 
-    // Center words
     // TODO: If I understand right, this assumes a single value for kerning spacing? Probably bad for some fonts
-    Vector2 v = MeasureTextEx(GetFontDefault(), butt->string_text, FONTSIZE, 2);
-    int textx = butt->position.x + buttrect.w/2 - v.x/2;
-    int texty = butt->position.y + buttrect.h/2 - v.y/2;
+    Vector2 v = MeasureTextEx(GetFontDefault(), butt->string_text, butt->fontSize, 2);
+    int textx = butt->position.x + offset.x + buttrect.w/2 - v.x/2;
+    int texty = butt->position.y + offset.y + buttrect.h/2 - v.y/2;
 
-    printf("%s at %d %d\n", butt->string_text, butt->position.x, butt->position.y);
-
-    DrawTexture(button_texture, butt->position.x, butt->position.y, WHITE);
-    DrawText(butt->string_text, textx, texty, FONTSIZE, WHITE);
+    DrawTexture(button_texture, buttrect.x, buttrect.y, WHITE);
+    DrawText(butt->string_text, textx, texty, butt->fontSize, WHITE);
 }
 
 void Button_Free(UiButton* b){

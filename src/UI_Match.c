@@ -40,6 +40,8 @@ Texture p2wing;
 Texture p1nameplate;
 Texture p2nameplate;
 
+int shaderPalLoc;
+
 void Ui_Match_MakeRects(){
     p1HealthRectUnder.x = 50; 
     p1HealthRectUnder.y = 10;
@@ -105,6 +107,10 @@ bool Ui_Match_Init(Match* m){
 
     Fighter* f1 = m->players[0].pointCharacter;
     Fighter* f2 = m->players[1].pointCharacter;
+
+    // shaderPalLoc = GetShaderLocation(fighterShader, "palette");
+    // SetShaderValueTexture(fighterShader, shaderPalLoc, p1->pointCharacter->paletteTexture);
+    // SetShaderValueTexture(fighterShader, shaderPalLoc, p2->pointCharacter->paletteTexture);
 
     p1wing = LoadTexture("Graphics/Ui/wing-2-feather-left.png");
     p2wing = LoadTexture("Graphics/Ui/wing-2-feather-right.png");
@@ -182,11 +188,17 @@ void DrawHUD(Match* m){
     DrawText(times, VIRT_SCREEN_SIZE_X/2 - v.x/2, 25 - v.y/2, TIMERFONTSIZE, BLACK);
 
     // Draw Names
+    // Draw the plate twice; once without shader for the border and background, then again for the colors
     DrawTexture(p1nameplate, 0, 55, WHITE);
-    // DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X - p2nameplate.width, 55, WHITE);
+    BeginShaderMode(p1->pointCharacter->fighterShader);
+    DrawTexture(p1nameplate, 0, 55, WHITE);
+    EndShaderMode();
     DrawText(p1->pointCharacter->name, 5+p1nameOffset.x, 55+p1nameOffset.y, NAMEFONTSIZE, WHITE);
     v = MeasureTextEx(GetFontDefault(), p2->pointCharacter->name, NAMEFONTSIZE, 2);
     DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X-p2nameplate.width, 55, WHITE);
+    BeginShaderMode(p2->pointCharacter->fighterShader);
+    DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X-p2nameplate.width, 55, WHITE);
+    EndShaderMode();
     DrawText(p2->pointCharacter->name, VIRT_SCREEN_SIZE_X - v.x - 5 - p2nameOffset.x, 55 + p2nameOffset.y, NAMEFONTSIZE, WHITE);
 
     // #pragma region Portaits

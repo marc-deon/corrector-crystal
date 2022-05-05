@@ -18,7 +18,7 @@ void Animation_SetLink(Animation* a, Animation* link){
     a->linksTo = link;
 }
 
-Animation* Animation_Create(Color colors[256], char* name, char* filename, uint frameCount, uint frameWait, RectI cropRect, int loopStart){
+Animation* Animation_Create(char* name, char* filename, uint frameCount, uint frameWait, RectI cropRect, int loopStart){
 
     // Allocate
     Animation* anim = malloc(sizeof(Animation));
@@ -51,7 +51,7 @@ Animation* Animation_Create(Color colors[256], char* name, char* filename, uint 
     // // Unload image
     // UnloadImage(img);
 
-    printf("Loading anim from sheet %s\n", filename);
+    // printf("Loading anim from sheet %s\n", filename);
     Texture t = LoadTexture(filename);
     
     anim->texture = t;

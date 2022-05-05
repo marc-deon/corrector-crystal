@@ -10,6 +10,14 @@
 
 typedef unsigned short ushort;
 
+enum boxtype {
+    boxtype_none,
+    boxtype_hit,
+    boxtype_hurt,
+    boxtype_shove,
+    boxtype_max
+};
+
 typedef struct hitbox {
     RectI rect;
     

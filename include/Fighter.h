@@ -3,6 +3,10 @@
 
 typedef struct fighter Fighter;
 
+extern float fighterDrawScale;
+extern int selectedBoxIdx;
+extern enum boxtype selectedBoxType;
+
 #include "Vec2I.h"
 #include "Player.h"
 #include "Hitbox.h"
@@ -13,6 +17,8 @@ typedef struct fighter Fighter;
 #include "FighterFlags.h"
 #include "Action.h"
 #include "Stick.h"
+
+// extern Shader fighterShader;
 
 typedef struct fighterState{
 
@@ -48,6 +54,8 @@ typedef struct fighter {
     char* name;
     Color palette[256];
     uint paletteNumber;
+    Texture paletteTexture;
+    Shader fighterShader;
     
     uint maxJumps;
     int maxHealth;

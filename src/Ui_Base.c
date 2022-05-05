@@ -4,6 +4,7 @@
 #include "stdio.h"
 
 UiMenu** _ui_focus_stack = 0;
+int uiidcount = 0;
 
 // Use with caution!
 void** Ui_GetFocusStack(){
@@ -45,23 +46,21 @@ Vec2I UiElement_Size(UiElement* elem){
     Vec2I size = (Vec2I){-1, -1};
     switch(elem->type){
         case UI_TYPE_BUTTON:
-            // printf("Found UI_TYPE_BUTTON\n");
             size = Button_Size(mqui_as_button(elem));
             break;
         case UI_TYPE_LABEL:
-            // printf("Found UI_TYPE_LABEL\n");
             size = Label_Size(mqui_as_label(elem));
             break;
         case UI_TYPE_MENU:
-            // printf("Found UI_TYPE_MENU\n");
             size = Menu_Size(mqui_as_menu(elem));
             break;
             
         case UI_TYPE_LIST:
-            printf("list size\n");
+            // printf("list size\n");
             break;
 
         case UI_TYPE_PREVIEW:
+            size = (Vec2I){720, 720};
             break;
 
         default:
@@ -70,6 +69,5 @@ Vec2I UiElement_Size(UiElement* elem){
             break;
     }
 
-    // printf("calculated size is %d %d type %d\n", size.x, size.y, elem->type);
     return size;
 }

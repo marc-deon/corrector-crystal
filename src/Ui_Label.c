@@ -10,8 +10,8 @@ const Color mmlWHITE = (Color){255, 255, 255, 255};
 UiLabel* Label_New(UiMenu* menu, char* text){
     mmlabelfont = LoadFont("Graphics/Fonts/Recursive-Bold.ttf");
     
-
     UiLabel* label = malloc(sizeof(UiLabel));
+    label->id = uiidcount++;
     label->hcentered = 1;
     label->up = label->down = label->left = label->right = NULL;
 
@@ -25,10 +25,10 @@ UiLabel* Label_New(UiMenu* menu, char* text){
     return label;
 }
 
-void Label_Draw(UiMenu* menu, UiLabel* label){
+void Label_Draw(UiMenu* menu, UiLabel* label, Vec2I offset){
     
     
-    DrawText(label->string_text, label->position.x, label->position.y, 20, WHITE);
+    DrawText(label->string_text, label->position.x + offset.x, label->position.y + offset.y, 20, WHITE);
 }
 
 void Label_Free(UiLabel* l){

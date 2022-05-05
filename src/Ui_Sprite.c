@@ -4,6 +4,7 @@
 UiSprite* Sprite_New(UiMenu* menu, char* path){
 
     UiSprite* sprite = malloc(sizeof(UiSprite));
+    sprite->id = uiidcount++;
     sprite->type = UI_TYPE_SPRITE;
 
     sprite->hcentered = 0;
@@ -20,9 +21,8 @@ UiSprite* Sprite_New(UiMenu* menu, char* path){
     return sprite;
 }
 
-void Sprite_Draw(UiMenu* menu, UiSprite* sprite){
-    DrawTexture(sprite->texture, sprite->position.x, sprite->position.y, WHITE);
-    printf("Drawing texture at %d %d\n", sprite->position.x, sprite->position.y);
+void Sprite_Draw(UiMenu* menu, UiSprite* sprite, Vec2I offset){
+    DrawTexture(sprite->texture, sprite->position.x + offset.x, sprite->position.y + offset.y, WHITE);
 }
 
 void Sprite_Free(UiSprite* sprite){

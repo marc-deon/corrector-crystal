@@ -11,7 +11,7 @@ typedef struct ui_label {
 } UiLabel;
 
 UiLabel* Label_New(UiMenu* menu, char* text);
-void Label_Draw(UiMenu* menu, UiLabel* label);
+void Label_Draw(UiMenu* menu, UiLabel* label, Vec2I offset);
 void Label_Free(UiLabel* l);
 Vec2I Label_Size(UiLabel* butt);
 
