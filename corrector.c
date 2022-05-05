@@ -4,6 +4,7 @@
 // #define DRAWCOLLISIONBOX
 // #define DRAWHURTBOXES
 // #define DRAWHITBOXES
+#define SUPERMAN "newchara.json"
 
 int asamiya = 0;
 
@@ -128,11 +129,11 @@ void CC_CLOSE(){
 
 void Game_PlayerInit(){
     currentMatch.players[0].stick =          &p1Stick;
-    currentMatch.players[0].pointCharacter = Fighter_Create("fighterData/superman.jsonc");
-    void* parsed = Fighter_GetParsedJson("fighterData/superman.jsonc");
+    currentMatch.players[0].pointCharacter = Fighter_Create(SUPERMAN);
+    void* parsed = Fighter_GetParsedJson(SUPERMAN);
     Fighter_GetPalette(currentMatch.players[0].pointCharacter, p1Pal);
     currentMatch.players[1].stick =          &p2Stick;
-    currentMatch.players[1].pointCharacter = Fighter_Create("fighterData/superman.jsonc");
+    currentMatch.players[1].pointCharacter = Fighter_Create(SUPERMAN);
 
     Fighter_GetPalette(currentMatch.players[1].pointCharacter, p2Pal);
 }
@@ -268,12 +269,12 @@ int CC_ProcessInput(){
     p2Pal = (maxpal + p2Pal) % maxpal;
 
     // if (p1Pal != oldPal[0]){
-    //     void* parsed = Fighter_GetParsedJson("fighterData/superman.jsonc");
+    //     void* parsed = Fighter_GetParsedJson(SUPERMAN);
     //     Fighter_GetPalette(currentMatch.players[0].pointCharacter, parsed, p1Pal);
     // }
 
     if (p2Pal != oldPal[1]){
-        void* parsed = Fighter_GetParsedJson("fighterData/superman.jsonc");
+        void* parsed = Fighter_GetParsedJson(SUPERMAN);
         Fighter_GetPalette(currentMatch.players[1].pointCharacter, p2Pal);
     }
 

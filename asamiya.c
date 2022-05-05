@@ -5,6 +5,7 @@
 #include "stretchy_buffer.h"
 #include "Match.h"
 #include "Fighter.h"
+#include "Fighter_Read.h"
 #include "Fighter_Write.h"
 #include "Ui_Types.h"
 #include "circular_buffer.h"
@@ -246,6 +247,8 @@ void SetupData(){
 
 void SetupFighter(){
     Fighter* f = asamiya_f = Fighter_Create("fighterData/superman.jsonc");
+    Fighter_GetPalette(f, 0);
+
     f->stateHistory = cb_init(f->stateHistory, MAX_REWIND);
     cb_push(f->stateHistory, (FighterState){});
     FighterState* fs = &cb_last(f->stateHistory);

@@ -34,11 +34,6 @@ Fighter* Fighter_Create(char* path){
     Fighter_SpriteInit(f, path);
     f->fighterShader = LoadShader(0, "testshader.fs");
 
-    // if(!shaderLoaded){
-    //     fighterShader = LoadShader(0, "testshader.fs");
-    //     shaderLoaded = true;
-    // }
-
     return f;
 }
 
