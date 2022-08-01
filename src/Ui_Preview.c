@@ -65,6 +65,6 @@ void Preview_Draw(UiPreview* p, Vec2I offset){
     Fighter_DrawHurtboxes(asamiya_f, previewCamera);
     Fighter_DrawPoint(asamiya_f, previewCamera);
 
-    printf("Fighter drawn\n");
+    // printf("Fighter drawn\n");
 
 }

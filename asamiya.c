@@ -10,48 +10,21 @@
 #include "Ui_Types.h"
 #include "circular_buffer.h"
 #include "stretchy_buffer.h"
+#include "Ui_List.h"
 
 #define MOUSEWHEEL_UP (1f)
 #define MOUSEWHEEL_DOWN (-1f)
 
-typedef struct {
-    int itemCount;
-    int focusIndex;  // Which item is currently hovered
-    int scrollIndex; // Which item to begin drawing at
-    int activeIndex; // Which item is currently active
-    int maxHeight;
-    char** items;
-
-} ListViewInfo;
-
-ListViewInfo shoppingList = {
-    .itemCount   = -1,
-    .focusIndex  = -1,
-    .scrollIndex = -1,
-    .activeIndex = -1,
-    .maxHeight   = -1,
-    .items = NULL
-};
-
-////////////////////
-// Move to new files
-
-typedef struct {
-    ui_preamble
-
-    void* itemSource;
-
-} UiList;
+// ListViewInfo shoppingList = {
+//     .itemCount   = -1,
+//     .focusIndex  = -1,
+//     .scrollIndex = -1,
+//     .activeIndex = -1,
+//     .maxHeight   = -1,
+//     .items = NULL
+// };
 
 
-
-UiList* List_New(){
-    UiList* l = malloc(sizeof(UiList));
-    l->position = (Vec2I) {0,0};
-    l->id = uiidcount++;
-    l->type = UI_TYPE_LIST;
-    l->itemSource = NULL;
-}
 
 // Loop through every box:
 //     If the nth box has a size of (0,0), swap it with the n+1th box.
@@ -114,45 +87,45 @@ void cb_SwapToAnimations(){
     printf("Swapping to Animations\n");
 }
 
-void List_Draw(ListViewInfo* lvi, Vector2 offset){
-    int height = 0;
-    int y = 0;
-    const int FONTSIZE = 20;
+void InspectAnimation(){
+    
+}
 
-    for(int i = lvi->scrollIndex; (i < lvi->itemCount) && (height <= lvi->maxHeight); i++){
-        Font f = GetFontDefault();
-        char* text = lvi->items[i];
-        Vector2 size = MeasureTextEx(f, text, FONTSIZE, 2);
-        height += size.y;
-        y += size.y;
+void InspectAction(){
 
-        Color color = lvi->activeIndex == i ? GREEN : lvi->focusIndex == i ? WHITE : GRAY;
-
-        if (height <= lvi->maxHeight){
-            DrawText(lvi->items[i], offset.x, y + offset.y, FONTSIZE, color);
-        }
-    }
 }
 
 void cb_tab_act(){
-    // Generate list info based on fighter actions
-    shoppingList.itemCount = sb_count(asamiya_f->actions);
-    shoppingList.focusIndex = 0;
-    shoppingList.scrollIndex = 0;
-    shoppingList.activeIndex = 0;
-    // shoppingList.maxHeight 
 
-    shoppingList.items = (char**) malloc(shoppingList.itemCount * sizeof(char*));
+    // UiList* list = mqui_as_menu(root->elements[0])->elements[1];
+    // ListViewInfo* = &(list->data);
 
-    for (size_t i = 0; i < shoppingList.itemCount; i++)
-    {
-        shoppingList.items[i] = (char*) malloc(TextLength(asamiya_f->actions[i]->name ) + 1);
-        TextCopy(shoppingList.items[i], asamiya_f->actions[i]->name);
-        // printf("[%s]\n", shoppingList.items[i]);
-    }
+    // // Free data if already present
+    // if(listData->items){
+    //     for(int i = 0; i < listData->itemCount; i++){
+    //         free(listData->items[i]);
+    //     }
+    //     free(listData->items);
+    // }
+
+    // // Generate list info based on fighter actions
+    // listData->itemCount = sb_count(asamiya_f->actions);
+    // listData->focusIndex = 0;
+    // listData->scrollIndex = 0;
+    // listData->activeIndex = 0;
+
+
+    // listData->items = (char**) malloc(listData->itemCount * sizeof(char*));
+
+    // for (size_t i = 0; i < listData->itemCount; i++)
+    // {
+    //     listData->items[i] = (char*) malloc(TextLength(asamiya_f->actions[i]->name ) + 1);
+    //     TextCopy(listData->items[i], asamiya_f->actions[i]->name);
+    // }
     
     
-    // Disable hitboxes button
+    // // Disable hitboxes button
+
 
 }
 
@@ -165,8 +138,8 @@ void cb_alist_click(){
 }
 
 void cb_alist_scroll(int dir){
-    printf("scroll\n");
-    shoppingList.activeIndex = max(0, min(shoppingList.itemCount-1, shoppingList.activeIndex + dir));
+    // printf("scroll\n");
+    // shoppingList.activeIndex = max(0, min(shoppingList.itemCount-1, shoppingList.activeIndex + dir));
 
 }
 
