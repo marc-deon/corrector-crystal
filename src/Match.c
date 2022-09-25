@@ -7,7 +7,7 @@
 #define FRAMES_PER_SECOND 60
 #define MAX_ROUNDS 2
 
-Match Match_Init(){
+Match Match_Init() {
     Match m;
     m.type = UI_TYPE_MATCH;
     m.paused = false;
@@ -21,14 +21,14 @@ Match Match_Init(){
     m.history = NULL;
 
     m.history = cb_init(m.history, MAX_REWIND);
-    cb_push(m.history, (MatchState){});
+    cb_push(m.history, (MatchState) {});
 
     cb_last(m.history).currentTime = m.maxTime; 
     cb_last(m.history).hitStop = 0;
     return m;
 }
 
-void Match_End(Match* m){
+void Match_End(Match* m) {
     cb_free(m->history);
     Fighter_Destroy(m->players[0].pointCharacter);
     Fighter_Destroy(m->players[1].pointCharacter);
@@ -36,13 +36,13 @@ void Match_End(Match* m){
 
 // FIXME: This will have errors on rollback, make sure it's interuptable.
 // 0 is no win, 1 and 2 are players, 3 is a double KO or tied time out.
-int Match_CheckRoundWin(Match* m){
+int Match_CheckRoundWin(Match* m) {
     int i = 0;
     int p1hp = cb_last(m->players[0].pointCharacter->entity->history).currentHealth;
     int p2hp = cb_last(m->players[1].pointCharacter->entity->history).currentHealth;
 
 
-    if(cb_last(m->history).currentTime == 0){
+    if(cb_last(m->history).currentTime == 0) {
         i += (p2hp >= p1hp);
         i += (p2hp >= p1hp)*2;
     }
@@ -57,7 +57,7 @@ int Match_CheckRoundWin(Match* m){
 }
 
 // 0 is no win, 1 and 2 are players, 3 is tie
-int Match_CheckMatchWin(Match* m){
+int Match_CheckMatchWin(Match* m) {
     int i = 0;
     i += m->currentRounds[0] == m->maxRounds;
     i += m->currentRounds[1] == m->maxRounds * 2;

@@ -583,7 +583,7 @@ void ResetRound() {
         Fighter* f = p->pointCharacter;
 
         // Clear Subentities....
-        for (int i = 0; i < sb_count(f->entity->subEntities); i++){
+        for (int i = 0; i < sb_count(f->entity->subEntities); i++) {
             Entity_Destroy(f->entity->subEntities[i]);
         }
 

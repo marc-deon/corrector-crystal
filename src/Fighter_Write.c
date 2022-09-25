@@ -8,7 +8,7 @@
 #include "Fighter_Write.h"
 #include "stretchy_buffer.h"
 
-bool _Fighter_WriteBasic(Fighter* f, json_object* job){
+bool _Fighter_WriteBasic(Fighter* f, json_object* job) {
     json_object_object_add(job, "name", json_object_new_string(f->entity->name));
     json_object_object_add(job, "maxJumps", json_object_new_int(f->maxJumps));
     json_object_object_add(job, "maxHealth", json_object_new_int(f->maxHealth));
@@ -17,13 +17,13 @@ bool _Fighter_WriteBasic(Fighter* f, json_object* job){
     json_object_object_add(job, "gravity", json_object_new_int(f->gravity));
 }
 
-bool _Fighter_SaveAnimations(Fighter* f, json_object* job){
+bool _Fighter_SaveAnimations(Fighter* f, json_object* job) {
 
     json_object* animList = json_object_new_array_ext(sb_count(f->animations));
     json_object_object_add(job, "animations", animList);
 
 
-    for(int i = 0; i < sb_count(f->animations); i++){
+    for(int i = 0; i < sb_count(f->animations); i++) {
 
         json_object* animData = json_object_new_object();
 
@@ -60,13 +60,13 @@ bool _Fighter_SaveAnimations(Fighter* f, json_object* job){
     return true;
 }
 
-bool _Fighter_SaveActions(Fighter* f, json_object* job){
+bool _Fighter_SaveActions(Fighter* f, json_object* job) {
 
     json_object* animList = json_object_new_array_ext(sb_count(f->actions));
     json_object_object_add(job, "actions", animList);
 
 
-    for(int i = 0; i < sb_count(f->actions); i++){
+    for(int i = 0; i < sb_count(f->actions); i++) {
 
         Action* act = f->actions[i];
         json_object* actData = json_object_new_object();
@@ -180,12 +180,12 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job){
     return true;
 }
 
-bool _Fighter_SaveMotions(Fighter* f, json_object* job){
+bool _Fighter_SaveMotions(Fighter* f, json_object* job) {
 
     json_object* motionList = json_object_new_array_ext(sb_count(f->motions));
     json_object_object_add(job, "motions", motionList);
 
-    for(int i = 0; i < sb_count(f->motions); i++){
+    for(int i = 0; i < sb_count(f->motions); i++) {
         Motion* m = f->motions[i];
         json_object* motionData = json_object_new_object();
 
@@ -218,7 +218,7 @@ bool _Fighter_SaveMotions(Fighter* f, json_object* job){
     return true;
 }
 
-bool Fighter_Save(Fighter* f, const char* path){
+bool Fighter_Save(Fighter* f, const char* path) {
 
     printf("Beginning to save fighter [\%s] to [%s]\n", /*f->entity->name,*/ path);
 
@@ -234,7 +234,7 @@ bool Fighter_Save(Fighter* f, const char* path){
     // Write to file
     FILE* fp;
     fp = fopen(path, "w");
-    if(!fp){
+    if(!fp) {
         printf("Problem opening file to write: [%s]...\n", path);
         char cwdpath[80];
         getcwd(cwdpath, 80);

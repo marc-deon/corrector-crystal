@@ -9,7 +9,7 @@
 Fighter* asamiya_f;
 RectI previewCamera;
 
-UiPreview* Preview_New(){
+UiPreview* Preview_New() {
     UiPreview* p = malloc(sizeof(UiPreview));
     p->position = (Vec2I) {0,0};
     p->id = uiidcount++;
@@ -40,7 +40,7 @@ const Color boxcolors[] = {
     WHITE
 };
 
-void Preview_Draw(UiPreview* p, Vec2I offset){
+void Preview_Draw(UiPreview* p, Vec2I offset) {
     Action* act = cb_last(asamiya_f->entity->history).currentAction;
     Animation* ani = cb_last(asamiya_f->entity->history).currentAnimation;
     int y = 2;
@@ -76,7 +76,7 @@ void Preview_Draw(UiPreview* p, Vec2I offset){
     text = TextFormat("%d", sb_count(act->hurtboxes));
     DrawText(text, p->position.x + offset.x + 2 + textSize, p->position.y + offset.y + y, FONTSIZE, GREEN);  y += 20;
 
-    if(selectedBoxType == boxtype_hit && selectedBoxIdx >= 0){
+    if(selectedBoxType == boxtype_hit && selectedBoxIdx >= 0) {
         RectI r = act->hitboxes[selectedBoxIdx]->rect;
         text = TextFormat("%d %d %d %d", r.x, r.y, r.w, r.h);
         DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;

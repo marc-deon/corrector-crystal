@@ -8,13 +8,13 @@ Stick p2Stick = {.playerNumber = 2};
 
 
 
-void SaveInput(){
+void SaveInput() {
     // Save Old
     QF_CopyKeyArray(currentKeyStates, previousKeyStates);
 }
 
 
-void UpdateInput(){
+void UpdateInput() {
     // Get New
     QF_Update();
     

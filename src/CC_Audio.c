@@ -102,9 +102,9 @@ float volumeMusic = 0;
 float volumeSfx = 0;
 float volumeVocal = 0;
 
-bool CC_Audio_Init(){
+bool CC_Audio_Init() {
     InitAudioDevice();
-    if (IsAudioDeviceReady()){
+    if (IsAudioDeviceReady()) {
         printf("Audio ready\n");
     }
     else{
@@ -113,25 +113,25 @@ bool CC_Audio_Init(){
     }
     buttyes = LoadSound("audio/Access_Denied_High_DDM16_quieter.wav");
     buttno =  LoadSound("audio/Cancel Action_3.wav");
-    for(int i = 0; i < kiringtone_files_len; i++){
+    for(int i = 0; i < kiringtone_files_len; i++) {
         kirins[i] = LoadSound(kiringtone_files[i]);
     }
     return true;
 }
 
-void CC_Audio_Play_Music(char* path){
+void CC_Audio_Play_Music(char* path) {
     currentMusic = LoadMusicStream(path);
     PlayMusicStream(currentMusic);
     SetMusicVolume(currentMusic, volumeMusic/100);
     printf("is music playing? %d\n", IsMusicStreamPlaying(currentMusic));
 }
 
-void CC_Audio_Play_SFX(Sound sfx){
+void CC_Audio_Play_SFX(Sound sfx) {
     SetSoundVolume(sfx, volumeSfx/100);
     PlaySound(sfx);
 }
 
-void CC_Audio_Play_VOX(Sound vox){
+void CC_Audio_Play_VOX(Sound vox) {
     SetSoundVolume(vox, volumeVocal/100);
     PlaySound(vox);
 }

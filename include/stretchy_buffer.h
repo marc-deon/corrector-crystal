@@ -40,10 +40,6 @@
 // Access the given array in reverse.
 #define stb_sb_from_back(a, i)   (a[sb_count(a)-1-i])
 
-// void* sb_from_back(void* a, uint i){
-//     i = sb_count(a) - 1 - i;
-//     return &a[i];
-// }
 
 #define stb__sbraw(a) ((int *) (void *) (a) - 2)
 #define stb__sbm(a)   stb__sbraw(a)[0]

@@ -7,28 +7,28 @@ UiMenu** _ui_focus_stack = 0;
 int uiidcount = 0;
 
 // Use with caution!
-void** Ui_GetFocusStack(){
+void** Ui_GetFocusStack() {
     return _ui_focus_stack;
 }
 
-UiMenu* Ui_GetTopFocus(){
+UiMenu* Ui_GetTopFocus() {
     return sb_count(_ui_focus_stack) ? sb_last(_ui_focus_stack) : 0;
 }
 
-UiMenu* Ui_PopFocus(){
+UiMenu* Ui_PopFocus() {
     return sb_count(_ui_focus_stack) ? sb_pop(_ui_focus_stack) : 0;
 }
 
-UiMenu* Ui_PushFocus(UiMenu* focus){
+UiMenu* Ui_PushFocus(UiMenu* focus) {
     return sb_push(_ui_focus_stack, focus);
 }
 
-void Ui_CloseTop(){
+void Ui_CloseTop() {
     UiMenu* frame = Ui_PopFocus();
-    for(int i = 0; i < sb_count(frame->elements); i++){
+    for(int i = 0; i < sb_count(frame->elements); i++) {
         // free textures
         // free element
-        switch(frame->elements[i]->type){
+        switch(frame->elements[i]->type) {
             case UI_TYPE_BUTTON:
                 Button_Free(mqui_as_button(frame->elements[i]));
                 break;
@@ -42,9 +42,9 @@ void Ui_CloseTop(){
     free(frame);
 }
 
-Vec2I UiElement_Size(UiElement* elem){
-    Vec2I size = (Vec2I){-1, -1};
-    switch(elem->type){
+Vec2I UiElement_Size(UiElement* elem) {
+    Vec2I size = (Vec2I) {-1, -1};
+    switch(elem->type) {
         case UI_TYPE_BUTTON:
             size = Button_Size(mqui_as_button(elem));
             break;
@@ -60,7 +60,7 @@ Vec2I UiElement_Size(UiElement* elem){
             break;
 
         case UI_TYPE_PREVIEW:
-            size = (Vec2I){720, 720};
+            size = (Vec2I) {720, 720};
             break;
 
         default:

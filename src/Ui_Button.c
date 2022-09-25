@@ -13,7 +13,7 @@ Texture _button_base_texture_p2hover;
 Texture _button_base_texture_bothhover;
 Texture _button_base_texture_pressed;
 
-UiButton* Button_New(char* text, int fontSize){
+UiButton* Button_New(char* text, int fontSize) {
     mmbuttfont = GetFontDefault();
 
     _button_base_texture_normal = LoadTexture("Graphics/Ui/asabutton1.png");
@@ -32,10 +32,10 @@ UiButton* Button_New(char* text, int fontSize){
     butt->down  = NULL;
     butt->left  = NULL;
     butt->right = NULL;
-    butt->position = (Vec2I){0,0};
-    butt->on_confirm    = (CallbackFunction){};
-    butt->on_hold_left  = (CallbackFunction){};
-    butt->on_hold_right = (CallbackFunction){};
+    butt->position = (Vec2I) {0,0};
+    butt->on_confirm    = (CallbackFunction) {};
+    butt->on_hold_left  = (CallbackFunction) {};
+    butt->on_hold_right = (CallbackFunction) {};
 
     butt->texture_normal = _button_base_texture_normal;
     butt->texture_p1hover = _button_base_texture_p1hover;
@@ -51,19 +51,19 @@ UiButton* Button_New(char* text, int fontSize){
     return butt;
 }
 
-void Button_Draw(UiMenu* menu, UiButton* butt, Vec2I offset){
+void Button_Draw(UiMenu* menu, UiButton* butt, Vec2I offset) {
     RectI buttrect;
     Texture button_texture = butt->texture_normal;
 
-    if(menu->p1focused == mqui_as_element(butt) && menu->p2focused == mqui_as_element(butt)){
+    if(menu->p1focused == mqui_as_element(butt) && menu->p2focused == mqui_as_element(butt)) {
         button_texture = butt->texture_bothhover;
     }
 
-    else if(menu->p1focused == mqui_as_element (butt)){
+    else if(menu->p1focused == mqui_as_element (butt)) {
         button_texture = butt->texture_p1hover;
     }
 
-    else if(menu->p2focused == mqui_as_element(butt)){
+    else if(menu->p2focused == mqui_as_element(butt)) {
         button_texture = butt->texture_p2hover;
     }
 
@@ -80,11 +80,11 @@ void Button_Draw(UiMenu* menu, UiButton* butt, Vec2I offset){
     DrawText(butt->string_text, textx, texty, butt->fontSize, WHITE);
 }
 
-void Button_Free(UiButton* b){
+void Button_Free(UiButton* b) {
     free(b->string_text);
     free(b);
 }
 
-Vec2I Button_Size(UiButton* butt){
+Vec2I Button_Size(UiButton* butt) {
     return (Vec2I) {butt->texture_normal.width, butt->texture_normal.height};
 }

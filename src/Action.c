@@ -37,7 +37,7 @@ Action* Action_Create(
     uint index,
     bool phase,
     int entity
-){
+) {
     Action* act = (Action*) malloc(1 * sizeof(Action));
     act->currentFrame = 0;
     act->name = name;
@@ -75,14 +75,14 @@ Action* Action_Create(
     act->stepDelay = stepDelay;
     act->burnsJump = burnsJump;
     act->restoresJump = restoresJump;
-    if (overrideSelfGravity){
+    if (overrideSelfGravity) {
         act->overrideSelfGravity = calloc(2, sizeof(int));
         act->overrideSelfGravity[0] = overrideSelfGravity[0];
         act->overrideSelfGravity[1] = overrideSelfGravity[1];
     } else{
         act->overrideSelfGravity = 0;
     }
-    if (overrideSelfVelocity){
+    if (overrideSelfVelocity) {
         act->overrideSelfVelocity = calloc(2, sizeof(int));
         act->overrideSelfVelocity[0] = overrideSelfVelocity[0];
         act->overrideSelfVelocity[1] = overrideSelfVelocity[1];
@@ -97,7 +97,7 @@ Action* Action_Create(
     return act;
 }
 
-Action* Action_CreateNull(){
+Action* Action_CreateNull() {
     Action* act = (Action*) malloc(1 * sizeof(Action));
     act->currentFrame = 0;
     act->name = "ACT_NONAME";
@@ -145,15 +145,15 @@ Action* Action_CreateNull(){
     return act;
 }
 
-void Action_Free(Action* act){
+void Action_Free(Action* act) {
     // Mix_FreeChunk(act->audioChunk);
     free(act->overrideSelfGravity);
     free(act->overrideSelfVelocity);
     free(act);
 }
 
-int Action_FindIndexByName(Action** actions, int size, char* name){
-    for(int i = 0; i < size; i++){
+int Action_FindIndexByName(Action** actions, int size, char* name) {
+    for(int i = 0; i < size; i++) {
         int result = TextIsEqual(actions[i]->name, name);
         if(result)
             return i;
@@ -161,22 +161,22 @@ int Action_FindIndexByName(Action** actions, int size, char* name){
     return -1;
 }
 
-void Action_SetLinkFrom(Action* a, Action* link){
+void Action_SetLinkFrom(Action* a, Action* link) {
     a->linksFrom = link;
 }
 
-void Action_SetShovebox(Action* a, Shovebox hb){
+void Action_SetShovebox(Action* a, Shovebox hb) {
     a->shovebox = hb;
 }
 
 // Return the index of added element
-int Action_AddHitbox(Action* a, Hitbox* hb){
+int Action_AddHitbox(Action* a, Hitbox* hb) {
     sb_push(a->hitboxes, hb);
     return sb_count(a->hitboxes)-1;
 }
 
 // Return the index of added element
-int Action_AddHurtbox(Action* a, Hurtbox* hb){
+int Action_AddHurtbox(Action* a, Hurtbox* hb) {
     sb_push(a->hurtboxes, hb);
     return sb_count(a->hurtboxes)-1;
 }

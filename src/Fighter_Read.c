@@ -22,13 +22,13 @@
 Texture background;
 // extern Match currentMatch;
 
-const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_json){
+const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_json) {
     struct json_object* actions;
     bool defaulted;
     json_object_object_get_ex(parsed_json, "actions", &actions);
 
     fighter->actions = NULL;
-    for(int i = 0; i < json_object_array_length(actions); i++){
+    for(int i = 0; i < json_object_array_length(actions); i++) {
 
         struct json_object* action = json_object_array_get_idx(actions, i);
         
@@ -40,7 +40,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         
         char* animationName = json_get_default_string(action, "animation", name);
         int index = Animation_FindIndexByName(fighter->animations, sb_count(fighter->animations), animationName);
-        if(index == -1){
+        if(index == -1) {
             printf("Animation [%s] not found\n", animationName);
             assert(false && "Animation index cannot be -1\n");
         }
@@ -59,7 +59,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         
         int airKnockback[2];
         defaulted = json_get_default_int_array(action, "airKnockback", airKnockback, 2);
-        if (defaulted){
+        if (defaulted) {
             airKnockback[0] =  4;
             airKnockback[1] = -5;
         }
@@ -157,8 +157,8 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         json_bool hurtExists = json_object_object_get_ex(action, "hurtboxes", &ob_hurtboxes);
 
 
-        if(hitExists){
-            for(int j = 0; j < json_object_array_length(ob_hitboxes); j++){
+        if(hitExists) {
+            for(int j = 0; j < json_object_array_length(ob_hitboxes); j++) {
                 RectI rect;
                 array_list* al = json_object_get_array(ob_hitboxes);
                 // First dig into the array of arrays...
@@ -187,8 +187,8 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
             }
         }
 
-        if(hurtExists){
-            for(int j = 0; j < json_object_array_length(ob_hurtboxes); j++){
+        if(hurtExists) {
+            for(int j = 0; j < json_object_array_length(ob_hurtboxes); j++) {
                 RectI rect;
                 array_list* al = json_object_get_array(ob_hurtboxes);
                 // First dig into the array of arrays...
@@ -206,7 +206,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 
     // Now that we have the actions created, we can link them.
     printf("Beginning links\n");
-    for(int i = 0; i < sb_count(fighter->actions); i++){
+    for(int i = 0; i < sb_count(fighter->actions); i++) {
         struct json_object* action = json_object_array_get_idx(actions, i);
         Action* a = fighter->actions[i];
         a->linksTo = NULL;
@@ -217,18 +217,18 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         json_object* nameArray = json_object_object_get(action, "linksTo");
 
         // Certain actions automatically link to others (e.g. landing to standing, rekka 2 to [rekka3high, rekka 3low])
-        if (nameArray){
+        if (nameArray) {
             int length = json_object_array_length(nameArray);
 
-            if (length > 0){
+            if (length > 0) {
                 sb_free(a->linksTo);
                 a->linksTo = NULL;
 
                 // printf("%s links to", a->name);
-                for(int j = 0; j < length; j++){
+                for(int j = 0; j < length; j++) {
                     char* linkName = (char *) json_object_get_string(json_object_array_get_idx(nameArray, j));
                     // printf("... %s", linkName);
-                    if (linkName){
+                    if (linkName) {
                         int index = Action_FindIndexByName(fighter->actions, sb_count(fighter->actions), linkName);
                         // printf("%s\n", linkName);
                         assert(index >= 0 && "Could not find action by name");
@@ -242,7 +242,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         // Certain actions can only link from others (e.g. rekka 2 from rekka 1)
         char* linksFromName = json_get_default_string(action, "linksFrom", NULL);
 
-        if (linksFromName){
+        if (linksFromName) {
             int index = Action_FindIndexByName(fighter->actions, sb_count(fighter->actions), linksFromName);
             printf("%s\n", linksFromName);
             assert(index >= 0 && "Could not find action by name");
@@ -253,12 +253,12 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 }
 
 
-const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_json){
+const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_json) {
         struct json_object* animations;
         json_object_object_get_ex(parsed_json, "animations", &animations);
 
         fighter->animations = NULL;
-        for(int i = 0; i < json_object_array_length(animations); i++){
+        for(int i = 0; i < json_object_array_length(animations); i++) {
             struct json_object* animation = json_object_array_get_idx(animations, i);
 
             char* name = json_get_string(animation, "name");
@@ -275,7 +275,7 @@ const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_
         }
 
         // Now that we have the animations created, we can link them.
-        for(int i = 0; i < sb_count(fighter->animations); i++){
+        for(int i = 0; i < sb_count(fighter->animations); i++) {
             struct json_object* animation = json_object_array_get_idx(animations, i);
             char* linkName = json_get_default_string(animation, "linksTo", NULL);
 
@@ -292,7 +292,7 @@ const char* Fighter_ReadAnimations(Fighter* fighter, struct json_object* parsed_
     return NULL;
 }
 
-void Fighter_GetPalette(Fighter* f, int palIndex){
+void Fighter_GetPalette(Fighter* f, int palIndex) {
     FILE* fp;
     fp = fopen("fighterData/superman.pal", "rb");
     
@@ -315,10 +315,10 @@ void Fighter_GetPalette(Fighter* f, int palIndex){
     SetShaderValueTexture(f->entity->shader, shaderPalLoc, f->entity->paletteTexture);
 }
 
-struct json_object* Fighter_GetParsedJson(char* path){
+struct json_object* Fighter_GetParsedJson(char* path) {
     FILE* fp;
     fp = fopen(path, "r");
-    if(!fp){
+    if(!fp) {
         printf("Problem reading from path [%s]...\n", path);
         char cwdpath[80];
         getcwd(cwdpath, 80);
@@ -342,7 +342,7 @@ struct json_object* Fighter_GetParsedJson(char* path){
 }
 
 // TODO(#9): Clean up Game_SpriteInit; it does way more than just sprites.
-void Fighter_SpriteInit(Fighter* f, char* path){
+void Fighter_SpriteInit(Fighter* f, char* path) {
 
 
     struct json_object* parsed_json = Fighter_GetParsedJson(path);
@@ -364,7 +364,7 @@ void Fighter_SpriteInit(Fighter* f, char* path){
     // Animations
 
     const char* result = Fighter_ReadAnimations(f, parsed_json);
-    if(result){
+    if(result) {
         printf("Error: %s", result);
         return;
     } else{
@@ -374,7 +374,7 @@ void Fighter_SpriteInit(Fighter* f, char* path){
     //////////
     // Actions
     result = Fighter_ReadActions(f, parsed_json);
-    if(result){
+    if(result) {
         printf("Error: %s", result);
         return;
     } else{
@@ -384,7 +384,7 @@ void Fighter_SpriteInit(Fighter* f, char* path){
     //////////
     // Motions
     result = Fighter_ReadMotions(f, parsed_json);
-    if(result){
+    if(result) {
         printf("Error: %s", result);
         return;
     } else{
@@ -413,12 +413,12 @@ char* sfxPaths[] = {
 // FIXME: For random
 #include <stdlib.h>
 
-void Game_Data_InitActions(Player* p){
+void Game_Data_InitActions(Player* p) {
 
     // TODO(#10): Get sound effects. Currently, we just assign randomly.
     time_t t;
     srand((unsigned) time(&t));
-    for(int i = 0; i < sb_count(p->pointCharacter->actions); i++){
+    for(int i = 0; i < sb_count(p->pointCharacter->actions); i++) {
         
         char* path = sfxPaths[rand() % 12];
         // TODO: Actual SFX
@@ -427,12 +427,12 @@ void Game_Data_InitActions(Player* p){
 }
 
 
-const char* Fighter_ReadMotions(Fighter* fighter, struct json_object* parsed_json){
+const char* Fighter_ReadMotions(Fighter* fighter, struct json_object* parsed_json) {
     struct json_object* motions;
     json_object_object_get_ex(parsed_json, "motions", &motions);
 
     fighter->motions = NULL;
-    for(int i = 0; i < json_object_array_length(motions); i++){
+    for(int i = 0; i < json_object_array_length(motions); i++) {
 
         struct json_object* motion = json_object_array_get_idx(motions, i);
 
@@ -453,7 +453,7 @@ const char* Fighter_ReadMotions(Fighter* fighter, struct json_object* parsed_jso
     return NULL;
 }
 
-void Fighter_Destroy(Fighter* fighter){
+void Fighter_Destroy(Fighter* fighter) {
 
 
     //// Stretchy buffers

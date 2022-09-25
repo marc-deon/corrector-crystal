@@ -4,8 +4,8 @@
 #include <raylib.h>
 #include <stdio.h>
 
-int Animation_FindIndexByName(Animation** a, int size, char* name){
-    for(int i = 0; i < size; i++){
+int Animation_FindIndexByName(Animation** a, int size, char* name) {
+    for(int i = 0; i < size; i++) {
         int result =  TextIsEqual(a[i]->name, name);
         if(result)
             return i;
@@ -14,11 +14,11 @@ int Animation_FindIndexByName(Animation** a, int size, char* name){
 }
 
 
-void Animation_SetLink(Animation* a, Animation* link){
+void Animation_SetLink(Animation* a, Animation* link) {
     a->linksTo = link;
 }
 
-Animation* Animation_Create(char* name, char* filename, uint frameCount, uint frameWait, RectI cropRect, int loopStart){
+Animation* Animation_Create(char* name, char* filename, uint frameCount, uint frameWait, RectI cropRect, int loopStart) {
 
     // Allocate
     Animation* anim = malloc(sizeof(Animation));
@@ -36,7 +36,7 @@ Animation* Animation_Create(char* name, char* filename, uint frameCount, uint fr
     // spriteClips
     anim->spriteClips = 0;
     //
-    for(uint i = 0; i < frameCount; i++){
+    for(uint i = 0; i < frameCount; i++) {
         RectI* rect = malloc(sizeof(RectI));
         rect->pos.x = i*cropRect.size.x;
         rect->pos.y = cropRect.pos.y;
@@ -52,6 +52,6 @@ Animation* Animation_Create(char* name, char* filename, uint frameCount, uint fr
     return anim;
 }
 
-void Animation_Free(Animation* anim){
+void Animation_Free(Animation* anim) {
     free(anim);
 }

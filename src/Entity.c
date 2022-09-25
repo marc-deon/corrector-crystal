@@ -277,7 +277,7 @@ Action* Entity_GetAction(Entity* e) {
     return es.currentAction;
 }
 
-RectI Entity_GlobalizeRect(Entity* e, RectI r){
+RectI Entity_GlobalizeRect(Entity* e, RectI r) {
         RectI hbr = Entity_FacingRight(e) ? r : Rect_Flip(r);
         hbr.pos = Vec2_Add(hbr.pos, cb_last(e->history).position);
         return hbr;

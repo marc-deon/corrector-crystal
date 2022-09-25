@@ -6,32 +6,32 @@
 uint8_t* previousKeyStates;
 uint8_t* currentKeyStates;
 
-bool QF_IsKeyDown(uint k){
+bool QF_IsKeyDown(uint k) {
     // return currentKeyStates[k];
     return IsKeyDown(k);
 }
 
-bool QF_IsKeyJustDown(uint k){
+bool QF_IsKeyJustDown(uint k) {
     // return currentKeyStates[k] && !(previousKeyStates[k]);
     return IsKeyPressed(k);
 }
 
-bool QF_IsKeyUp(uint k){
+bool QF_IsKeyUp(uint k) {
     // return !currentKeyStates[k];
     return IsKeyUp(k);
 }
 
-bool QF_IsKeyJustUp(uint k){
+bool QF_IsKeyJustUp(uint k) {
     // return !currentKeyStates[k] && previousKeyStates[k];
     return IsKeyReleased(k);
 }
 
-void QF_CopyKeyArray(uint8_t* from, uint8_t* to){
+void QF_CopyKeyArray(uint8_t* from, uint8_t* to) {
     if (from == 0) 
         return;
     for(int i = 0; i < scancodeCount; i++)
         to[i] = from[i];
 }
 
-void QF_Update(){
+void QF_Update() {
 }

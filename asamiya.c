@@ -34,14 +34,14 @@ int asamiya = 1;
 //
 // This is a little bit inefficient (it's basically bubble sort), but it's w/e.
 // We're dealing with very small arrays here just on button press in editor.
-void PruneBoxes(void** sb, enum boxtype t){
+void PruneBoxes(void** sb, enum boxtype t) {
 
     bool foundNull = true;
     int loopTil = sb_count(sb)-1;
 
-    while(foundNull){
+    while(foundNull) {
         foundNull = false;
-        for(int i = 0; i < loopTil; i++){
+        for(int i = 0; i < loopTil; i++) {
 
             // If size is (0,0)
             if (((Hitbox*)(sb[i]))->rect.w == 0 && ((Hitbox*)(sb[i]))->rect.h == 0) {
@@ -58,7 +58,7 @@ void PruneBoxes(void** sb, enum boxtype t){
     }
 
     // Pop trailing zero-sized boxes and free
-    while(sb_count(sb) > 0){
+    while(sb_count(sb) > 0) {
         int count = sb_count(sb);
         Hitbox* hb = sb_last((Hitbox**)sb);
         if (sb_last((Hitbox**)sb)->rect.w == 0 && sb_last((Hitbox**)sb)->rect.h == 0) {
@@ -83,34 +83,34 @@ Match currentMatch;
 
 UiMenu* root;
 
-void stopGame(){ /* Left intentionally blank */ }
+void stopGame() { /* Left intentionally blank */ }
 
-void GameInit(){ /* Left intentionally blank */ }
+void GameInit() { /* Left intentionally blank */ }
 
-void cb_SwapToActions(){
+void cb_SwapToActions() {
     printf("Swapping to Actions\n");
 }
 
-void cb_SwapToAnimations(){
+void cb_SwapToAnimations() {
     printf("Swapping to Animations\n");
 }
 
-void InspectAnimation(){
+void InspectAnimation() {
     
 }
 
-void InspectAction(){
+void InspectAction() {
 
 }
 
-void cb_tab_act(){
+void cb_tab_act() {
 
     // UiList* list = mqui_as_menu(root->elements[0])->elements[1];
     // ListViewInfo* = &(list->data);
 
     // // Free data if already present
-    // if(listData->items){
-    //     for(int i = 0; i < listData->itemCount; i++){
+    // if(listData->items) {
+    //     for(int i = 0; i < listData->itemCount; i++) {
     //         free(listData->items[i]);
     //     }
     //     free(listData->items);
@@ -137,43 +137,43 @@ void cb_tab_act(){
 
 }
 
-void cb_tab_anim(){
+void cb_tab_anim() {
 
 }
 
-void cb_alist_click(){
+void cb_alist_click() {
 
 }
 
-void cb_alist_scroll(int dir){
+void cb_alist_scroll(int dir) {
     // printf("scroll\n");
     // shoppingList.activeIndex = max(0, min(shoppingList.itemCount-1, shoppingList.activeIndex + dir));
 
 }
 
-void cb_preview_drag(){
+void cb_preview_drag() {
 
 }
 
-void cb_tab_inspector(){
+void cb_tab_inspector() {
 
 }
 
-void cb_tab_hitbox(){
+void cb_tab_hitbox() {
 
 }
 
-void cb_rlist_scroll(){
+void cb_rlist_scroll() {
 
 }
 
-void SetupRaylib(){
+void SetupRaylib() {
     SetTraceLogLevel(LOG_NONE);
     SetTargetFPS(60);
     InitWindow(1280, 720, "Asamiya Character Creater");
 }
 
-void SetupData(){
+void SetupData() {
     /* 0  */ // root;
     /* 1  */ UiMenu* leftPane;
     /* 2  */     UiMenu* leftTabs;
@@ -215,7 +215,7 @@ void SetupData(){
             add_element(rightTabs, buttHitboxes);
         add_element(rightPane, rList);
 
-    root->size = (Vec2I){1280, 720}; // Set size
+    root->size = (Vec2I) {1280, 720}; // Set size
     leftPane->size  = (Vec2I) {}; // Set spacing
     leftTabs->size  = (Vec2I) {ui_w(buttAct) + ui_w(buttAnim), ui_h(buttAct)}; // Set size
     rightPane->size = (Vec2I) {}; // Set spacing
@@ -226,9 +226,9 @@ void SetupData(){
 }
 
 
-void SetupFighter(){
+void SetupFighter() {
     Fighter* f = asamiya_f = Fighter_Create("fighterData/superman.jsonc");
-    cb_push(f->stateHistory, (FighterState){});
+    cb_push(f->stateHistory, (FighterState) {});
     cb_push(f->entity->history, *EntityState_Create());
 
     Fighter_GetPalette(f, 0);
@@ -253,23 +253,23 @@ void SetupFighter(){
     Fighter_StartActionIndex(f, 15, -1);
 }
 
-void UpdateHitboxes(){
+void UpdateHitboxes() {
     Action*    lastAct = cb_last(asamiya_f->entity->history).currentAction;
     Animation* lastAni = cb_last(asamiya_f->entity->history).currentAnimation;
 
     lastAct->currentFrame += (!currentMatch.paused) + IsKeyPressed(KEY_PERIOD) - IsKeyPressed(KEY_COMMA);
     lastAni->currentFrame +=                          IsKeyPressed(KEY_PERIOD) - IsKeyPressed(KEY_COMMA);
 
-    if (!currentMatch.paused){
+    if (!currentMatch.paused) {
         lastAct->currentFrame++;
-        if (lastAct->currentFrame == lastAct->mustLinkAfter){
+        if (lastAct->currentFrame == lastAct->mustLinkAfter) {
             Fighter_StartAction(asamiya_f, lastAct, -1);
             lastAct = cb_last(asamiya_f->entity->history).currentAction;
             lastAni = cb_last(asamiya_f->entity->history).currentAnimation;
         }
     }
 
-    for(int i = 0; i < sb_count(lastAct->hitboxes); i++){
+    for(int i = 0; i < sb_count(lastAct->hitboxes); i++) {
         lastAct->hitboxes[i]->currentFrame += (!currentMatch.paused) + IsKeyPressed(KEY_PERIOD) - IsKeyPressed(KEY_COMMA);
     }
 
@@ -277,7 +277,7 @@ void UpdateHitboxes(){
 
     lastAni->currentFrame = (lastAni->currentFrame + modMax) % modMax;
     lastAct->currentFrame = lastAni->currentFrame;
-    for(int i = 0; i < sb_count(lastAct->hitboxes); i++){
+    for(int i = 0; i < sb_count(lastAct->hitboxes); i++) {
         Hitbox* hb = lastAct->hitboxes[i];
 
         hb->currentFrame = lastAni->currentFrame;
@@ -285,7 +285,7 @@ void UpdateHitboxes(){
     }
 
     int delta = IsKeyPressed(KEY_RIGHT_BRACKET) - IsKeyPressed(KEY_LEFT_BRACKET);
-    if (delta){
+    if (delta) {
         int idx = lastAct->index + delta;
         idx = (idx + sb_count(asamiya_f->actions)) % sb_count(asamiya_f->actions);
         Fighter_StartActionIndex(asamiya_f, idx, -1);
@@ -321,7 +321,7 @@ void UpdateHitboxes(){
     else if (selectedBoxType == boxtype_shove)
         selectedBox = &lastAct->shovebox;
     
-    if (selectedBox){
+    if (selectedBox) {
         selectedBox->rect.x += (IsKeyDown(KEY_D) - IsKeyDown(KEY_A)) * (1 + 9*IsKeyDown(KEY_LEFT_SHIFT));
         selectedBox->rect.y += (IsKeyDown(KEY_S) - IsKeyDown(KEY_W)) * (1 + 9*IsKeyDown(KEY_LEFT_SHIFT));
         selectedBox->rect.w += (IsKeyDown(KEY_KP_6) - IsKeyDown(KEY_KP_4)) * (1 + 9*IsKeyDown(KEY_LEFT_SHIFT));
@@ -333,7 +333,7 @@ void UpdateHitboxes(){
         switch (selectedBoxType) {
             case boxtype_hit: {
                 selectedBoxIdx = sb_count(lastAct->hitboxes);
-                Hitbox* hb = Hitbox_Create((RectI){100, -100, 100, 100}, 0, lastAni->frameCount * lastAni->frameWait);
+                Hitbox* hb = Hitbox_Create((RectI) {100, -100, 100, 100}, 0, lastAni->frameCount * lastAni->frameWait);
                 // hb->active = lastAni->currentFrame >= hb->activeOnFrame && lastAni < hb->offOnFrame;
                 sb_push(lastAct->hitboxes, hb);
                 break;
@@ -341,7 +341,7 @@ void UpdateHitboxes(){
 
             case boxtype_hurt: {
                 selectedBoxIdx = sb_count(lastAct->hurtboxes);
-                Hurtbox* hb = Hurtbox_Create((RectI){100, -100, 100, 100});
+                Hurtbox* hb = Hurtbox_Create((RectI) {100, -100, 100, 100});
                 
                 sb_push(lastAct->hurtboxes, hb);
                 break;
@@ -350,34 +350,34 @@ void UpdateHitboxes(){
     }
 
     // Delete: Nulls current box
-    if(IsKeyPressed(KEY_DELETE) && selectedBoxIdx >= 0){
+    if(IsKeyPressed(KEY_DELETE) && selectedBoxIdx >= 0) {
 
-        switch (selectedBoxType){
+        switch (selectedBoxType) {
             case boxtype_hit:
-                if (selectedBoxIdx < sb_count(lastAct->hitboxes)){
+                if (selectedBoxIdx < sb_count(lastAct->hitboxes)) {
                     Hitbox* hb = lastAct->hitboxes[selectedBoxIdx];
                     hb->active = 0;
                     hb->activeOnFrame = 0;
                     hb->offOnFrame = 0;
-                    hb->rect = (RectI){0,0,0,0};
+                    hb->rect = (RectI) {0,0,0,0};
                     PruneBoxes(lastAct->hitboxes, boxtype_hit);
                 }
                 break;
 
             case boxtype_hurt:
-                if (selectedBoxIdx < sb_count(lastAct->hurtboxes)){
+                if (selectedBoxIdx < sb_count(lastAct->hurtboxes)) {
                     Hurtbox* hb = lastAct->hurtboxes[selectedBoxIdx];
-                    hb->rect = (RectI){0,0,0,0};
+                    hb->rect = (RectI) {0,0,0,0};
                     PruneBoxes(lastAct->hurtboxes, boxtype_hurt);
                 }
                 break;
             case boxtype_shove:
-                lastAct->shovebox.rect = (RectI){0,0,0,0};
+                lastAct->shovebox.rect = (RectI) {0,0,0,0};
         }
     }
 }
 
-void main(){
+void main() {
 
     SetupRaylib();
     SetupData();
@@ -408,15 +408,15 @@ void main(){
         "Ctrl+S : Save to json",
     };
 
-    while(!WindowShouldClose()){
+    while(!WindowShouldClose()) {
 
         currentMatch.paused = currentMatch.paused ^ IsKeyPressed(KEY_SPACE);
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)){
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
             Fighter_Save(asamiya_f, "newchara.json");
         }
 
-        if (IsKeyPressed(KEY_KP_DECIMAL)){
+        if (IsKeyPressed(KEY_KP_DECIMAL)) {
             previewCamera.x = -6000;
             previewCamera.y = -4700;
         }
@@ -427,7 +427,7 @@ void main(){
         previewCamera.x += (9 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_LEFT) - IsKeyDown(KEY_RIGHT));
         previewCamera.y += (9 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_UP) - IsKeyDown(KEY_DOWN));
         
-        if(true){
+        if(true) {
             UpdateHitboxes();
         }
         else{
@@ -439,7 +439,7 @@ void main(){
         ClearBackground(BLACK);
 
         float dir;
-        if (dir = GetMouseWheelMove()){
+        if (dir = GetMouseWheelMove()) {
             cb_alist_scroll(-(int)dir);
         }
 

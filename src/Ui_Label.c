@@ -5,9 +5,9 @@
 #include <stdio.h>
 
 Font mmlabelfont;
-const Color mmlWHITE = (Color){255, 255, 255, 255};
+const Color mmlWHITE = (Color) {255, 255, 255, 255};
 
-UiLabel* Label_New(UiMenu* menu, char* text){
+UiLabel* Label_New(UiMenu* menu, char* text) {
     mmlabelfont = LoadFont("Graphics/Fonts/Recursive-Bold.ttf");
     
     UiLabel* label = malloc(sizeof(UiLabel));
@@ -25,18 +25,18 @@ UiLabel* Label_New(UiMenu* menu, char* text){
     return label;
 }
 
-void Label_Draw(UiMenu* menu, UiLabel* label, Vec2I offset){
+void Label_Draw(UiMenu* menu, UiLabel* label, Vec2I offset) {
     
     
     DrawText(label->string_text, label->position.x + offset.x, label->position.y + offset.y, 20, WHITE);
 }
 
-void Label_Free(UiLabel* l){
+void Label_Free(UiLabel* l) {
     free(l->string_text);
     free(l);
 }
 
-Vec2I Label_Size(UiLabel* label){
+Vec2I Label_Size(UiLabel* label) {
     Vector2 v = MeasureTextEx(GetFontDefault(), label->string_text, 20, 0);
     return (Vec2I) {v.x, v.y};
     

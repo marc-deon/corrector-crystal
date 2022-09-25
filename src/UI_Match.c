@@ -42,7 +42,7 @@ Texture p2nameplate;
 
 int shaderPalLoc;
 
-void Ui_Match_MakeRects(){
+void Ui_Match_MakeRects() {
     p1HealthRectUnder.x = 50; 
     p1HealthRectUnder.y = 10;
     p1HealthRectUnder.w = 220;
@@ -92,18 +92,18 @@ void Ui_Match_MakeRects(){
     p2HealthRectOver.h = 40;
 }
 
-void Ui_Match_MakeColors(){
+void Ui_Match_MakeColors() {
 }
 
-bool Ui_Match_MakeFonts(){
+bool Ui_Match_MakeFonts() {
     return true;
 }
-bool Ui_Match_MakeNames(char* p1Name, char* p2Name){
+bool Ui_Match_MakeNames(char* p1Name, char* p2Name) {
     return true;
 }
 
 
-bool Ui_Match_Init(Match* m){
+bool Ui_Match_Init(Match* m) {
 
     Fighter* f1 = m->players[0].pointCharacter;
     Fighter* f2 = m->players[1].pointCharacter;
@@ -118,18 +118,18 @@ bool Ui_Match_Init(Match* m){
     Image img;
 
     img = LoadImage("Graphics/Ui/NamePalettePlate.png");
-    ImageColorReplace(&img, (Color){255,0,0,  255}, f1->entity->palette[1]);
-    ImageColorReplace(&img, (Color){0,255,0,  255}, f1->entity->palette[2]);
-    ImageColorReplace(&img, (Color){0,0,255,  255}, f1->entity->palette[3]);
-    ImageColorReplace(&img, (Color){255,0,255,255}, f1->entity->palette[4]);
+    ImageColorReplace(&img, (Color) {255,0,0,  255}, f1->entity->palette[1]);
+    ImageColorReplace(&img, (Color) {0,255,0,  255}, f1->entity->palette[2]);
+    ImageColorReplace(&img, (Color) {0,0,255,  255}, f1->entity->palette[3]);
+    ImageColorReplace(&img, (Color) {255,0,255,255}, f1->entity->palette[4]);
     p1nameplate = LoadTextureFromImage(img);
     UnloadImage(img);
 
     img = LoadImage("Graphics/Ui/NamePalettePlate.png");
-    ImageColorReplace(&img, (Color){255,0,0,  255}, f2->entity->palette[1]);
-    ImageColorReplace(&img, (Color){0,255,0,  255}, f2->entity->palette[2]);
-    ImageColorReplace(&img, (Color){0,0,255,  255}, f2->entity->palette[3]);
-    ImageColorReplace(&img, (Color){255,0,255,255}, f2->entity->palette[4]);
+    ImageColorReplace(&img, (Color) {255,0,0,  255}, f2->entity->palette[1]);
+    ImageColorReplace(&img, (Color) {0,255,0,  255}, f2->entity->palette[2]);
+    ImageColorReplace(&img, (Color) {0,0,255,  255}, f2->entity->palette[3]);
+    ImageColorReplace(&img, (Color) {255,0,255,255}, f2->entity->palette[4]);
     ImageFlipHorizontal(&img);
     p2nameplate = LoadTextureFromImage(img);
     UnloadImage(img);
@@ -148,7 +148,7 @@ bool Ui_Match_Init(Match* m){
 
 
 
-void DrawHUD(Match* m){
+void DrawHUD(Match* m) {
 
     uint time  = cb_last(m->history).currentTime / 60;
     Player* p1 = &m->players[0];
@@ -214,7 +214,7 @@ void DrawHUD(Match* m){
     #pragma endregion
 }
 
-void DrawHUD_Training(Match* m){
+void DrawHUD_Training(Match* m) {
     // TODO(#18): P2 training gui
     #pragma region Action names
     

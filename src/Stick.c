@@ -20,26 +20,26 @@
 #define MEDIUM 0b00100
 #define HEAVY  0b00010
 
-bool Stick_IsButtonJustDown(Stick* s, int button){
+bool Stick_IsButtonJustDown(Stick* s, int button) {
     int thisFrame = (Stick_StickStateToInt(s->buffer[0]) & button);
     int lastFrame = (Stick_StickStateToInt(s->buffer[1]) & button);
     int ret = thisFrame && !lastFrame;
     return (bool)ret;
 }
 
-bool Stick_IsButtonJustUp(Stick* s, int button){
+bool Stick_IsButtonJustUp(Stick* s, int button) {
     int thisFrame = (Stick_StickStateToInt(s->buffer[0]) & button);
     int lastFrame = (Stick_StickStateToInt(s->buffer[1]) & button);
     int ret = !thisFrame && lastFrame;
     return (bool)ret;
 }
 
-bool Stick_IsButtonDown(Stick* s, int button){
+bool Stick_IsButtonDown(Stick* s, int button) {
     return Stick_StickStateToInt(s->buffer[0]) & button;
 }
 
 // Return an integer version of the given StickState where each button corrosponds to a bit
-int Stick_StickStateToInt(StickState ss){
+int Stick_StickStateToInt(StickState ss) {
     return
         ss.up       * STICK_UP     |
         ss.down     * STICK_DOWN   |
@@ -56,7 +56,7 @@ int Stick_StickStateToInt(StickState ss){
     ;
 }
 
-void Stick_PrintState(Stick* st){
+void Stick_PrintState(Stick* st) {
 
     if (Stick_StickStateToInt(st->buffer[0]) == Stick_StickStateToInt(st->buffer[1]))
         return;
@@ -86,37 +86,37 @@ st->playerNumber, s.select, s.start, s.up, s.x, s.y, s.z, s.left, s.down, s.righ
 }
 
 
-void Stick_AddState(Stick* stick, StickState state){
+void Stick_AddState(Stick* stick, StickState state) {
     
-    for(int i = INPUT_BUFFER_SIZE-1; i > 0; i--){
+    for(int i = INPUT_BUFFER_SIZE-1; i > 0; i--) {
         stick->buffer[i] = stick->buffer[i-1];
     }
     stick->buffer[0] = state;
 }
 
-StickState* Stick_GetState(Stick* stick){
+StickState* Stick_GetState(Stick* stick) {
     return &(stick->buffer[0]);
 }
 
 
 // Count the number of tokens in str, where a token is grouped between startGroup and endGroup, or otherwise is a single character.
 // e.g. 236A -> 4, 23(6A) -> 3
-int Stick_CountTokens(char* str, char* groups){
+int Stick_CountTokens(char* str, char* groups) {
     int i = 0;
     int count = 0;
     bool pause = false;
-    while (str[i] != '\0'){
+    while (str[i] != '\0') {
         
         int j = 0;
-        while (groups[j] != '\0'){
+        while (groups[j] != '\0') {
             char startGroup = groups[j];
             char endGroup = groups[j+1];
 
-            if(str[i] == startGroup){
+            if(str[i] == startGroup) {
                 pause = true;
             }
 
-            else if(str[i] == endGroup){
+            else if(str[i] == endGroup) {
                 pause = false;
             }
 
@@ -124,7 +124,7 @@ int Stick_CountTokens(char* str, char* groups){
         }
 
 
-        if(!pause){
+        if(!pause) {
             count++;
         }
         
@@ -135,7 +135,7 @@ int Stick_CountTokens(char* str, char* groups){
 }
 
 // Return a copy of the given StickState with left and right flipped
-StickState Stick_FlipState(StickState ss){
+StickState Stick_FlipState(StickState ss) {
     StickState newSs = ss;
     newSs.left = ss.right;
     newSs.right = ss.left;
@@ -144,10 +144,10 @@ StickState Stick_FlipState(StickState ss){
 
 // Check if the stick state has the given button (or direction combo) activated
 // TODO(#13): (Maybe not in this function) account for sideswaps?
-int Stick_GetPattern_SingleToken(StickState ss, char token, int punches, int kicks){
+int Stick_GetPattern_SingleToken(StickState ss, char token, int punches, int kicks) {
     int success = 0;
 
-    switch(token){
+    switch(token) {
         case '1':
             success = ss.down && ss.left;
             break;
@@ -206,25 +206,25 @@ int Stick_GetPattern_SingleToken(StickState ss, char token, int punches, int kic
         case 'P':
 
             // punches & LIGHT will be 0 only if we haven't yet processed a light punch (otherwise it will be 0b01000). Similar for others.
-            if ((punches & LIGHT) == 0 && ss.x){
+            if ((punches & LIGHT) == 0 && ss.x) {
                     success = PUNCH | LIGHT;
             }
-            else if ((punches & MEDIUM) == 0 && ss.y){
+            else if ((punches & MEDIUM) == 0 && ss.y) {
                     success = PUNCH | MEDIUM;
             }
-            else if ((punches & HEAVY) == 0 && ss.z){
+            else if ((punches & HEAVY) == 0 && ss.z) {
                     success = PUNCH | HEAVY;
             }
             break;
 
         case 'K':
-            if ((kicks & LIGHT) == 0 && ss.a){
+            if ((kicks & LIGHT) == 0 && ss.a) {
                     success = KICK | LIGHT;
             }
-            else if ((kicks & MEDIUM) == 0 && ss.b){
+            else if ((kicks & MEDIUM) == 0 && ss.b) {
                     success = KICK | MEDIUM;
             }
-            else if ((kicks & HEAVY) == 0 && ss.c){
+            else if ((kicks & HEAVY) == 0 && ss.c) {
                     success = KICK | HEAVY;
             }
             break;
@@ -269,7 +269,7 @@ int Stick_GetPattern_SingleToken(StickState ss, char token, int punches, int kic
 // returns a Vec2I where x is a 1 or 0 for find success, and y is the number of indices to move forward.
 // NOTE: startIndex will be the index of '(', and should be incremented by return.y to index of ')' such that
 // the next iteration of the loop will start one character after ')'.
-Vec2I Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex, char groupEnd){
+Vec2I Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex, char groupEnd) {
     int increment = 1;
     int i = startIndex+1;
     int success = true;
@@ -279,17 +279,17 @@ Vec2I Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex, 
     int kicks =   KICK;  //0b00000
 
     // Look for every token in the given stick state
-    while(pattern[i] != groupEnd){
+    while(pattern[i] != groupEnd) {
         // As soon as there's a failure, mark success as false. Keep incrementing.
         int result = Stick_GetPattern_SingleToken(ss, pattern[i], punches, kicks);
         // Generic P or K
-        if(result > 1){
+        if(result > 1) {
             // P
-            if((result & PUNCH) == PUNCH){
+            if((result & PUNCH) == PUNCH) {
                 punches = punches | result;
             }
             // K
-            else if ((result & KICK) == KICK){
+            else if ((result & KICK) == KICK) {
                 kicks = kicks | result;
             }
             else{
@@ -297,7 +297,7 @@ Vec2I Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex, 
             }
         }
 
-        if(result == 0){
+        if(result == 0) {
             success = false;
         }
 
@@ -309,7 +309,7 @@ Vec2I Stick_GetPattern_GroupToken(StickState ss, char* pattern, int startIndex, 
     return ret;
 }
 
-Vec2I Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, int charStartIndex, int frameStartIndex, char groupEnd){
+Vec2I Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, int charStartIndex, int frameStartIndex, char groupEnd) {
     int success = false;
     char* pattern = motion->pattern;
 
@@ -331,9 +331,9 @@ Vec2I Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, int 
 
     int consecutive = 0;
     // Starting at the most recent state, go backwards and see if our match holds
-    // for(int curFrame = startFrame; curFrame >= endFrame; curFrame--){
+    // for(int curFrame = startFrame; curFrame >= endFrame; curFrame--) {
     int endFrame = 0;
-    for(int curFrame = frameStartIndex; curFrame >= endFrame; curFrame--){
+    for(int curFrame = frameStartIndex; curFrame >= endFrame; curFrame--) {
 
         // Some motions have stricter timing than the buffer
         if(curFrame > motion->bufferSize)
@@ -345,7 +345,7 @@ Vec2I Stick_GetPattern_ChargeToken(Player* p, Stick* stick, Motion* motion, int 
         consecutive++;
         consecutive *= match;
 
-        if (consecutive == length){
+        if (consecutive == length) {
             printf("succ break\n", consecutive);
             success = true;
             break;
@@ -392,10 +392,10 @@ Their purpose is to reduce redundancy in movement, e.x. so that all standing->cr
 actions can be covered by md and dm respectively.
 
 */ 
-bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt_override, int frame){
+bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt_override, int frame) {
     char* pattern = motion->pattern;
     // For charge moves
-    if (patt_override){
+    if (patt_override) {
         pattern = patt_override;
     }
     
@@ -408,13 +408,13 @@ bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt
     int startFrame = INPUT_BUFFER_SIZE-1;
     int endFrame = 0;
 
-    if(frame >= 0){
+    if(frame >= 0) {
         startFrame = frame;
         endFrame = frame;
     }
 
     // The stick buffer is a queue that we want to search oldest to newest
-    for(int curFrame = startFrame; curFrame >= endFrame; curFrame--){
+    for(int curFrame = startFrame; curFrame >= endFrame; curFrame--) {
 
         // Some motions have stricter timing than the buffer
         if(curFrame > motion->bufferSize)
@@ -422,37 +422,37 @@ bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt
 
         char currentCharacter = pattern[patternIndex];
         StickState currentState = stick->buffer[curFrame];
-        if(!Fighter_FacingRight(p->pointCharacter)){
+        if(!Fighter_FacingRight(p->pointCharacter)) {
             currentState = Stick_FlipState(currentState);
         }
         // if the current character was matched
         bool match = false;
         
         // Group token
-        if (currentCharacter == '('){
+        if (currentCharacter == '(') {
             Vec2I v = Stick_GetPattern_GroupToken(currentState, pattern, patternIndex, ')');
             
             match = v.x;
-            if(match){
+            if(match) {
                 patternIndex += v.y - 1;
             }
         }
 
         // Charge token
-        else if (currentCharacter == '['){
+        else if (currentCharacter == '[') {
             Vec2I v = Stick_GetPattern_ChargeToken(p, stick, motion, patternIndex, curFrame, ']');
             match = v.x;
-            if (match){
+            if (match) {
                 patternIndex += v.y - 1;
             }
         }
         
-        else if (currentCharacter == ')'){
+        else if (currentCharacter == ')') {
             patternIndex++;
         }
 
 
-        else if (currentCharacter == ']'){
+        else if (currentCharacter == ']') {
             patternIndex++;
         }
 
@@ -461,13 +461,13 @@ bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt
             match = Stick_GetPattern_SingleToken(currentState, currentCharacter, PUNCH, KICK);
         }
 
-        if(match){
+        if(match) {
             matchesLeft--;
             patternIndex++;
             
         } 
         
-        if(matchesLeft == 0){
+        if(matchesLeft == 0) {
             
             return true;
         }
