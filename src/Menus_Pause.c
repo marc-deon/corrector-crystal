@@ -12,13 +12,13 @@ Character Select
 Main Menu
 */
 
-void cb_pause_menu_continue(CallbackInfo info){
+void cb_pause_menu_continue(CallbackInfo info) {
     UiMenu* top = Ui_PopFocus();
     Menu_Free(top);
     currentMatch.paused = false;
 }
 
-void cb_pause_menu_main(CallbackInfo info){
+void cb_pause_menu_main(CallbackInfo info) {
     UiMenu* top = Ui_PopFocus();
     Menu_Free(top);
     Match_End((Match*) Ui_PopFocus());
@@ -27,7 +27,7 @@ void cb_pause_menu_main(CallbackInfo info){
     MakeMainMenu();
 }
 
-UiMenu* MakePauseMenu(){
+UiMenu* MakePauseMenu() {
 
     printf("Paused\n");
 
@@ -38,7 +38,7 @@ UiMenu* MakePauseMenu(){
     menu->p1focused = NULL;
     menu->p2focused = NULL;
     menu->on_cancel;
-    // menu->on_cancel = (CallbackFunction){cb_back};
+    // menu->on_cancel = (CallbackFunction) {cb_back};
     menu->elements = NULL;
 
     // Background should be the size of the screen and have a negative position so that it covers the whole screen
@@ -57,9 +57,9 @@ UiMenu* MakePauseMenu(){
     UiButton* butt_main_menu= Button_New("Main Menu", 20); i++;
     add_element(menu, butt_main_menu);
 
-    menu->on_cancel = (CallbackFunction){.function=cb_pause_menu_continue};
-    butt_continue->on_confirm = (CallbackFunction){.function=cb_pause_menu_continue};
-    butt_main_menu->on_confirm = (CallbackFunction){.function=cb_pause_menu_main};
+    menu->on_cancel = (CallbackFunction) {.function=cb_pause_menu_continue};
+    butt_continue->on_confirm = (CallbackFunction) {.function=cb_pause_menu_continue};
+    butt_main_menu->on_confirm = (CallbackFunction) {.function=cb_pause_menu_main};
 
     butt_continue->down =  mqui_as_element(butt_set_conts);
     butt_set_conts->down = mqui_as_element(butt_view_acts);
@@ -81,7 +81,7 @@ UiMenu* MakePauseMenu(){
     menu->margin = (Vec4I) {0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50};
 
     Menu_Bake(menu, true);
-    // Menu_Bake(menu, (Vec4I){0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50}, (Vec4I){.l=0, .r=0, .t=0, .b=0}, BAKE_TYPE_SET_Y_SIZE, true);
+    // Menu_Bake(menu, (Vec4I) {0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50}, (Vec4I) {.l=0, .r=0, .t=0, .b=0}, BAKE_TYPE_SET_Y_SIZE, true);
     return menu;
 
 

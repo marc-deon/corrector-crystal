@@ -22,4 +22,7 @@ typedef struct vec4I {
 Vec2I Vec2_Add(Vec2I a, Vec2I b);
 Vec4I Vec4_Add(Vec4I a, Vec4I b);
 
+#define VEC2_ZERO ((Vec2I){0,0})
+#define VEC4_ZERO ((Vec2I){0,0,0,0})
+
 #endif

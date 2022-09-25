@@ -3,43 +3,37 @@
 
 RectI NULLRECT = {0,0,0,0};
 
-RectI CreateReactangle(int x, int y, int w, int h){
-    RectI r;
-    r.pos.x = x;
-    r.pos.y = y;
-    r.size.x = w;
-    r.size.y = h;
-    return r;
+RectI CreateReactangle(int x, int y, int w, int h) {
+    return (RectI) {x,y,w,h};
 }
 
-RectI Rect_Flip(RectI rect){
+RectI Rect_Flip(RectI rect) {
     RectI nr = rect;
-    nr.pos.x  *= -1;
-    nr.size.x *= -1;
+    nr.x  *= -1;
+    nr.w *= -1;
     return nr;
 }
 
-RectI Rect_Flip_Draw(RectI rect){
+RectI Rect_Flip_Draw(RectI rect) {
     RectI nr = rect;
-    nr.pos.x  = - rect.pos.x - rect.w;
-    // nr.size.x *= -1;
+    nr.x  = - rect.x - rect.w;
     return nr;
 }
 
-bool Rect_Overlap(RectI rect1, RectI rect2){
+bool Rect_Overlap(RectI rect1, RectI rect2) {
     // This math assumes [left x, top y, right x, bottom y],
     // so create these.
     int r1[4] = {
-        min(rect1.pos.x, rect1.pos.x + rect1.size.x),
-        min(rect1.pos.y, rect1.pos.y + rect1.size.y),
-        max(rect1.pos.x, rect1.pos.x + rect1.size.x),
-        max(rect1.pos.y, rect1.pos.y + rect1.size.y),
+        min(rect1.x, rect1.x + rect1.w),
+        min(rect1.y, rect1.y + rect1.h),
+        max(rect1.x, rect1.x + rect1.w),
+        max(rect1.y, rect1.y + rect1.h),
     };
     int r2[4] = {
-        min(rect2.pos.x, rect2.pos.x + rect2.size.x),
-        min(rect2.pos.y, rect2.pos.y + rect2.size.y),
-        max(rect2.pos.x, rect2.pos.x + rect2.size.x),
-        max(rect2.pos.y, rect2.pos.y + rect2.size.y),
+        min(rect2.x, rect2.x + rect2.w),
+        min(rect2.y, rect2.y + rect2.h),
+        max(rect2.x, rect2.x + rect2.w),
+        max(rect2.y, rect2.y + rect2.h),
     };
 
 
@@ -56,23 +50,23 @@ bool Rect_Overlap(RectI rect1, RectI rect2){
 // TODO(#12): This *technically* has a built in bias towards moving left, which
 // could result in unwanted behavior if both RectIs overlap perfectly.
 // It's very, very, very unlikely that this would ever be the case, though.
-int Rect_ShortestEscape(RectI rect1, RectI rect2){
+int Rect_ShortestEscape(RectI rect1, RectI rect2) {
     
-    if(!Rect_Overlap(rect1, rect2)){
+    if(!Rect_Overlap(rect1, rect2)) {
         return 0;
     }
 
     int r1[4] = {
-        min(rect1.pos.x, rect1.pos.x + rect1.size.x),
-        min(rect1.pos.y, rect1.pos.y + rect1.size.y),
-        max(rect1.pos.x, rect1.pos.x + rect1.size.x),
-        max(rect1.pos.y, rect1.pos.y + rect1.size.y),
+        min(rect1.x, rect1.x + rect1.w),
+        min(rect1.y, rect1.y + rect1.h),
+        max(rect1.x, rect1.x + rect1.w),
+        max(rect1.y, rect1.y + rect1.h),
     };
     int r2[4] = {
-        min(rect2.pos.x, rect2.pos.x + rect2.size.x),
-        min(rect2.pos.y, rect2.pos.y + rect2.size.y),
-        max(rect2.pos.x, rect2.pos.x + rect2.size.x),
-        max(rect2.pos.y, rect2.pos.y + rect2.size.y),
+        min(rect2.x, rect2.x + rect2.w),
+        min(rect2.y, rect2.y + rect2.h),
+        max(rect2.x, rect2.x + rect2.w),
+        max(rect2.y, rect2.y + rect2.h),
     };
 
     int currentArea = 
@@ -88,6 +82,7 @@ int Rect_ShortestEscape(RectI rect1, RectI rect2){
         (max(r1[3], r2[3]) - min(r1[1], r2[1]));
 
     // Try moving rect1 to the left by a bit
+    // TODO: ... what the fuck am i doing here
     int leftArea = 0;
         (min(r1[2] - 1, r2[2]) - max(r1[0] - 1, r2[0])) *
         (max(r1[3], r2[3]) - min(r1[1], r2[1]));

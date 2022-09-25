@@ -1,38 +1,48 @@
 #include <raylib.h>
-#include <assert.h>
-#include "stretchy_buffer.h"
-#include "main.h"
-#include "Fighter.h"
-#include "circular_buffer.h"
-#include "CC_Consts.h"
-#include "CC_Audio.h"
+#include <stdio.h>
 #include "Action.h"
+#include "CC_Audio.h"
+#include "CC_Consts.h"
+#include "circular_buffer.h"
+#include "Entities.h"
+#include "Entity.h"
+#include "Fighter_Read.h"
+#include "Fighter.h"
+#include "Match.h"
+#include "stretchy_buffer.h"
+
+extern Match currentMatch;
+extern int asamiya;
 
 float fighterDrawScale = 1;
-// bool shaderLoaded = false;
 
 
 int selectedBoxIdx = -1;
 enum boxtype selectedBoxType = boxtype_none;
 
-int sign(int x){
+inline int sign(int x) {
     return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
 
 
-
 Fighter* Fighter_Create(char* path){
     Fighter* f = (Fighter*)malloc(1 * sizeof(Fighter));
-    f->name = "UNINITIALIZED FIGHTER";
+    Entity* e = Entity_Create(NULL);
+    e->fighter = f;
+    f->entity = e;
+    e->name = "UNINITIALIZED FIGHTER";
     f->actions = NULL;
     f->animations = NULL;
     f->motions = NULL;
     f->stateHistory = NULL;
-
     f->opponent = NULL;
+
+    f->stateHistory = cb_init(f->stateHistory, MAX_REWIND);
     
+
     Fighter_SpriteInit(f, path);
-    f->fighterShader = LoadShader(0, "testshader.fs");
+    
+    e->shader = LoadShader(0, "testshader.fs");
 
     return f;
 }
@@ -45,6 +55,10 @@ bool Fighter_Air(Fighter* f){
     return cb_last(f->stateHistory).stateFlags & FF_AIR;
 }
 
+bool Fighter_FacingRight(Fighter* f){
+    return Entity_FacingRight(f->entity);
+}
+
 bool Fighter_OnRight(Fighter* f){
 
     if (!f->opponent)
@@ -53,46 +67,35 @@ bool Fighter_OnRight(Fighter* f){
     FighterState* sh = f->opponent->stateHistory;
     FighterState ls = cb_last(sh);
 
-    if(cb_last(f->stateHistory).position.x > cb_last(f->opponent->stateHistory).position.x){
+    if(cb_last(f->entity->history).position.x > cb_last(f->opponent->entity->history).position.x){
         return true;
     }
 
-    else if(cb_last(f->stateHistory).position.x == cb_last(f->opponent->stateHistory).position.x){
+    else if(cb_last(f->entity->history).position.x == cb_last(f->opponent->entity->history).position.x){
         // In the case of a tie, place player 2 on the right.
-        if(f->owner == 2){
+        if(f->ownerIndex == 2){
             return true;
         }
     }
     return false;
 }
 
-void Fighter_Damage(Fighter* f, Action* a, bool onRight){
+void Fighter_Damage(Fighter* f, Action* a){
     if(!a){
         return;
     }
 
-    int right = onRight ? 1 : -1;
     
     FighterState* fs = &cb_last(f->stateHistory);
+    EntityState* es = &cb_last(f->entity->history);
+    int right = es->facingRight ? 1 : -1;
     int staggerIndex    = Action_FindIndexByName(f->actions, sb_count(f->actions), "Stagger");
     int airStaggerIndex = Action_FindIndexByName(f->actions, sb_count(f->actions), "Air Stagger");
     int hkdIndex        = Action_FindIndexByName(f->actions, sb_count(f->actions), "Back Land Hard");
-
-    int damage = a->damage;
-    if(fs->health - damage < 0){
-        fs->health = 0;
-    }
-    else{
-        fs->health -= damage;
-    }
     
     if(Fighter_Air(f)){
-        fs->velocity.x = a->airKnockback[0] * right;
-        fs->velocity.y = a->airKnockback[1];
-    }
-    else{
-        fs->velocity.x = a->knockback[0] * right;
-        fs->velocity.y = a->knockback[1];
+        es->velocity.x = a->airKnockback[0] * right;
+        es->velocity.y = a->airKnockback[1];
     }
     if(a->forceAir){
         fs->stateFlags = fs->stateFlags | FF_AIR;
@@ -114,36 +117,21 @@ void Fighter_Damage(Fighter* f, Action* a, bool onRight){
 
 
 // Use setMax for things like blockstun, hitstun, grabstun
-void Fighter_StartAction(Fighter*f, Action* a, uint setMax){
-
-    // TODO(#24): Imeplemnt step (e.g. Guile 4HK)
+void Fighter_StartAction(Fighter* f, Action* a, uint setMax){
 
     FighterState* fs = &cb_last(f->stateHistory);
+    
+    // TODO: Some entities shouldn't spawn immediately
+    // Probably don't worry about that here, but add it to a queue within Entities_SpawnType
+    if (a->entity && !asamiya){
+        Entities_SpawnType(a->entity, f->entity, VEC2_ZERO);
+    }
 
     fs->frame = 0;
-    if (setMax > 0)
-        a->mustLinkAfter = setMax;
-
-    // Play audio
-    Sound sfx = a->audioChunk;
-    if(sfx.frameCount){
-        CC_Audio_Play_SFX(sfx);
-    }
-    fs->action = a;
-
-
-    for(int i = 0; i < sb_count(a->hitboxes); i++){
-        a->hitboxes[i]->currentFrame = 0;
-        a->hitboxes[i]->active = HB_INACTIVE;
-    }
-
+    
     fs->jumps -= a->burnsJump;
     if(a->restoresJump)
         fs->jumps = f->maxJumps;
-
-    if(a->overrideSelfTime){
-        fs->subframe = a->overrideSelfTime;
-    }
 
     if (a->groundAir == 1){
         fs->stateFlags |= FF_AIR;
@@ -152,154 +140,56 @@ void Fighter_StartAction(Fighter*f, Action* a, uint setMax){
         fs->stateFlags &= ~FF_AIR;
     }
 
-
-    if(a->overrideSelfVelocity){
-        int right = Fighter_OnRight(f) ? -1 : 1;
-        if (a->overrideSelfVelocity[0] != 6969){
-            fs->velocity.x = a->overrideSelfVelocity[0] * right;
-        }
-        fs->velocity.y = a->overrideSelfVelocity[1];
-    }
-
     if(a->overrideSelfGravity){
-        int right = Fighter_OnRight(f) ? -1 : 1;
+        int right = Fighter_FacingRight(f) ? 1 : -1;
         fs->tempGravity.x = a->overrideSelfGravity[0] * right;
         fs->tempGravity.y = a->overrideSelfGravity[1];
     }
 
-    Fighter_ChangeAnimation(f, a->animation);
+    Entity_StartAction(f->entity, a, setMax);
+
+    // Fighter_ChangeAnimation(f, a->animation);
 }
 
 
 void Fighter_StartActionIndex(Fighter*f, uint i, uint setMax){
-    Fighter_StartAction(f, (f->actions[i]), setMax);
+    Fighter_StartAction(f, f->actions[i], setMax);
 }
 
 
 float Fighter_HealthPercent(Fighter* f){
-    return (float)cb_last(f->stateHistory).health / f->maxHealth;
+    return (float) cb_last(f->entity->history).currentHealth / f->maxHealth;
 }
 
 void Fighter_DrawSprite(Fighter* f, RectI camera){
-    int count = cb_count(f->stateHistory);
-    FighterState* fs = &(cb_last(f->stateHistory));
-
-    Animation* curAnim = fs->animation;
-    
-    Animation* an = fs->animation;
-    RectI** sc = fs->animation->spriteClips; 
-    
-    RectI* ricc = curAnim->spriteClips[fs->animation->currentFrame / curAnim->frameWait];
-    
-    Rectangle currentClip = { ricc->x, ricc->y, ricc->w, ricc->h };
-
-
-    int flip = Fighter_OnRight(f);
-    currentClip.width *= !flip - flip;
-    currentClip.x += currentClip.width * flip;
-    
-    Rectangle targetRect = {
-        .x = (fs->position.x - camera.x) * UNIT_TO_PIX - abs(currentClip.width)/2 * fighterDrawScale,
-        .y = (fs->position.y - camera.y) * UNIT_TO_PIX - abs(currentClip.height) * fighterDrawScale,
-        .width  = abs(currentClip.width) * fighterDrawScale,
-        .height = abs(currentClip.height) * fighterDrawScale
-        };
-
-
-    BeginShaderMode(f->fighterShader);
-    // int shaderPalLoc = GetShaderLocation(f->fighterShader, "palette");
-    // SetShaderValueTexture(f->fighterShader, shaderPalLoc, f->paletteTexture);
-    // Draw a part of a texture defined by a rectangle with 'pro' parameters
-    DrawTexturePro(
-        fs->animation->texture, // Texture
-        currentClip,            // Source rect
-        targetRect,             // Destination rect
-        (Vector2){0,0},         // Origin
-        0,                      // Rotation
-        WHITE                   // Tint
-    );
-    EndShaderMode();
-
-    // fs->animation->texture.width = abs(fs->animation->texture.width);
-
-    // Advance the frame
-    assert(f && "no fighter");
-    assert(f->stateHistory && "no history");
-    assert(&(cb_last(f->stateHistory)) && "no 0th");
-
-    if(!cb_last(currentMatch.history).hitStop && !currentMatch.paused){
-        fs->animation->currentFrame++;
-    }
-
-    // If we finish with the animation, advance to the linked animation.
-    if(fs->animation->currentFrame >= fs->animation->frameWait * fs->animation->frameCount){
-        Fighter_ChangeAnimation(f, fs->animation->linksTo);
-    }
-
+    Entity_DrawSprite(f->entity, camera);
 }
 
-void Fighter_ChangeAnimation(Fighter* f, Animation* newAnimation){
-
-    FighterState* fs = &cb_last(f->stateHistory);
-
-    // Start on the loop point if new = old, otherwise start at 0.
-    if(newAnimation == cb_last(f->stateHistory).animation){
-        cb_last(f->stateHistory).animation->currentFrame = cb_last(f->stateHistory).animation->frameWait * newAnimation->loopStart;
-    }
-    else{
-        cb_last(f->stateHistory).animation = newAnimation;
-        cb_last(f->stateHistory).animation->currentFrame = 0;
-    }
-}
 
 void Fighter_DrawPoint(Fighter* f, RectI camera){
+    EntityState* es = &cb_last(f->entity->history);
     DrawRectangle(
-        (cb_last(f->stateHistory).position.x * fighterDrawScale - 1 - camera.x) * UNIT_TO_PIX,
-        (cb_last(f->stateHistory).position.y * fighterDrawScale - 1 - camera.y) * UNIT_TO_PIX,
+        (es->position.x * fighterDrawScale - 1 - camera.x) * UNIT_TO_PIX,
+        (es->position.y * fighterDrawScale - 1 - camera.y) * UNIT_TO_PIX,
         3,
         3,
         WHITE
     );
 }
  
+
 void Fighter_DrawHitboxes(Fighter* f, RectI camera){
-    Action* a = cb_last(f->stateHistory).action;
-    
-    for(int i = 0; i < sb_count(a->hitboxes); i++){
-        if(a->hitboxes[i]->active != HB_ACTIVE){
-            continue;
-        }
-
-        RectI hbr = a->hitboxes[i]->rect;
-        // Since we can't *Draw* with negative width, we need to do this
-        if (Fighter_OnRight(f)){
-            hbr = Rect_Flip_Draw(hbr);
-        }
-
-        int selected = selectedBoxType == boxtype_none || (selectedBoxType == boxtype_hit && (selectedBoxIdx == i || selectedBoxIdx < 0));
-        int opac = 127 * selected + 64 * !selected;
-        opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_hit);
-
-        DrawRectangle(
-            ((hbr.pos.x + cb_last(f->stateHistory).position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
-            ((hbr.pos.y + cb_last(f->stateHistory).position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
-            hbr.size.x * UNIT_TO_PIX * fighterDrawScale,
-            hbr.size.y * UNIT_TO_PIX * fighterDrawScale,
-            (Color){255, 0, 0, opac}
-        );
-    }
+    Entity_DrawHitboxes(f->entity, camera);
 }
 
 void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
-    for(int i = 0; i < sb_count(cb_last(f->stateHistory).action->hurtboxes); i++){
-        char* name = cb_last(f->stateHistory).action->name;
-        // printf("%s\n", name);
-        int count = sb_count(cb_last(f->stateHistory).action->hurtboxes);
-        FighterState last = cb_last(f->stateHistory);
-        Action* act = last.action;
-        RectI hbr = act->hurtboxes[i]->rect;
+    EntityState* es = &cb_last(f->entity->history);
+
+    for(int i = 0; i < sb_count(es->currentAction->hurtboxes); i++){
+        char* name = es->currentAction->name;
+        RectI hbr = es->currentAction->hurtboxes[i]->rect;
         // Since we can't *Draw* with negative width, we need to do this
-        if (Fighter_OnRight(f)){
+        if (Fighter_FacingRight(f)){
             hbr = Rect_Flip_Draw(hbr);
         }
 
@@ -308,8 +198,8 @@ void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
         opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_hurt);
 
         DrawRectangle(
-            ((hbr.pos.x + cb_last(f->stateHistory).position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
-            ((hbr.pos.y + cb_last(f->stateHistory).position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+            ((hbr.pos.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+            ((hbr.pos.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
             hbr.size.x * UNIT_TO_PIX * fighterDrawScale,
             hbr.size.y * UNIT_TO_PIX * fighterDrawScale,
             (Color){0, 255, 0, opac}
@@ -318,9 +208,10 @@ void Fighter_DrawHurtboxes(Fighter* f, RectI camera){
 }
 
 void Fighter_DrawCollisionbox(Fighter* f, RectI camera){
-    RectI hbr = cb_last(f->stateHistory).action->shovebox.rect;
+    EntityState* es = &cb_last(f->entity->history);
+    RectI hbr = es->currentAction->shovebox.rect;
     // Since we can't *Draw* with negative width, we need to do this
-    if (Fighter_OnRight(f)){
+    if (Fighter_FacingRight(f)){
         hbr = Rect_Flip_Draw(hbr);
     }
 
@@ -329,8 +220,8 @@ void Fighter_DrawCollisionbox(Fighter* f, RectI camera){
     opac += 100 * selectedBoxType == boxtype_shove;
 
     DrawRectangle(
-        ((hbr.pos.x + cb_last(f->stateHistory).position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
-        ((hbr.pos.y + cb_last(f->stateHistory).position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+        ((hbr.pos.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+        ((hbr.pos.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
         (hbr.size.x) * UNIT_TO_PIX * fighterDrawScale,
         (hbr.size.y) * UNIT_TO_PIX * fighterDrawScale,
         (Color){255, 255, 255, opac}
@@ -341,34 +232,53 @@ void Fighter_DrawCollisionbox(Fighter* f, RectI camera){
 #define UNSHOVE 1
 
 
+void Fighter_Process_Advance(Fighter* f){
+    FighterState* fs = &cb_last(f->stateHistory);
+    fs->frame++;
+
+    Entity_Process_Advance(f->entity);
+
+    EntityState* es = &cb_last(f->entity->history);
+
+    if(es->frame == es->currentAction->mustLinkAfter){
+        // if(fs->stateFlags & FF_HARD_KD){
+        //     Entity_StartAction(e, es->currentAction, 0);
+        // }
+        // else{
+            Entity_StartAction(f->entity, es->currentAction->linksTo[0], 0);
+        // }
+    }    
+    else if(es->currentAction->mustLinkAfter >= 0 && es->frame > es->currentAction->mustLinkAfter){
+        printf("%s: %d >%d\n", es->currentAction->name, es->frame, es->currentAction->mustLinkAfter);
+        printf("This shouldn't happen. %s (%d)\n", __FILE__, __LINE__);
+        return false;
+    }
+}
+
 void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, RectI camera){
     ///////////////////////////////////////
     // Unshove if overlapping with opponent
 
     FighterState* fs = &cb_last(f->stateHistory);
     FighterState* os = &cb_last(f->opponent->stateHistory);
+    EntityState* es = &cb_last(f->entity->history);
+    EntityState* oes = &cb_last(f->opponent->entity->history);
 
-    RectI rect1 = Fighter_OnRight(f) ?
-        Rect_Flip(fs->action->shovebox.rect)
-        : fs->action->shovebox.rect;
-    rect1.pos = Vec2_Add(rect1.pos, fs->position);
+    es->facingRight = !Fighter_OnRight(f);
 
-    RectI rect2 = Fighter_OnRight(f->opponent) ?
-        Rect_Flip(cb_last(f->opponent->stateHistory).action->shovebox.rect)
-        : cb_last(f->opponent->stateHistory).action->shovebox.rect;
-    rect2.pos = Vec2_Add(rect2.pos, cb_last(f->opponent->stateHistory).position);
+    RectI rect1 = Fighter_OnRight(f) ? Rect_Flip(es->currentAction->shovebox.rect) : es->currentAction->shovebox.rect;
+    rect1.pos = Vec2_Add(rect1.pos, es->position);
+
+    RectI rect2 = Fighter_OnRight(f->opponent) ? Rect_Flip(oes->currentAction->shovebox.rect) : oes->currentAction->shovebox.rect;
+    rect2.pos = Vec2_Add(rect2.pos, oes->position);
 
 
     
-
-    int us = ss->right - ss->left;
+    int us = es->velocity.x;
     int opp = ess->right - ess->left;
 
-    us = fs->velocity.x;
-
-
     // jumpsquat
-    if(fs->subframe > 0){
+    if(es->subframe > 0){
         us = 0;
     }
     fs->stateFlags &= ~FF_HARD_KD;
@@ -378,40 +288,46 @@ void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, RectI camer
     
 
     // If we're not walking
-    if(!(fs->action == f->actions[4] || fs->action == f->actions[5])){
+    if(!(es->currentAction == f->actions[4] || es->currentAction == f->actions[5])){
         us = 0;
         opp = 0;
     }
+
+    // we're walking
     if(us != 0){
-        fs->velocity.x = (us-(opp*col))/(1+abs(col));
+        es->velocity.x = (us-(opp*col))/(1+abs(col));
     }
+    // we're stationary, opponent is walking into us
     else if(col){
-        fs->velocity.x = UNSHOVE * abs(col) * (Fighter_OnRight(f) ? 1 : -1);
+        es->velocity.x = UNSHOVE * abs(col) * (Fighter_OnRight(f) ? 1 : -1);
     }
     else{
-        fs->velocity.x = 0;
+        es->velocity.x = 0;
     }
     
     // This prevents the players from moving beyond the camera
-    int tentativeDistance = (fs->position.x + fs->velocity.x) - os->position.x;
+    int tentativeDistance = (es->position.x + es->velocity.x) - oes->position.x;
 
     if(abs(tentativeDistance) > camera.w * PIX_TO_UNIT){
-        int multiplier = fs->velocity.x > 0 ? 1 : 0;
-        fs->position.x = camera.x + (multiplier * PIX_TO_UNIT * camera.w);
-        fs->velocity.x = 0;
+        int multiplier = es->velocity.x > 0 ? 1 : 0;
+        es->position.x = camera.x + (multiplier * PIX_TO_UNIT * camera.w);
+        es->velocity.x = 0;
     }
 
-    fs->position.x += fs->velocity.x;
+    // es->position.x += es->velocity.x;
+    Entity_Process_Position(f->entity);    
 }
 
 void Fighter_Land(Fighter* f){
     FighterState* fs = &cb_last(f->stateHistory);
+    EntityState* es = &cb_last(f->entity->history);
 
     fs->jumps = f->maxJumps;
     
     fs->stateFlags ^= FF_AIR;
-    fs->velocity.x = 0;
-    fs->subframe = 0;
+    es->velocity = VEC2_ZERO;
+    
+    es->subframe = 0;
     
     if(fs->stateFlags & FF_HARD_KD){
         int i = Action_FindIndexByName(f->actions, sb_count(f->actions), "Back Land Hard");
@@ -426,72 +342,71 @@ void Fighter_Land(Fighter* f){
 void Fighter_MoveAir(Fighter* f, StickState* ss, RectI camera){
 
     FighterState* fs = &cb_last(f->stateHistory);
+    EntityState* es = &cb_last(f->entity->history);
     FighterState* os = &cb_last(f->opponent->stateHistory);
+    EntityState* oes = &cb_last(f->opponent->entity->history);
 
     if(fs->tempGravity.x == 6969 && fs->tempGravity.y == 6969){
-        fs->velocity.y += f->gravity;
+        es->velocity.y += f->gravity;
         // Give the player a little bit of drift, as a treat.
-        fs->velocity.x += (ss->right - ss->left) * 1;
+        es->velocity.x += (ss->right - ss->left) * 1;
     }
     else{
-        fs->velocity.x += fs->tempGravity.x;
-        fs->velocity.y += fs->tempGravity.y;
+        es->velocity.x += fs->tempGravity.x;
+        es->velocity.y += fs->tempGravity.y;
     }
 
     // This prevents the players from moving beyond the camera
-    int tentativeDistance = (fs->position.x + fs->velocity.x) - os->position.x;
+    int tentativeDistance = (es->position.x + es->velocity.x) - oes->position.x;
 
     if(abs(tentativeDistance) > camera.w * PIX_TO_UNIT){
-        int multiplier = fs->velocity.x > 0 ? 1 : 0;
-        fs->position.x = camera.x + (multiplier * PIX_TO_UNIT * camera.w);
-        fs->velocity.x = 0;
+        int multiplier = es->velocity.x > 0 ? 1 : 0;
+        es->position.x = camera.x + (multiplier * PIX_TO_UNIT * camera.w);
+        es->velocity.x = 0;
     }
 
-    fs->position = Vec2_Add(fs->position, fs->velocity);
-    
+    Entity_Process_Position(f->entity);    
 
     // Land if neccesary, otherwise swap to rising/falling animation if neccesary
-    if (cb_last(f->stateHistory).position.y >= FLOOR_OFFSET && cb_last(f->stateHistory).velocity.y >= 0){
-        cb_last(f->stateHistory).position.y = FLOOR_OFFSET;
+    if (es->position.y >= FLOOR_OFFSET && es->velocity.y >= 0){
+        es->position.y = FLOOR_OFFSET;
         Fighter_Land(f);
     }
 
     else if (
-        (cb_last(f->stateHistory).velocity.y < 0 &&               // Going upward AND
-         cb_last(f->stateHistory).action == f->actions[6] &&      // Currently air idle AND
-         cb_from_back(f->stateHistory, 1).action != f->actions[6] // Was not previously air idle
+        (es->velocity.y < 0 &&                  // Going upward AND
+         es->currentAction == f->actions[6] &&  // Currently air idle AND
+         cb_from_back(f->entity->history, 1).currentAction != f->actions[6] // Was not previously air idle
         )
     ){
         // Switch animation to upward loop
-        Fighter_ChangeAnimation(f, f->animations[6]);
+        Entity_ChangeAnimation(f->entity, f->animations[6]);
     }
 
     else if (
-        cb_last(f->stateHistory).velocity.y >= 0 &&
-        
-        TextIsEqual(cb_last(f->stateHistory).animation->name, "Jump Rise")
-    ){
+        es->velocity.y >= 0 && TextIsEqual(es->currentAnimation->name, "Jump Rise")) {
         // Switch animation to downward loop
         // FIXME: Do this by string?
-        Fighter_ChangeAnimation(f, f->animations[8]);
+        Entity_ChangeAnimation(f->entity, f->animations[8]);
     }
 }
 
 void Fighter_CheckWalls(Fighter* f){
-    // Collide with walls
-    if(cb_last(f->stateHistory).position.x < LEFT_WALL)
-        cb_last(f->stateHistory).position.x = LEFT_WALL;
-    else if(cb_last(f->stateHistory).position.x > RIGHT_WALL)
-        cb_last(f->stateHistory).position.x = RIGHT_WALL;
+    EntityState* es = &cb_last(f->entity->history);
+    if(es->position.x < LEFT_WALL)
+        es->position.x = LEFT_WALL;
+    else if(es->position.x > RIGHT_WALL)
+        es->position.x = RIGHT_WALL;
 }
 
 void Fighter_UpdateSubstate(Fighter* f){
     FighterState* fs = &cb_last(f->stateHistory);
-    if(fs->subframe == 0){
+    EntityState* es = &cb_last(f->entity->history);
+    if(es->subframe == 0){
         fs->tempGravity.x = 6969;
         fs->tempGravity.y = 6969;
     }
     else{
-        fs->subframe--;
+        es->subframe--;
     }
 }

@@ -118,18 +118,18 @@ bool Ui_Match_Init(Match* m){
     Image img;
 
     img = LoadImage("Graphics/Ui/NamePalettePlate.png");
-    ImageColorReplace(&img, (Color){255,0,0,  255}, f1->palette[1]);
-    ImageColorReplace(&img, (Color){0,255,0,  255}, f1->palette[2]);
-    ImageColorReplace(&img, (Color){0,0,255,  255}, f1->palette[3]);
-    ImageColorReplace(&img, (Color){255,0,255,255}, f1->palette[4]);
+    ImageColorReplace(&img, (Color){255,0,0,  255}, f1->entity->palette[1]);
+    ImageColorReplace(&img, (Color){0,255,0,  255}, f1->entity->palette[2]);
+    ImageColorReplace(&img, (Color){0,0,255,  255}, f1->entity->palette[3]);
+    ImageColorReplace(&img, (Color){255,0,255,255}, f1->entity->palette[4]);
     p1nameplate = LoadTextureFromImage(img);
     UnloadImage(img);
 
     img = LoadImage("Graphics/Ui/NamePalettePlate.png");
-    ImageColorReplace(&img, (Color){255,0,0,  255}, f1->palette[1]);
-    ImageColorReplace(&img, (Color){0,255,0,  255}, f1->palette[2]);
-    ImageColorReplace(&img, (Color){0,0,255,  255}, f1->palette[3]);
-    ImageColorReplace(&img, (Color){255,0,255,255}, f1->palette[4]);
+    ImageColorReplace(&img, (Color){255,0,0,  255}, f2->entity->palette[1]);
+    ImageColorReplace(&img, (Color){0,255,0,  255}, f2->entity->palette[2]);
+    ImageColorReplace(&img, (Color){0,0,255,  255}, f2->entity->palette[3]);
+    ImageColorReplace(&img, (Color){255,0,255,255}, f2->entity->palette[4]);
     ImageFlipHorizontal(&img);
     p2nameplate = LoadTextureFromImage(img);
     UnloadImage(img);
@@ -141,7 +141,7 @@ bool Ui_Match_Init(Match* m){
     if(!Ui_Match_MakeFonts())
         return false;
 
-    Ui_Match_MakeNames(f1->name, f2->name);
+    Ui_Match_MakeNames(f1->entity->name, f2->entity->name);
 
     return true;
 }
@@ -154,8 +154,8 @@ void DrawHUD(Match* m){
     Player* p1 = &m->players[0];
     Player* p2 = &m->players[1];
 
-    short p1health = cb_last(p1->pointCharacter->stateHistory).health;
-    short p2health = cb_last(p2->pointCharacter->stateHistory).health;
+    short p1health = cb_last(p1->pointCharacter->entity->history).currentHealth;
+    short p2health = cb_last(p2->pointCharacter->entity->history).currentHealth;
 
     const float widthFactor = 0.39f;
     const int portraitSize = 48;
@@ -190,16 +190,16 @@ void DrawHUD(Match* m){
     // Draw Names
     // Draw the plate twice; once without shader for the border and background, then again for the colors
     DrawTexture(p1nameplate, 0, 55, WHITE);
-    BeginShaderMode(p1->pointCharacter->fighterShader);
+    BeginShaderMode(p1->pointCharacter->entity->shader);
     DrawTexture(p1nameplate, 0, 55, WHITE);
     EndShaderMode();
-    DrawText(p1->pointCharacter->name, 5+p1nameOffset.x, 55+p1nameOffset.y, NAMEFONTSIZE, WHITE);
-    v = MeasureTextEx(GetFontDefault(), p2->pointCharacter->name, NAMEFONTSIZE, 2);
+    DrawText(p1->pointCharacter->entity->name, 5+p1nameOffset.x, 55+p1nameOffset.y, NAMEFONTSIZE, WHITE);
+    v = MeasureTextEx(GetFontDefault(), p2->pointCharacter->entity->name, NAMEFONTSIZE, 2);
     DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X-p2nameplate.width, 55, WHITE);
-    BeginShaderMode(p2->pointCharacter->fighterShader);
+    BeginShaderMode(p2->pointCharacter->entity->shader);
     DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X-p2nameplate.width, 55, WHITE);
     EndShaderMode();
-    DrawText(p2->pointCharacter->name, VIRT_SCREEN_SIZE_X - v.x - 5 - p2nameOffset.x, 55 + p2nameOffset.y, NAMEFONTSIZE, WHITE);
+    DrawText(p2->pointCharacter->entity->name, VIRT_SCREEN_SIZE_X - v.x - 5 - p2nameOffset.x, 55 + p2nameOffset.y, NAMEFONTSIZE, WHITE);
 
     // #pragma region Portaits
     

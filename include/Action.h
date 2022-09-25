@@ -7,7 +7,7 @@
 #include "Animation.h"
 #include "Hitbox.h"
 #include "CC_Audio.h"
-
+#include "Types.h"
 
 /*
 Everything a character does is an Action: standing, walking, blocking, attacking,
@@ -73,7 +73,6 @@ typedef struct action {
     bool overrideGravity;
 
     unsigned short hitStop;
-    unsigned short hitStun;
 
     int knockback[2];
     int airKnockback[2];
@@ -96,6 +95,11 @@ typedef struct action {
     unsigned char overrideSelfTime;
 
     bool phase;
+
+    // Type of entity to spawn
+    int entity;
+
+    CallbackFunction cb_on_Damage;
 
 } Action;
 
@@ -128,13 +132,16 @@ Action* Action_Create(
     int overrideSelfVelocity[2],
     uint overrideSelfTime,
     uint index,
-    bool phase
+    bool phase,
+    int entity
     );
-void Action_SetShovebox(Action*, Shovebox hb);
+
+Action* Action_CreateNull();
+void Action_SetShovebox(Action* a, Shovebox hb);
 // Return the index of added element
-int Action_AddHitbox(Action*, Hitbox* hb);
+int Action_AddHitbox(Action* a, Hitbox* hb);
 // Return the index of added element
-int Action_AddHurtbox(Action*, Hurtbox* hb);
+int Action_AddHurtbox(Action* a, Hurtbox* hb);
 int Action_FindIndexByName(Action** a, int size, char* name);
 void Action_SetLinkTo(Action* a, Action* link);
 void Action_SetLinkFrom(Action* a, Action* link);

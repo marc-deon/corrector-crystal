@@ -1,4 +1,5 @@
 #include "CC_Audio.h"
+#include <stdio.h>
 
 Music currentMusic;
 

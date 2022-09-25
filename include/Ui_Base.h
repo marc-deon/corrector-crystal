@@ -3,6 +3,7 @@
 
 #include "Vec2I.h"
 #include "Stick.h"
+#include "Types.h"
 
 enum ui_type {
     UI_TYPE_NONE,   // 0
@@ -43,21 +44,14 @@ typedef struct ui_element {
     ui_preamble
 } UiElement;
 
-typedef struct callback_info {
-    int player;
-    UiElement* target;
-    int arg;
-} CallbackInfo;
 
-typedef struct callback_function {
-    void (*function)();
-    CallbackInfo info;
-} CallbackFunction;
-
-
+// Invoke
 #define invoke(cbfunc) (cbfunc.function(cbfunc.info))
+// Invoke with set arg
 #define invokea(cbfunc, a) (cbfunc.info.arg=a, invoke(cbfunc))
+// Invoke with set player
 #define invokep(cbfunc, p) (cbfunc.info.player=p, invoke(cbfunc))
+// Invoke with set player and arg
 #define invokepa(cbfunc, p, a) (cbfunc.info.player=p, cbfunc.arg=a, invoke(cbfunc))
 
 Vec2I UiElement_Size(UiElement* elem);

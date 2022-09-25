@@ -33,31 +33,54 @@ const char* boxtypes[] = {
     "Shove",
 };
 
+const Color boxcolors[] = {
+    BLACK,
+    RED,
+    GREEN,
+    WHITE
+};
+
 void Preview_Draw(UiPreview* p, Vec2I offset){
-    Action* act = cb_last(asamiya_f->stateHistory).action;
-    Animation* ani = cb_last(asamiya_f->stateHistory).animation;
+    Action* act = cb_last(asamiya_f->entity->history).currentAction;
+    Animation* ani = cb_last(asamiya_f->entity->history).currentAnimation;
     int y = 2;
 
+    const FONTSIZE = 20;
     DrawRectangle(p->position.x + offset.x, p->position.y + offset.y, ui_w(p), ui_h(p), PURPLE);
 
 
     const char* text = TextFormat("Camera: %d %d", previewCamera.x, previewCamera.y);
-    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, 20, WHITE); y += 20;
+    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
 
     text = TextFormat("(%d) %s", act->index, act->name);
-    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, 20, WHITE); y += 20;
+    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
 
     text = TextFormat("f %d/%d", ani->currentFrame, ani->frameCount * ani->frameWait - 1);
-    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, 20, WHITE); y += 20;
+    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
 
     text = TextFormat("Selected type: %s", boxtypes[selectedBoxType]);
-    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, 20, WHITE); y += 20;
+    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, boxcolors[selectedBoxType]); y += 20;
 
     text = TextFormat("Box index: %d", selectedBoxIdx);
-    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, 20, WHITE); y += 20;
+    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
 
-    text = TextFormat("hb count: %d", sb_count(act->hitboxes));
-    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, 20, WHITE); y += 20;
+    text = TextFormat("hb count: ");
+    DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE);
+    int textSize = MeasureText(text, FONTSIZE);
+    text = TextFormat("%d", sb_count(act->hitboxes));
+    DrawText(text, p->position.x + offset.x + 2 + textSize, p->position.y + offset.y + y, FONTSIZE, RED);
+    textSize += MeasureText(text, FONTSIZE);
+    text = " + ";
+    DrawText(text, p->position.x + offset.x + 2 + textSize, p->position.y + offset.y + y, FONTSIZE, WHITE);
+    textSize += MeasureText(text, FONTSIZE);
+    text = TextFormat("%d", sb_count(act->hurtboxes));
+    DrawText(text, p->position.x + offset.x + 2 + textSize, p->position.y + offset.y + y, FONTSIZE, GREEN);  y += 20;
+
+    if(selectedBoxType == boxtype_hit && selectedBoxIdx >= 0){
+        RectI r = act->hitboxes[selectedBoxIdx]->rect;
+        text = TextFormat("%d %d %d %d", r.x, r.y, r.w, r.h);
+        DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
+    }
 
     Fighter_DrawSprite(asamiya_f, previewCamera);
     Fighter_DrawCollisionbox(asamiya_f, previewCamera);

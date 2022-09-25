@@ -10,40 +10,40 @@ Texture mainMenuGrillTexture;
 RectI mainMenuGrillRect;
 
 #pragma region Button Callbacks
-void cb_arcade(){
+void cb_arcade() {
     MakeArcadeMenu();
 }
 
-void cb_versus(){
+void cb_versus() {
     MakeVersusMenu();
 }
 
-void cb_training(){
+void cb_training() {
     MakeTrainingMenu();
 }
 
-void cb_replays(){
+void cb_replays() {
     MakeReplaysMenu();
 }
 
-void cb_options(){
+void cb_options() {
     MakeOptionsMenu();
 }
 
-void cb_quit(){
+void cb_quit() {
     Ui_CloseTop();
     stopGame = 1;
 }
 
-void cb_back(){
+void cb_back() {
     Ui_CloseTop();
 }
 
 int playerCharaIndices[2] = {-1, -1};
 
-void cb_arcade_back(CallbackInfo info){
+void cb_arcade_back(CallbackInfo info) {
 
-    if (playerCharaIndices[info.player] == -1){
+    if (playerCharaIndices[info.player] == -1) {
         Ui_CloseTop();
     }
 
@@ -52,21 +52,21 @@ void cb_arcade_back(CallbackInfo info){
 
 #pragma endregion
 
-void TransitionToMatch(){
+void TransitionToMatch() {
 
 }
 
-void cb_character_select(CallbackInfo info){
+void cb_character_select(CallbackInfo info) {
     printf("Player %d selected character %d\n", info.player, info.arg);
     playerCharaIndices[info.player] = info.arg;
 
-    if(info.player == 0){
+    if(info.player == 0) {
         Ui_GetTopFocus()->p1focused = NULL;
-    }else if (info.player == 1){
+    }else if (info.player == 1) {
         Ui_GetTopFocus()->p2focused = NULL;
     }
 
-    if (playerCharaIndices[0] != -1 && playerCharaIndices[1] != -1){
+    if (playerCharaIndices[0] != -1 && playerCharaIndices[1] != -1) {
         while(Ui_GetTopFocus())
             Ui_PopFocus();
         UiMenu* m = mqui_as_menu(GameInit(playerCharaIndices[0], playerCharaIndices[1]));
@@ -75,12 +75,12 @@ void cb_character_select(CallbackInfo info){
 }
 
 // TODO: Add rects for portraits on left and right, read textures from file as neccesary
-UiMenu* MakeArcadeMenu(){
+UiMenu* MakeArcadeMenu() {
     playerCharaIndices[0] = -1;
     playerCharaIndices[1] = -1;
     UiMenu* menu = Menu_New(BAKE_TYPE_FLOATING);
     menu->elements = 0;
-    menu->on_cancel = (CallbackFunction){cb_arcade_back};
+    menu->on_cancel = (CallbackFunction) {cb_arcade_back};
 
     menu->background_texture = LoadTexture("Graphics/Ui/menubg.png");
 
@@ -148,15 +148,15 @@ UiMenu* MakeArcadeMenu(){
     menu->p1focused = mqui_as_element(butt_puppet);
     menu->p2focused = mqui_as_element(butt_puppet);
 
-    for (int i = -1; i <= 1; i++){
+    for (int i = -1; i <= 1; i++) {
         xs[i+1] = midx + i*(buttsize+space) - buttsize/2;
     }
-    for (int i = -1; i <= 1; i++){
+    for (int i = -1; i <= 1; i++) {
         ys[i+1] = midy + i*(buttsize+space) - buttsize/2;
     }
 
-    for(int x = 0; x < 3; x++){
-        for(int y = 0; y < 3; y++){
+    for(int x = 0; x < 3; x++) {
+        for(int y = 0; y < 3; y++) {
             butts[y][x]->position.x = xs[x];
             butts[y][x]->position.y = ys[y];
             sprites[y][x]->position.x = xs[x] + 2;
@@ -171,7 +171,7 @@ UiMenu* MakeArcadeMenu(){
             butts[y][x]->up    = y > 0 ? mqui_as_element(butts[y-1][x]) : 0;
             butts[y][x]->down  = y < 2 ? mqui_as_element(butts[y+1][x]) : 0;
 
-            butts[y][x]->on_confirm = (CallbackFunction){cb_character_select, (CallbackInfo){0, 0, 3*y+x}};
+            butts[y][x]->on_confirm = (CallbackFunction) {cb_character_select, (CallbackInfo) {0, 0, 3*y+x}};
         }
     }
 
@@ -179,35 +179,35 @@ UiMenu* MakeArcadeMenu(){
     return menu;
 }
 
-UiMenu* MakeVersusMenu(){
+UiMenu* MakeVersusMenu() {
     UiMenu* menu = Menu_New(BAKE_TYPE_FLOATING);
 
     return Ui_PushFocus(menu);
 }
 
-UiMenu* MakeTrainingMenu(){
+UiMenu* MakeTrainingMenu() {
     UiMenu* menu = Menu_New(BAKE_TYPE_FLOATING);
 
     return Ui_PushFocus(menu);
 }
 
-UiMenu* MakeReplaysMenu(){
+UiMenu* MakeReplaysMenu() {
     UiMenu* menu = Menu_New(BAKE_TYPE_SET_Y_SPACING);
 }
 
-UiMenu* MakeOptionsMenu(){
+UiMenu* MakeOptionsMenu() {
     UiMenu* menu = Menu_New(BAKE_TYPE_SET_Y_SPACING);
 
     return Ui_PushFocus(menu);
 }
 
-UiMenu* MakeMainMenu(){
+UiMenu* MakeMainMenu() {
     Texture surf;
 
     UiMenu* menu = Menu_New(BAKE_TYPE_SET_Y_SIZE);
     menu->p1focused = NULL;
     menu->p2focused = NULL;
-    menu->on_cancel = (CallbackFunction){cb_back};
+    menu->on_cancel = (CallbackFunction) {cb_back};
     menu->elements = NULL;
 
     menu->background_texture = LoadTexture("Graphics/Ui/mainbg.png");
@@ -233,26 +233,26 @@ UiMenu* MakeMainMenu(){
     add_element(menu, butt_quit);
     
     butt_arcade->down = butt_versus;
-    mqui_as_button(butt_arcade)->on_confirm = (CallbackFunction){cb_arcade};    
+    mqui_as_button(butt_arcade)->on_confirm = (CallbackFunction) {cb_arcade};    
 
     butt_versus->up = butt_arcade;
     butt_versus->down = butt_training;
-    mqui_as_button(butt_versus)->on_confirm = (CallbackFunction){cb_versus};    
+    mqui_as_button(butt_versus)->on_confirm = (CallbackFunction) {cb_versus};    
     
     butt_training->up = butt_versus;
     butt_training->down = butt_replays;
-    mqui_as_button(butt_training)->on_confirm = (CallbackFunction){cb_training};    
+    mqui_as_button(butt_training)->on_confirm = (CallbackFunction) {cb_training};    
 
     butt_replays->up = butt_training;
     butt_replays->down = butt_options;
-    mqui_as_button(butt_replays)->on_confirm = (CallbackFunction){cb_replays};    
+    mqui_as_button(butt_replays)->on_confirm = (CallbackFunction) {cb_replays};    
 
     butt_options->up = butt_replays;
     butt_options->down = butt_quit;
-    mqui_as_button(butt_options)->on_confirm = (CallbackFunction){cb_options};
+    mqui_as_button(butt_options)->on_confirm = (CallbackFunction) {cb_options};
     
     butt_quit->up = butt_options;
-    mqui_as_button(butt_quit)->on_confirm = (CallbackFunction){cb_quit};
+    mqui_as_button(butt_quit)->on_confirm = (CallbackFunction) {cb_quit};
 
     menu->p1focused = butt_arcade;
     Ui_PushFocus(menu);

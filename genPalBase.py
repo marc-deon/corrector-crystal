@@ -1,4 +1,9 @@
 #! /usr/bin/env python3
+
+###
+# Run this to convert Aoko sources to BW indexed
+###
+
 import PIL
 from PIL import Image
 from sys import argv

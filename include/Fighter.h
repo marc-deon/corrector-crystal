@@ -17,20 +17,21 @@ extern enum boxtype selectedBoxType;
 #include "FighterFlags.h"
 #include "Action.h"
 #include "Stick.h"
+#include "Types.h"
+#include "Entity.h"
 
-// extern Shader fighterShader;
+// typedef EntityState;
+// typedef struct entity Entity;
 
-typedef struct fighterState{
+typedef struct {
 
-    Action* action;
-    Animation* animation;
-    Vec2I position;
-    Vec2I velocity;
+    // Action*    action;
+    // Animation* animation;
     // Temporary gravity, i.e. during airdash. disabled at [6969, 6969]
     Vec2I tempGravity;
 
     FighterFlags stateFlags;
-    short health;
+    // short health;
     short mana;
     short meter;
 
@@ -39,8 +40,7 @@ typedef struct fighterState{
     // Used for: jumpsquat
     //           hitStop
     //           tempGravity (airdash)
-    unsigned char subframe;
-    unsigned char gravity; // increment every fighter.gravityEvery
+
 
 } FighterState;
 
@@ -48,29 +48,28 @@ typedef struct fighterState{
 
 typedef struct fighter {
 
+    Entity* entity;
+
     // Match constant
-    uint owner;
+    uint ownerIndex;
     Fighter* opponent;
-    char* name;
-    Color palette[256];
-    uint paletteNumber;
-    Texture paletteTexture;
-    Shader fighterShader;
-    
+       
     uint maxJumps;
     int maxHealth;
     int maxMana;
     int gravity;
     int maxMeter;
-    Action** actions; // Stretchy buffer
+    Action** actions;       // Stretchy buffer
     Animation** animations; // Stretchy buffer
     Texture portrait;
 
     // Special move inputs, listed in order of (tiebreaking) priority
-    Motion** motions; // Stretchy buffer
-    FighterState* stateHistory; // Stretchy buffer
+    Motion** motions;           // Stretchy buffer
+    FighterState* stateHistory; // Circular buffer
 
 } Fighter;
+
+void Fighter_Process_Advance(Fighter* f);
 
 void Fighter_DrawSprite(Fighter* f, RectI camrea);
 void Fighter_DrawPoint(Fighter* f, RectI camrea);
@@ -95,12 +94,13 @@ void Fighter_StartActionIndex(Fighter*f, uint i, uint setMax);
 bool Fighter_Grounded(Fighter* f);
 bool Fighter_Air(Fighter* f);
 bool Fighter_OnRight(Fighter* f);
+bool Fighter_FacingRight(Fighter* f);
 
-// Things to free: animations (and animation->spriteClips RectIs)
 Fighter* Fighter_Create(char* path);
-void Fighter_Damage(Fighter* f, Action* a, bool onRight);
+void Fighter_Damage(Fighter* f, Action* a);
 void Fighter_Free(Fighter* f);
 void Fighter_Destroy(Fighter* f);
+
 
 
 #endif /* FIGHTER */

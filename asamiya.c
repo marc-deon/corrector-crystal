@@ -1,4 +1,5 @@
-#define ASAMIYA
+// #define ASAMIYA
+int asamiya = 1;
 
 #include <raylib.h>
 #include <stdio.h>
@@ -43,7 +44,7 @@ void PruneBoxes(void** sb, enum boxtype t){
         for(int i = 0; i < loopTil; i++){
 
             // If size is (0,0)
-            if( ((Hitbox*)(sb[i]))->rect.w == 0 && ((Hitbox*)(sb[i]))->rect.h == 0){
+            if (((Hitbox*)(sb[i]))->rect.w == 0 && ((Hitbox*)(sb[i]))->rect.h == 0) {
                 // Swap with next
                 void* temp = sb[i];
                 sb[i] = sb[i+1];
@@ -57,16 +58,23 @@ void PruneBoxes(void** sb, enum boxtype t){
     }
 
     // Pop trailing zero-sized boxes and free
-    if(sb_count(sb) > 0){
-        while(sb_last((Hitbox**)sb)->rect.w == 0 && sb_last((Hitbox**)sb)->rect.h == 0){
+    while(sb_count(sb) > 0){
+        int count = sb_count(sb);
+        Hitbox* hb = sb_last((Hitbox**)sb);
+        if (sb_last((Hitbox**)sb)->rect.w == 0 && sb_last((Hitbox**)sb)->rect.h == 0) {
             switch(t) {
                 case boxtype_hit:
-                    free((Hitbox**)sb_pop(sb));
+                    Hitbox* e1 = sb_pop((Hitbox**)sb);
+                    free(e1);
                     break;
                 case boxtype_hurt:
-                    free((Hurtbox**)sb_pop(sb));
+                    Hurtbox* e2 = sb_pop((Hurtbox**)sb);
+                    free(e2);
                     break;
             }
+        }
+        else {
+            break;
         }
     }
 }
@@ -220,32 +228,34 @@ void SetupData(){
 
 void SetupFighter(){
     Fighter* f = asamiya_f = Fighter_Create("fighterData/superman.jsonc");
-    Fighter_GetPalette(f, 0);
-
-    f->stateHistory = cb_init(f->stateHistory, MAX_REWIND);
     cb_push(f->stateHistory, (FighterState){});
+    cb_push(f->entity->history, *EntityState_Create());
+
+    Fighter_GetPalette(f, 0);
+    
     FighterState* fs = &cb_last(f->stateHistory);
+    EntityState* es = &cb_last(f->entity->history);
+
     fs->stateFlags              = 0;
     fs->tempGravity.x           = 6969;
     fs->tempGravity.y           = 6969;
-    fs->subframe                = 0;
-    fs->animation = f->animations[0];
-    fs->animation->currentFrame = 0;
+    es->subframe                = 0;
+    es->currentAnimation = f->animations[0];
+    es->currentAnimation->currentFrame = 0;
 
     fs->jumps   = f->maxJumps;
-    fs->health  = f->maxHealth;
+    es->currentHealth  = f->maxHealth;
     fs->mana    = f->maxMana;
     fs->meter   = f->maxMeter;
-    fs->action  = f->actions[0];
-    fs->health = f->maxHealth;       
+    es->currentAction  = f->actions[0];
 
-    fs->position.x = 0;
+    es->position.x = 0;
     Fighter_StartActionIndex(f, 15, -1);
 }
 
 void UpdateHitboxes(){
-    Action*    lastAct = cb_last(asamiya_f->stateHistory).action;
-    Animation* lastAni = cb_last(asamiya_f->stateHistory).animation;
+    Action*    lastAct = cb_last(asamiya_f->entity->history).currentAction;
+    Animation* lastAni = cb_last(asamiya_f->entity->history).currentAnimation;
 
     lastAct->currentFrame += (!currentMatch.paused) + IsKeyPressed(KEY_PERIOD) - IsKeyPressed(KEY_COMMA);
     lastAni->currentFrame +=                          IsKeyPressed(KEY_PERIOD) - IsKeyPressed(KEY_COMMA);
@@ -254,8 +264,8 @@ void UpdateHitboxes(){
         lastAct->currentFrame++;
         if (lastAct->currentFrame == lastAct->mustLinkAfter){
             Fighter_StartAction(asamiya_f, lastAct, -1);
-            lastAct = cb_last(asamiya_f->stateHistory).action;
-            lastAni = cb_last(asamiya_f->stateHistory).animation;
+            lastAct = cb_last(asamiya_f->entity->history).currentAction;
+            lastAni = cb_last(asamiya_f->entity->history).currentAnimation;
         }
     }
 
@@ -287,6 +297,19 @@ void UpdateHitboxes(){
     selectedBoxType = (selectedBoxType + boxtype_max) % boxtype_max;
     selectedBoxIdx  += IsKeyPressed(KEY_E) - IsKeyPressed(KEY_Q);
 
+    // bound selectedBoxIdx to range [-1, numBoxes-1]
+    selectedBoxIdx = max(selectedBoxIdx, -1);
+    switch (selectedBoxType) {
+        case boxtype_hit:
+            selectedBoxIdx = min(selectedBoxIdx, sb_count(lastAct->hitboxes) - 1);
+            break;
+        
+        case boxtype_hurt:
+            selectedBoxIdx = min(selectedBoxIdx, sb_count(lastAct->hurtboxes) - 1);
+            break;
+    }
+    
+
     Hitbox* selectedBox = 0;
 
     if (selectedBoxType == boxtype_hit && selectedBoxIdx >= 0 && selectedBoxIdx < sb_count(lastAct->hitboxes))
@@ -310,7 +333,8 @@ void UpdateHitboxes(){
         switch (selectedBoxType) {
             case boxtype_hit: {
                 selectedBoxIdx = sb_count(lastAct->hitboxes);
-                Hitbox* hb = Hitbox_Create((RectI){100, -100, 100, 100}, 0, lastAni->frameCount);
+                Hitbox* hb = Hitbox_Create((RectI){100, -100, 100, 100}, 0, lastAni->frameCount * lastAni->frameWait);
+                // hb->active = lastAni->currentFrame >= hb->activeOnFrame && lastAni < hb->offOnFrame;
                 sb_push(lastAct->hitboxes, hb);
                 break;
             }
@@ -318,6 +342,7 @@ void UpdateHitboxes(){
             case boxtype_hurt: {
                 selectedBoxIdx = sb_count(lastAct->hurtboxes);
                 Hurtbox* hb = Hurtbox_Create((RectI){100, -100, 100, 100});
+                
                 sb_push(lastAct->hurtboxes, hb);
                 break;
             }
@@ -325,7 +350,8 @@ void UpdateHitboxes(){
     }
 
     // Delete: Nulls current box
-    if(IsKeyPressed(KEY_DELETE)){
+    if(IsKeyPressed(KEY_DELETE) && selectedBoxIdx >= 0){
+
         switch (selectedBoxType){
             case boxtype_hit:
                 if (selectedBoxIdx < sb_count(lastAct->hitboxes)){
@@ -378,6 +404,8 @@ void main(){
 
         "Return : Create new box",
         "Delete : Delete box",
+
+        "Ctrl+S : Save to json",
     };
 
     while(!WindowShouldClose()){

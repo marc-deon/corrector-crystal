@@ -29,35 +29,10 @@ Animation* Animation_Create(char* name, char* filename, uint frameCount, uint fr
     anim->frameWait = frameWait;
     anim->loopStart = loopStart;
 
-    // TODO: Palette stuff needs to be done in a shader instead
-
-    // Load image
-    // Image img = LoadImage(filename);
-    
-    // // Load images's base palette
-    // int colorCount;
-    // Color* baseColors = LoadImagePalette(img, 256, &colorCount);
-    // // Color* baseColors = LoadImageColors(img);
-
-    // // For each base color, replace with new color
-    // // NOTE: This may require some shenanigans... or we use shaders later. Probably shaders.
-    // for(int i = 0; i < colorCount; i++){
-    //     ImageColorReplace(&img, baseColors[i], colors[i]);
-    // }
-
-    // // Convert image to texture
-    // Texture imagesurface = LoadTextureFromImage(img);
-
-    // // Unload image
-    // UnloadImage(img);
-
-    // printf("Loading anim from sheet %s\n", filename);
     Texture t = LoadTexture(filename);
     
     anim->texture = t;
     
-
-
     // spriteClips
     anim->spriteClips = 0;
     //

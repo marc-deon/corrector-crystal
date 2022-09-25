@@ -17,6 +17,8 @@
 
 #include <unistd.h> // Unix only: getcwd
 
+#include <Entities.h>
+
 Texture background;
 // extern Match currentMatch;
 
@@ -97,6 +99,10 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         uint overrideSelfTime = json_get_default_int(action, "overrideSelfTime", 0);
 
         bool phase = json_get_default_bool(action, "phase", false);
+
+        char* entity_name = json_get_default_string(action, "entity", NULL);
+        int entity = Entities_GetEntityFromName(entity_name);
+
         Action* act = Action_Create(
             name,
             canLinkAfter,
@@ -126,7 +132,8 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
             overrideSelfVelocity,
             overrideSelfTime,
             i,
-            phase
+            phase,
+            entity
         );
         sb_push(fighter->actions, act);
         
@@ -296,16 +303,16 @@ void Fighter_GetPalette(Fighter* f, int palIndex){
     fread(buffer, 256 * 4, 1, fp);
     fclose(fp);
 
-    memcpy(f->palette, buffer, 256 * 4);
+    memcpy(f->entity->palette, buffer, 256 * 4);
 
     Image imBlank = GenImageColor(256, 1, BLANK);
     for(int x = 0; x < 256; x++)
-        ImageDrawPixel(&imBlank, x, 0, f->palette[x]);
-    UnloadTexture(f->paletteTexture);
-    f->paletteTexture = LoadTextureFromImage(imBlank);
+        ImageDrawPixel(&imBlank, x, 0, f->entity->palette[x]);
+    UnloadTexture(f->entity->paletteTexture);
+    f->entity->paletteTexture = LoadTextureFromImage(imBlank);
     UnloadImage(imBlank);
-    int shaderPalLoc = GetShaderLocation(f->fighterShader, "palette");
-    SetShaderValueTexture(f->fighterShader, shaderPalLoc, f->paletteTexture);
+    int shaderPalLoc = GetShaderLocation(f->entity->shader, "palette");
+    SetShaderValueTexture(f->entity->shader, shaderPalLoc, f->entity->paletteTexture);
 }
 
 struct json_object* Fighter_GetParsedJson(char* path){
@@ -346,7 +353,7 @@ void Fighter_SpriteInit(Fighter* f, char* path){
 
     //////////
     // General
-    f->name = json_get_string(parsed_json, "name");
+    f->entity->name = json_get_string(parsed_json, "name");
     f->maxJumps = json_get_int(parsed_json, "maxJumps");
     f->maxHealth = json_get_int(parsed_json, "maxHealth");
     f->maxMeter = json_get_int(parsed_json, "maxMeter");

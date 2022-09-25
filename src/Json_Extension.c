@@ -61,8 +61,8 @@ bool json_get_default_int_array(const struct json_object* sourceObject, const ch
 
 // Return the size of array
 int json_get_int_array(const struct json_object* sourceObject, const char* key, int* target){
-    struct json_object* tempObject;
-    json_object_object_get_ex(sourceObject, key, &tempObject);
+    struct json_object* tempObject = NULL;
+    json_bool exists = json_object_object_get_ex(sourceObject, key, &tempObject);
     struct array_list* arrlist = json_object_get_array(tempObject);
 
     for(int i = 0; i < array_list_length(arrlist); i++){

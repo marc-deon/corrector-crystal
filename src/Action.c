@@ -35,7 +35,8 @@ Action* Action_Create(
     int overrideSelfVelocity[2],
     uint overrideSelfTime,
     uint index,
-    bool phase
+    bool phase,
+    int entity
 ){
     Action* act = (Action*) malloc(1 * sizeof(Action));
     act->currentFrame = 0;
@@ -91,6 +92,56 @@ Action* Action_Create(
     act->overrideSelfTime = overrideSelfTime;
     act->index = index;
     act->phase = phase;
+    act->entity = entity;
+    act->cb_on_Damage.function = NULL;
+    return act;
+}
+
+Action* Action_CreateNull(){
+    Action* act = (Action*) malloc(1 * sizeof(Action));
+    act->currentFrame = 0;
+    act->name = "ACT_NONAME";
+    act->canLinkAfter = 0;
+    act->mustLinkAfter = -1;
+    act->linksTo = 0;
+    act->linksFrom = 0;
+    act->state = 0;
+    act->priority = 0;
+    act->animation = 0;
+    act->hitboxes = 0;
+    act->hurtboxes = 0;
+    // act->shovebox;
+    act->damage = 0;
+    act->hitstun = 0;
+    act->audioChunk.frameCount = 0;
+
+    act->wallSplat = 0;
+    act->dunk = 0;
+    act->hardKnockdown = 0;
+    act->forceAir = 0;
+    act->groundAir = 0;
+    act->overrideGravity = 0;
+    act->hitStop = 0;
+    act->knockback[0] = 0;
+    act->knockback[1] = 0;
+    act->airKnockback[0] = 0;
+    act->airKnockback[1] = 0;
+    act->knockbackFrames = 0;
+    act->selfKnockback[0] = 0;
+    act->selfKnockback[1] = 0;
+    act->selfKnockbackFrames = 0;
+    act->step[0] = 0;
+    act->step[1] = 0;
+    act->stepDelay = 0;
+    act->burnsJump = 0;
+    act->restoresJump = 0;
+    act->overrideSelfGravity = 0;
+    act->overrideSelfVelocity = 0;
+    act->overrideSelfTime = 0;
+    act->index = 0;
+    act->phase = 0;
+    act->entity = 0;
+    act->cb_on_Damage.function = NULL;
     return act;
 }
 

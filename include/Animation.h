@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include "RectI.h"
 
-typedef struct animation{
+typedef struct animation {
     char* name;
     Texture texture;
     uint currentFrame;

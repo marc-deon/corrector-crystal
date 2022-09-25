@@ -30,11 +30,11 @@ typedef struct hitbox {
 
 } Hitbox;
 
-typedef struct hurtbox{
+typedef struct hurtbox {
     RectI rect;
 } Hurtbox;
 
-typedef struct shovebox{
+typedef struct shovebox {
     RectI rect;
 } Shovebox;
 
@@ -46,12 +46,6 @@ Hitbox* Hitbox_Create(RectI rect, ushort activeOnFrame, ushort offOnFrame);
 Hurtbox* Hurtbox_Create(RectI rect);
 Shovebox Shovebox_Create(RectI rect);
 
-Hitbox Hitbox_Flip(Hitbox hb);
-Hurtbox Hurtbox_Flip(Hurtbox hb);
-Shovebox Shovebox_Flip(Shovebox hb);
-
-void Hitbox_Activate(Hitbox* hb);
-void Hitbox_Deactivate(Hitbox* hb);
 void Hitbox_UpdateTimer(Hitbox* hb);
 
 #endif /* HITBOX */

@@ -9,7 +9,7 @@
             "name": "Debug Corrector",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/corrector_crystal",
+            "program": "${workspaceFolder}/corrector",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

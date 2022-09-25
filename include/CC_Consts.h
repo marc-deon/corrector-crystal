@@ -28,4 +28,9 @@
 
 #define MAX_REWIND 30
 
+enum {
+    COL_MASK_PLAYER     = 0x1,
+    COL_MASK_PROJECTILE = 0x2
+};
+
 #endif

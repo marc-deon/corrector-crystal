@@ -420,10 +420,9 @@ bool Stick_GetPattern(struct player* p, Stick* stick, Motion* motion, char* patt
         if(curFrame > motion->bufferSize)
             continue;
 
-        
         char currentCharacter = pattern[patternIndex];
         StickState currentState = stick->buffer[curFrame];
-        if(Fighter_OnRight(p->pointCharacter)){
+        if(!Fighter_FacingRight(p->pointCharacter)){
             currentState = Stick_FlipState(currentState);
         }
         // if the current character was matched

@@ -38,8 +38,8 @@ void Match_End(Match* m){
 // 0 is no win, 1 and 2 are players, 3 is a double KO or tied time out.
 int Match_CheckRoundWin(Match* m){
     int i = 0;
-    int p1hp = cb_last(m->players[0].pointCharacter->stateHistory).health;
-    int p2hp = cb_last(m->players[1].pointCharacter->stateHistory).health;
+    int p1hp = cb_last(m->players[0].pointCharacter->entity->history).currentHealth;
+    int p2hp = cb_last(m->players[1].pointCharacter->entity->history).currentHealth;
 
 
     if(cb_last(m->history).currentTime == 0){

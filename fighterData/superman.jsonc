@@ -5,11 +5,8 @@
     "maxHealth": 10000,
     "maxMeter": 1000,
     "maxMana": 5,
-    "gravity": 6, 
+    "gravity": 6,
 
-
-    // NOTE: The 0th color in the palette will be ignored, made transparent.
-    // Colors can be defined as a triplet or quadruplet, RGBA. If triplet, A is assumed to be 255.
 
     "animations": [
         {
@@ -18,21 +15,21 @@
             "sprite": "Graphics/Fighter/Shoto/aoko_idle.png",
             "frames": 16,
             "wait": 4,
-            "cropRect":[0, 0, 43, 105],
+            "cropRect":[0, 0, 43, 105]
         },
         {
             "name": "Crouch Start",
             "sprite": "Graphics/Fighter/Shoto/aoko_crouch_start.png",
             "frames": 6,
             "wait": 4,
-            "cropRect":[0, 0, 63, 106],
+            "cropRect":[0, 0, 63, 106]
         },
         {
             "name": "Crouch Loop",
             "sprite": "Graphics/Fighter/Shoto/aoko_crouch_loop.png",
             "frames": 1,
             "wait": 4,
-            "cropRect":[0, 0, 63, 106],
+            "cropRect":[0, 0, 63, 106]
         },
         {
             "name": "Stand",
@@ -40,7 +37,7 @@
             "frames": 5,
             "wait": 4,
             "cropRect":[0, 0, 63, 106],
-            "linksTo": "Idle",
+            "linksTo": "Idle"
         },
         {
             "name": "Walk Forward",
@@ -153,35 +150,35 @@
             "sprite": "Graphics/Fighter/Shoto/shoto_tatsu.png",
             "frames": 8,
             "wait": 8,
-            "cropRect":[0, 0, 64, 64],
+            "cropRect":[0, 0, 64, 64]
         },
         {
             "name": "3C",
             "sprite": "Graphics/Fighter/Shoto/aoko_3c.png",
             "frames": 12,
             "wait": 4,
-            "cropRect":[0, 0, 255, 121],
+            "cropRect":[0, 0, 255, 121]
         },
         {
             "name": "j.A",
             "sprite": "Graphics/Fighter/Shoto/aoko_ja.png",
             "frames": 4,
             "wait": 4,
-            "cropRect":[0, 0, 255, 124],
+            "cropRect":[0, 0, 255, 124]
         },
         {
             "name": "j.B",
             "sprite": "Graphics/Fighter/Shoto/aoko_jb.png",
             "frames": 7,
             "wait": 4,
-            "cropRect":[0, 0, 255, 135],
+            "cropRect":[0, 0, 255, 135]
         },
         {
             "name": "j.C",
             "sprite": "Graphics/Fighter/Shoto/aoko_jc.png",
             "frames": 9,
             "wait": 4,
-            "cropRect":[0, 0, 255, 151],
+            "cropRect":[0, 0, 255, 151]
         },
 
         {
@@ -189,7 +186,7 @@
             "sprite": "Graphics/Fighter/Shoto/aoko_ad.png",
             "frames": 6,
             "wait": 4,
-            "cropRect":[0,0, 255, 148],
+            "cropRect":[0,0, 255, 148]
         },
         {
             "name": "Stagger High",
@@ -240,7 +237,15 @@
             "sprite": "Graphics/Fighter/Shoto/aoko_backwakeup.png",
             "frames": 10,
             "wait": 3,
-            "cropRect": [0,0, 255, 108],
+            "cropRect": [0,0, 255, 108]
+        },
+
+        {
+            "name": "Fireball",
+            "sprite": "Graphics/Fighter/Shoto/aoko_fireball.png",
+            "frames": 20,
+            "wait": 6,
+            "cropRect": [0,0, 255, 255]
         }
     ],
 
@@ -276,7 +281,7 @@
         },
         {
             "name": "Crouch Start",
-            "linksTo": ["Crouch Loop",],
+            "linksTo": ["Crouch Loop"],
             "mustLinkAfter": 24,
             "priority": 2,
             "shovebox": [-200, -600, 400, 600]
@@ -292,7 +297,7 @@
         },
         {
             "name": "Stand",
-            "linksTo": ["Idle",],
+            "linksTo": ["Idle"],
             "mustLinkAfter": 20,
             "shovebox": [-200, -600, 400, 600]
 
@@ -304,7 +309,7 @@
             "priority": 1,
             "hurtboxes": [[-250, -600, 500, 600]],
             "shovebox": [-200, -600, 400, 600],
-            "overrideSelfVelocity": [45, 0]
+            "overrideSelfVelocity": [35, 0]
 
         },
         {
@@ -415,30 +420,30 @@
 
         },
         {
-            "name": "A",
+            "name": "5A",
             "linksTo": ["Idle"],
             "mustLinkAfter": 20,
             "priority": 10,
             "animation": "5A",
             "damage": 350,
             "hitstun": 16,
-            "hitboxes": [[-112.5, -630, 55, 280],[-32.5, -565, 120, 255],[97.5, -565, 25, 5],[97.5, -505, 200, 195],],
-            "hurtboxes": [[-247.5, -1045, 610, 1010],[-242.5, -1030, 175, 170],[47.5, -885, 5, 5],[-242.5, -675, 155, 605],[-112.5, -630, 55, 280],[-202.5, -625, 5, 15],[-32.5, -565, 120, 255],[97.5, -565, 25, 5],[97.5, -505, 200, 195],[-102.5, -275, 50, 205],],
+            "hitboxes": [[97.5, -505, 200, 195]],
+            "hurtboxes": [[-247.5, -1045, 610, 1010]],
             "shovebox": [-317.5, -1035, 265, 970],
-            "hitStop": 60
+            "hitStop": 0
 
 
         },
         {
-            "name": "B",
+            "name": "5B",
             "linksTo": ["Idle"],
             "mustLinkAfter": 32,
             "priority": 20,
             "animation": "5B",
             "damage": 800,
             "hitstun": 22,
-            "hitboxes": [[-50, -600, 650, 200, 12, 28], [-50, -500, 250, 250, 0, 24]],
-            "hurtboxes": [[-300, -1000, 450, 1000],[50, -650, 450, 300],[50, -500, 200, 250]],
+            "hitboxes": [[-50, -500, 250, 250, 0, 24]],
+            "hurtboxes": [[-300, -1000, 450, 1000]],
             "shovebox": [-150, -970, 300, 950]
 
 
@@ -449,25 +454,52 @@
             "mustLinkAfter": 88,
             "priority": 31,
             "animation": "5[C]",
-            "damage": 850,
+            "damage": 1600,
             "hitstun": 28,
-            "hitboxes": [[-165, -1000, 1000, 1000]],
-            "hurtboxes": [[305.0, 745, 150, 150],[145.0, 585, 195, 195],[-5.0, 435, 25, 25],[-95.0, 345, 0, 0],[-105.0, 335, 170, 170],[-285.0, 155, 90, 90],[5.0, 445, 100, 100],[-105.0, 335, 170, 170],[-285.0, 155, 25, 25],[-335.0, 105, 40, 40],[-285.0, 155, 40, 40],[-105.0, 335, 220, 220],[145.0, 585, 85, 85],[225.0, 665, 5, 5],[175.0, 615, 20, 20],[305.0, 745, 150, 150],[-105.0, 335, 270, 270],[55.0, 495, 35, 35],[-95.0, 345, 0, 0],[-65.0, 375, 30, 30],[145.0, 585, 240, 240],[175.0, 615, 20, 20]],
+            "hitboxes": [[300,-635,250,250, 16, 44], [540, -850,250,250, 16, 44]],
+            "hurtboxes": [[-300, -1000, 450, 1000]],
             "shovebox": [165.0, 605, 10, 10]
 
         },
         {
-            "name": "C",
+            "name": "5C",
             "linksTo": ["Idle"],
             "mustLinkAfter": 44,
             "priority": 30,
             "animation": "5C",
             "damage": 850,
             "hitstun": 28,
-            "hitboxes": [[-85.0, -155, 195, 195],[-185.0, -55, 160, 160],[-85.0, -155, 90, 90],[205.0, -445, 100, 100],[105.0, -335, 170, 170],[-85.0, -155, 25, 25],[-135.0, -105, 40, 40],[-85.0, -155, 40, 40],[105.0, -335, 220, 220],[195.0, -345, 0, 0]],
-            "hurtboxes": [[305.0, 745, 150, 150],[145.0, 585, 195, 195],[-5.0, 435, 25, 25],[-95.0, 345, 0, 0],[-105.0, 335, 170, 170],[-285.0, 155, 90, 90],[5.0, 445, 100, 100],[-105.0, 335, 170, 170],[-285.0, 155, 25, 25],[-335.0, 105, 40, 40],[-285.0, 155, 40, 40],[-105.0, 335, 220, 220],[145.0, 585, 85, 85],[225.0, 665, 5, 5],[175.0, 615, 20, 20],[305.0, 745, 150, 150],[-105.0, 335, 270, 270],[55.0, 495, 35, 35],[-95.0, 345, 0, 0],[-65.0, 375, 30, 30],[145.0, 585, 240, 240],[175.0, 615, 20, 20]],
+            "hitboxes": [[300,-635,250,250, 16, 44], [540, -850,250,250, 16, 44]],
+            "hurtboxes": [[-300, -1000, 450, 1000]],
             "shovebox": [165.0, 605, 10, 10]
 
+        },
+        {
+            "name": "Light Fireball",
+            "animation": "Fireball",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 48,
+            "priority": 40,
+            "shovebox": [-200, -600, 400, 600],
+            "entity": "ENTITY_AOKO_FIREBALL_A"
+        },
+        {
+            "name": "Medium Fireball",
+            "animation": "Fireball",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 48,
+            "priority": 40,
+            "shovebox": [-200, -600, 400, 600],
+            "entity": "ENTITY_AOKO_FIREBALL_B"
+        },
+        {
+            "name": "Heavy Fireball",
+            "animation": "Fireball",
+            "linksTo": ["Idle"],
+            "mustLinkAfter": 48,
+            "priority": 40,
+            "shovebox": [-200, -600, 400, 600],
+            "entity": "ENTITY_AOKO_FIREBALL_C"
         },
         {
             "name": "Tatsu",
@@ -578,7 +610,7 @@
             "damage": 700,
             "knockback": [10, 0],
             "airKnockback": [10, -35],
-            "groundAir": 1,
+            "groundAir": 1
 
         },
         {
@@ -593,7 +625,7 @@
             "damage": 1000,
             "knockback": [10, 0],
             "airKnockback": [10, -35],
-            "groundAir": 1,
+            "groundAir": 1
 
         },
         {
@@ -709,7 +741,29 @@
             "action": "Tatsu",
             "bufferSize": -1
         },
-        {   "name": "j.X",
+        {
+            "name": "Light Fireball",
+            "pattern": "236X",
+            "priority": 40,
+            "action": "Light Fireball",
+            "bufferSize": 8
+        },
+        {
+            "name": "Medium Fireball",
+            "pattern": "236Y",
+            "priority": 40,
+            "action": "Medium Fireball",
+            "bufferSize": 8
+        },
+        {
+            "name": "Heavy Fireball",
+            "pattern": "236Z",
+            "priority": 40,
+            "action": "Heavy Fireball",
+            "bufferSize": 8
+        },
+        {
+            "name": "j.X",
             "pattern": "X",
             "priority": 60,
             "airOk":true,
@@ -726,12 +780,6 @@
             "priority": 80,
             "airOk":true,
             "action":"j.C"
-        },
-        {   "name": "Light Tatsu",
-            "pattern": "214A",
-            "priority": 50,
-            "action":"Tatsu",
-            "bufferSize":1
         },
         {   "name": "3C",
             "pattern": "(3Z)",
@@ -767,17 +815,17 @@
         {   "name": "5C",
             "pattern": "Z",
             "priority": 30,
-            "action":"C"
+            "action":"5C"
         },
         {   "name": "5B",
             "pattern": "Y",
             "priority": 20,
-            "action":"B"
+            "action":"5B"
         },
         {   "name": "5A",
             "pattern": "X",
             "priority": 10,
-            "action":"A"
+            "action":"5A"
         },
         {   "name": "dj7",
             "pattern": "m7",

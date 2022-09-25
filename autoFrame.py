@@ -45,6 +45,7 @@ parser.add_argument("--path", help="Create output file in given directory.",
     action='store_true')
 parser.add_argument("--layout", help="Create sprite sheet horizontally or vertically.",
     choices=('h', 'v'), default='h')
+parser.add_argument("--fliph", help="Flip each frame horizontally.", action='store_true')
 parser.add_argument("paths", help="Input directories.", type=str, nargs="+")
 args = parser.parse_args()
 
@@ -58,15 +59,21 @@ if args.color != "t":
 def Animated(cropRect, size, paths):
     frames = []
     for fullpath in paths:
-        frames.append(PIL.Image.open(fullpath).crop(cropRect))
-    
+        frame = PIL.Image.open(fullpath).crop(cropRect)
+        if args.fliph:
+            print("fliph")
+            frame = frame.transpose(Image.FLIP_LEFT_RIGHT)
+        else:
+            print("no fliph")
+        frames.append(frame)
+
     if len(frames) == 1:
         print(f"Only 1 frame in {fullpath}? Saving anyway...")
-    
+
     elif len(frames) == 0:
         print(f"No frames in {fullpath}? Aborting save...")
         return
-    
+
     f = "PNG" if args.output_type.lower() == ".apng" else "GIF"
     # APNG doesn't like a disposal of 2
     d = 0 if args.output_type.lower() == ".apng" else 2
@@ -99,6 +106,8 @@ def Sheet(cropRect, size, paths):
                 sheet = sheet.resize((size[0], size[1] * len(paths)))
 
         img = PIL.Image.open(fullpath).crop(cropRect)
+        if args.fliph:
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
         box = (0, 0)
         if args.layout == 'h':
             box = (i*size[0], 0)
@@ -115,7 +124,8 @@ def Sheet(cropRect, size, paths):
 
     # Save in image source directory
     if args.path:
-        filename = f"{path}/{paths[0].split('/')[::-1][1]} {size[0]}:{size[1]} ({len(paths)}){args.output_type}"
+        raise NotImplemented
+        #filename = f"{paths[0].split('/')[::-1][1]} {size[0]}:{size[1]} ({len(paths)}){args.output_type}"
         print(filename)
         sheet.save(filename)
     pass

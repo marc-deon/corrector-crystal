@@ -9,7 +9,7 @@
 #include "stretchy_buffer.h"
 
 bool _Fighter_WriteBasic(Fighter* f, json_object* job){
-    json_object_object_add(job, "name", json_object_new_string(f->name));
+    json_object_object_add(job, "name", json_object_new_string(f->entity->name));
     json_object_object_add(job, "maxJumps", json_object_new_int(f->maxJumps));
     json_object_object_add(job, "maxHealth", json_object_new_int(f->maxHealth));
     json_object_object_add(job, "maxMeter", json_object_new_int(f->maxMeter));
@@ -220,7 +220,7 @@ bool _Fighter_SaveMotions(Fighter* f, json_object* job){
 
 bool Fighter_Save(Fighter* f, const char* path){
 
-    printf("Beginning to save fighter [%s] to [%s]\n", f->name, path);
+    printf("Beginning to save fighter [\%s] to [%s]\n", /*f->entity->name,*/ path);
 
     // Construct the json_object
     struct json_object *job = json_object_new_object();
