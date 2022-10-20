@@ -96,8 +96,7 @@ typedef struct action {
 
     bool phase;
 
-    // Type of entity to spawn
-    int entity;
+    void* partial_entity;
 
     CallbackFunction cb_on_Damage;
 
@@ -133,7 +132,7 @@ Action* Action_Create(
     uint overrideSelfTime,
     uint index,
     bool phase,
-    int entity
+    char* entityPath
     );
 
 Action* Action_CreateNull();
@@ -146,5 +145,6 @@ int Action_FindIndexByName(Action** a, int size, char* name);
 void Action_SetLinkTo(Action* a, Action* link);
 void Action_SetLinkFrom(Action* a, Action* link);
 void Action_Free(Action* act);
+Action* Action_Copy(Action* old_a);
 
 #endif /* CC_ACTION */

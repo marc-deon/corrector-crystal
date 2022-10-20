@@ -31,7 +31,7 @@
 #define cb_from_back stb_cb_from_back
 #endif
 
-#define stb_cb_init(a,m)       (stb__cbinitf(a, m, sizeof(*(a))))
+#define stb_cb_init(a,m)       (a = stb__cbinitf(a, m, sizeof(*(a))))
 
 #define stb_cb_free(a)         ((a) ? free(stb__cbraw(a)), 0 : 0)
 #define stb_cb_count(a)        ((a) ? stb__cbn(a) : 0)
@@ -52,20 +52,20 @@
 
 #include <stdlib.h>
 
-static void * stb__cbinitf(void *arr, int m, int itemsize)
-{
-   long int *p = (long int *) realloc(arr ? stb__cbraw(arr) : 0, (itemsize * m) + sizeof(long int)*3);
+static void *stb__cbinitf(void *arr, int m, int itemsize) {
+   long int *p = (long int *)realloc(arr ? stb__cbraw(arr) : 0, (itemsize * m) + sizeof(long int) * 3);
    if (p) {
       p[0] = m;
       if (!arr)
          p[1] = 0;
       p[2] = 0;
-      return p+3;
-   } else {
+      return p + 3;
+   }
+   else {
       #ifdef CIRCULAR_BUFFER_OUT_OF_MEMORY
-      CIRCULAR_BUFFER_OUT_OF_MEMORY ;
+      CIRCULAR_BUFFER_OUT_OF_MEMORY;
       #endif
-      return (void *) (3*sizeof(long int)); // try to force a NULL pointer exception later
+      return (void *)(3 * sizeof(long int)); // try to force a NULL pointer exception later
    }
 }
 #endif // STB_CIRCULAR_BUFFER_H_INCLUDED

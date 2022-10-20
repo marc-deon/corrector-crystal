@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include "Fighter.h"
 #include "Match.h"
+#include <string.h>
 
 #include <stdio.h>
 
@@ -43,11 +44,11 @@ Entity* Entity_Create(Entity* owner) {
     if(owner)
         sb_push(e->owner->subEntities, e);
 
-    e->history         = NULL;  // Circular
-    e->subEntities     = NULL;  // Stretchy
-    es->currentAction  = NULL;  // Stretchy
-    es->currentAnimation= NULL; // Stretchy
-    e->history = cb_init(e->history, MAX_REWIND);
+    e->history          = NULL;  // Circular
+    e->subEntities      = NULL;  // Stretchy
+    es->currentAction   = NULL;
+    es->currentAnimation= NULL;
+    cb_init(e->history, MAX_REWIND);
 
     /////
     // Entity state setup
@@ -76,12 +77,14 @@ void Entity_DrawSprite(Entity* e, RectI camera) {
 
     Animation* animation = es->currentAnimation;
     
+    if (!animation)
+        return;
+
     RectI** sc = animation->spriteClips; 
     
     RectI* ricc = animation->spriteClips[animation->currentFrame / animation->frameWait];
     
     Rectangle currentClip = { ricc->x, ricc->y, ricc->w, ricc->h };
-
 
     int flip = !es->facingRight;
     currentClip.width *= !flip - flip;
@@ -121,6 +124,7 @@ void Entity_DrawSprite(Entity* e, RectI camera) {
     if(animation->currentFrame >= animation->frameWait * animation->frameCount) {
         Entity_ChangeAnimation(e, animation->linksTo);
     }
+
 
     for(int i = 0; i < sb_count(e->subEntities); i++) {
         Entity_DrawSprite(e->subEntities[i], camera);
@@ -220,12 +224,14 @@ void Entity_Process_Hitbox(Entity* e) {
 void Entity_DrawHitboxes(Entity* e, RectI camera) {
     EntityState* es = &cb_last(e->history);
     Action* a = es->currentAction;
-    
+
+
 
     for(int i = 0; i < sb_count(a->hitboxes); i++) {
         if(a->hitboxes[i]->active != HB_ACTIVE) {
             continue;
         }
+
 
 
         RectI hbr = a->hitboxes[i]->rect;
@@ -238,10 +244,10 @@ void Entity_DrawHitboxes(Entity* e, RectI camera) {
         opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_hit);
 
         DrawRectangle(
-            ((hbr.pos.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
-            ((hbr.pos.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
-            hbr.size.x * UNIT_TO_PIX * fighterDrawScale,
-            hbr.size.y * UNIT_TO_PIX * fighterDrawScale,
+            ((hbr.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+            ((hbr.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+            hbr.w * UNIT_TO_PIX * fighterDrawScale,
+            hbr.h * UNIT_TO_PIX * fighterDrawScale,
             (Color) {255, 0, 0, opac}
         );
     }
@@ -310,8 +316,9 @@ void Entity_Damage(Entity* attacker, Entity* defender, Action* a) {
     es->currentHealth = max(es->currentHealth - a->damage, 0);
     if (es->currentHealth <= 0)
         Entity_Die(defender);
-    if (Entity_GetAction(attacker)->cb_on_Damage.function) {
-            invoke(Entity_GetAction(attacker)->cb_on_Damage);
+
+    if (a->cb_on_Damage.function) {
+        invoke(a->cb_on_Damage);
     }
 
 
@@ -319,9 +326,7 @@ void Entity_Damage(Entity* attacker, Entity* defender, Action* a) {
 }
 
 void Entity_Die(Entity* e) {
-    // if(e->owner) {
     cb_last(e->history).valid = false;
-    // }
 
     // Queue to free after MAX_REWIND frames?
 }

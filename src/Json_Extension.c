@@ -1,5 +1,7 @@
-#include <json-c/json.h>
+
 #include "Json_Extension.h"
+#include <stdio.h>
+#include <assert.h>
 
 int json_get_default_int(const struct json_object* sourceObject, const char* key, int defaultValue) {
     struct json_object* tempObject;
@@ -70,4 +72,30 @@ int json_get_int_array(const struct json_object* sourceObject, const char* key, 
     }
 
     return array_list_length(arrlist);
+}
+
+struct json_object* json_get_parsed_json(char* path) {
+    FILE* fp;
+    fp = fopen(path, "r");
+    if(!fp) {
+        printf("Problem reading from path [%s]...\n", path);
+        // char cwdpath[80];
+        // getcwd(cwdpath, 80);
+        // printf("CWD:%s\n", cwdpath);
+        // perror("Error");
+        assert(fp);
+    }
+    // Get the size of the json file
+    fseek(fp, 0, SEEK_END);
+    int size = ftell(fp);
+    rewind(fp);
+
+    // Read the json file into a char array
+    char buffer[size];
+    fread(buffer, size, 1, fp);
+    fclose(fp);
+
+    struct json_object* parsed_json = json_tokener_parse(buffer);
+    return parsed_json;
+
 }

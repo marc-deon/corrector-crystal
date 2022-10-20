@@ -20,7 +20,7 @@ Match Match_Init() {
     
     m.history = NULL;
 
-    m.history = cb_init(m.history, MAX_REWIND);
+    cb_init(m.history, MAX_REWIND);
     cb_push(m.history, (MatchState) {});
 
     cb_last(m.history).currentTime = m.maxTime; 

@@ -34,6 +34,7 @@ int asamiya = 0;
 #include "Ui_Match.h"
 #include "Ui_Types.h"
 #include "Entity.h"
+#include "Json_Extension.h"
 
 bool stopGame = 0;
 
@@ -115,10 +116,14 @@ bool CC_INIT() {
 
     if (videoSuccess) {
         printf("Video init error: %d\n", videoSuccess);
+    } else {
+        printf("Video OK\n");
     }
 
     if (videoSuccess) {
         printf("Audio init error: %d\n", audioSuccess);
+    } else {
+        printf("Audio OK\n");
     }
 
     return videoSuccess & audioSuccess;
@@ -133,7 +138,7 @@ void CC_CLOSE() {
 void Game_PlayerInit() {
     currentMatch.players[0].stick =          &p1Stick;
     currentMatch.players[0].pointCharacter = Fighter_Create(SUPERMAN);
-    void* parsed = Fighter_GetParsedJson(SUPERMAN);
+    void* parsed = json_get_parsed_json(SUPERMAN);
     Fighter_GetPalette(currentMatch.players[0].pointCharacter, p1Pal);
     currentMatch.players[1].stick =          &p2Stick;
     currentMatch.players[1].pointCharacter = Fighter_Create(SUPERMAN);
@@ -274,7 +279,7 @@ int CC_ProcessInput() {
     p2Pal = (maxpal + p2Pal) % maxpal;
 
     if (p1Pal != p1Pal_old || p2Pal != p2Pal_old) {
-        void* parsed = Fighter_GetParsedJson(SUPERMAN);
+        void* parsed = json_get_parsed_json(SUPERMAN);
         Fighter_GetPalette(currentMatch.players[0].pointCharacter, p1Pal);
         Fighter_GetPalette(currentMatch.players[1].pointCharacter, p2Pal);
     }
@@ -375,6 +380,7 @@ uint CC_Process_ApplyHits(struct Collision_Hit* hits) {
     uint hitstop = 0;
     for (int i = 0; i < sb_count(hits); i++) {
         struct Collision_Hit hit = hits[i];
+        printf("Appply Hits\n");
         Entity_Damage(hit.attacker, hit.defender, hit.action);
         if (hit.defender->fighter)
             Fighter_Damage((Fighter*)hit.defender->fighter, hit.action);
@@ -588,7 +594,7 @@ void ResetRound() {
         }
 
         // Init buffer...
-        f->stateHistory = cb_init(f->stateHistory, MAX_REWIND);
+        cb_init(f->stateHistory, MAX_REWIND);
         // Push empty...
         cb_push(f->stateHistory, (FighterState) {});
         // get last...
@@ -602,7 +608,7 @@ void ResetRound() {
         // Done with fs.
 
         // Init buffer...
-        f->entity->history = cb_init(f->entity->history, MAX_REWIND);
+        cb_init(f->entity->history, MAX_REWIND);
         // Push empty...
         cb_push(f->entity->history, *EntityState_Create());
         // Get last...

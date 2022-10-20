@@ -15,12 +15,11 @@
 #include <time.h>
 #include <string.h>
 
-#include <unistd.h> // Unix only: getcwd
+// #include <unistd.h> // Unix only: getcwd
 
 #include <Entities.h>
 
 Texture background;
-// extern Match currentMatch;
 
 const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_json) {
     struct json_object* actions;
@@ -100,8 +99,9 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 
         bool phase = json_get_default_bool(action, "phase", false);
 
-        char* entity_name = json_get_default_string(action, "entity", NULL);
-        int entity = Entities_GetEntityFromName(entity_name);
+        // char* entity_name = json_get_default_string(action, "entity", NULL);
+        // int entity = Entities_GetEntityFromName(entity_name);
+        char* entityPath = json_get_default_string(action, "entityPath", NULL);
 
         Action* act = Action_Create(
             name,
@@ -133,7 +133,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
             overrideSelfTime,
             i,
             phase,
-            entity
+            entityPath
         );
         sb_push(fighter->actions, act);
         
@@ -315,37 +315,13 @@ void Fighter_GetPalette(Fighter* f, int palIndex) {
     SetShaderValueTexture(f->entity->shader, shaderPalLoc, f->entity->paletteTexture);
 }
 
-struct json_object* Fighter_GetParsedJson(char* path) {
-    FILE* fp;
-    fp = fopen(path, "r");
-    if(!fp) {
-        printf("Problem reading from path [%s]...\n", path);
-        char cwdpath[80];
-        getcwd(cwdpath, 80);
-        printf("CWD:%s\n", cwdpath);
-        perror("Error");
-        assert(fp);
-    }
-    // Get the size of the json file
-    fseek(fp, 0, SEEK_END);
-    int size = ftell(fp);
-    rewind(fp);
 
-    // Read the json file into a char array
-    char buffer[size];
-    fread(buffer, size, 1, fp);
-    fclose(fp);
-
-    struct json_object* parsed_json = json_tokener_parse(buffer);
-    return parsed_json;
-
-}
 
 // TODO(#9): Clean up Game_SpriteInit; it does way more than just sprites.
 void Fighter_SpriteInit(Fighter* f, char* path) {
 
 
-    struct json_object* parsed_json = Fighter_GetParsedJson(path);
+    struct json_object* parsed_json = json_get_parsed_json(path);
 
     struct json_object* actions;
     struct json_object* motions;

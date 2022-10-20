@@ -34,7 +34,7 @@ void Hitbox_UpdateTimer(Hitbox* hb) {
     // If HB_INACTIVE, then the hitbox hasn't gone live yet. If HB_DISABLED, then it shouldn't go live.
     if(hb->currentFrame == hb->activeOnFrame && hb->active == HB_INACTIVE) {
         hb->active = HB_ACTIVE;
-        printf("Activating hitbox frame %d\n", hb->activeOnFrame);
+        // printf("Activating hitbox frame %d\n", hb->activeOnFrame);
     }
 
     if(hb->currentFrame == hb->offOnFrame) {
