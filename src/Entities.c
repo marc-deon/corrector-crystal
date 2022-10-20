@@ -2,64 +2,117 @@
 #include "Entities.h"
 #include "stretchy_buffer.h"
 #include "circular_buffer.h"
+#include "Json_Extension.h"
 
 #include <stdio.h>
+#include <json-c/json.h>
 
 EntityState** unowned_entities = 0;
 
 void temp_fireball_on_hit(CallbackInfo info) {
     Entity_Die(info.target);
-    printf("doot\n");
+    printf("doot %s %d\n", ((Entity*)info.target)->name, ((Entity*)info.target)->history->valid);
+    printf("Inside invoke %p %c\n", info.target, ((Entity*)info.target)->history->valid ? 'T' : 'F');
 }
 
-Entity* Entities_CreateAokoFireballA(Entity* owner) {
-    printf("Fireball created\n");
-    Entity* e = Entity_Create(owner);
-    e->name = "Fireball";
-    // e->shader = owner->shader;
-    e->shader.id = 0;
-    e->collisionMask = COL_MASK_PLAYER | COL_MASK_PROJECTILE;
 
-    EntityState* es = EntityState_Create();
-    es->facingRight = Entity_FacingRight(owner);
-    es->valid = true;
-    cb_push(e->history, *es);
-    es = &cb_last(e->history);
-    es->position = cb_last(owner->history).position;
-    es->velocity = (Vec2I) {5, 0};
-    if (!es->facingRight)
-        es->velocity.x *= -1;
-    es->currentAnimation = Animation_Create("Fireballball",
-        "Graphics/Fighter/Shoto/ryu_fireball_loop.png",
-        2, 4, (RectI) {0,0,639,479}, 0
+// TODO: Recursive copy of subentities, if neccesary. Hopefully not neccesary. Those would be complicated projectiles.
+// It is, without a doubt, in this function
+Entity* Entity_Copy(Entity* old_e) {
+
+    Entity* new_e = malloc(sizeof(Entity));
+
+    memcpy(new_e, old_e, sizeof(Entity));
+
+    new_e->subEntities = NULL;
+    for(int i = 0; i < sb_count(old_e->subEntities); i++) {
+        sb_push(new_e->subEntities, old_e->subEntities[i]);
+    }
+
+
+    new_e->history = NULL;
+    cb_init(new_e->history, MAX_REWIND);
+    EntityState es = cb_last(old_e->history);
+    cb_push(new_e->history, es);
+
+    EntityState* es2 = &cb_last(new_e->history);
+    es2->currentAnimation = Animation_Copy(es.currentAnimation);
+    es2->currentAction = Action_Copy(es.currentAction);
+
+    return new_e;
+}
+
+// returns a partially-initd Entity with partially-initd State, which should not be modified directly; copy it first.
+Entity* Entity_ReadPartial(char* path) {
+
+    struct json_object* parsed_json = json_get_parsed_json(path);
+    Entity* e;
+    int rect[6];
+
+    char* inherit = json_get_default_string(parsed_json, "inherit", NULL);
+
+    // Entitity proper
+    // e = inherit ? Entity_ReadPartial(inherit) : Entity_Create(NULL);
+    e = Entity_Create(NULL);
+    e->name = json_get_string(parsed_json, "name");
+    e->collisionMask = json_get_default_int(parsed_json, "collisionMask", 0b11);
+    e->shader.id = 0;
+
+    // Animation
+    json_get_int_array(parsed_json, "cropRect", rect);
+    Animation* a = Animation_Create(
+        json_get_string(parsed_json, "animationName"),
+        json_get_string(parsed_json, "filename"),
+        json_get_int(parsed_json, "frameCount"),
+        json_get_int(parsed_json, "frameWait"),
+        (RectI) {rect[0], rect[1], rect[2], rect[3]},
+        json_get_default_int(parsed_json, "loopStart", 0)
     );
 
-// "cropRect": [0,0, 639, 479]
-
+    // Entity state
+    json_get_default_int_array(parsed_json, "velocity", rect, 2);
+    EntityState* es = EntityState_Create();
+    es->velocity = (Vec2I) {rect[0], rect[1]};
+    es->currentHealth = 1;
+    es->currentAnimation = a;
     es->currentAction = Action_CreateNull();
-    es->currentAction->damage = 1000;
-    es->currentAction->cb_on_Damage.function = temp_fireball_on_hit;
-    es->currentAction->cb_on_Damage.info.target = e;
-    Hitbox* hb = Hitbox_Create((RectI) {0, -500, 639, 479} , 0, -1);
+    es->currentAction->damage = json_get_int(parsed_json, "damage");
+    es->currentAction->name = json_get_string(parsed_json, "name");
+    // Set defaults for hitbox onFrame, offFrame
+    rect[4] = 0; rect[5] = -1;
+    json_get_int_array(parsed_json, "hitbox", rect);
+    Hitbox* hb = Hitbox_Create((RectI) {rect[0], rect[1], rect[2], rect[3]}, rect[4], rect[5]);
     sb_push(es->currentAction->hitboxes, hb);
+    json_get_int_array(parsed_json, "position", rect);
+    es->position = (Vec2I) {rect[0], rect[1]};
+
+    cb_push(e->history, *es);
+
     return e;
 }
 
-Entity* Entities_CreateAokoFireballB(Entity* owner) {
-    Entity* e = Entities_CreateAokoFireballA(owner);
-    cb_last(e->history).velocity.x = 10;
-    if (!Entity_FacingRight(e))
-        cb_last(e->history).velocity.x *= -1;
-    return e;
+void Entity_Initialize_Partial(Entity* partial, Entity* owner) {
+    EntityState* es = &(cb_last(partial->history));
+    es->valid = true;
+    partial->owner = owner;
+    partial->fighter = owner->fighter;
+    partial->shader.id = 0;
+    // partial->palette = owner->palette;
+    partial->paletteNumber = owner->paletteNumber;
+    partial->paletteTexture = owner->paletteTexture;
+
+    es->facingRight = cb_last(owner->history).facingRight;
+    es->velocity.x *= es->facingRight ? 1 : -1;
+    es->position.x *= es->facingRight ? 1 : -1;
+
+    es->position = Vec2_Add(es->position, cb_last(owner->history).position);
+    
+    es->currentAction->cb_on_Damage.function = temp_fireball_on_hit;
+    es->currentAction->cb_on_Damage.info.target = partial;
+
+    sb_push(owner->subEntities, partial);
 }
 
-Entity* Entities_CreateAokoFireballC(Entity* owner) {
-    Entity* e = Entities_CreateAokoFireballA(owner);
-    cb_last(e->history).velocity.x = 15;
-    if (!Entity_FacingRight(e))
-        cb_last(e->history).velocity.x *= -1;
-    return e;
-}
 
 int Entities_GetEntityFromName(char* name) {
     if (!name)
@@ -70,30 +123,3 @@ int Entities_GetEntityFromName(char* name) {
     return_str_to_enum(name, ENTITY_AOKO_FIREBALL_EXPLODE)
     return ENTITY_NONE;
 }
-
-// The owner and position are not neccesarily both used
-Entity* Entities_SpawnType(enum EntityType type, Entity* owner, Vec2I position) {
-    Entity* e = NULL;
-
-    if (type)
-        printf("Spawning with type %d\n", type);
-    else
-        printf("Invalid spawn type %d\n", type);
-
-    switch(type) {
-        case ENTITY_AOKO_FIREBALL_A:
-            e = Entities_CreateAokoFireballA(owner);
-            break;
-        case ENTITY_AOKO_FIREBALL_B:
-            e = Entities_CreateAokoFireballB(owner);
-            break;
-        case ENTITY_AOKO_FIREBALL_C:
-            e = Entities_CreateAokoFireballC(owner);
-            break;
-        case ENTITY_AOKO_FIREBALL_EXPLODE:
-            break;
-    }
-
-    return e;
-}
-

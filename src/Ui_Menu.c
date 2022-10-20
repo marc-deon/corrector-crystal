@@ -83,7 +83,7 @@ void Menu_Bake(UiMenu* menu, int centerInBorders) {
                 UiElement* element = menu->elements[i];
 
                 if(element->type == UI_TYPE_MENU) {
-                    Menu_Bake(element, false);
+                    Menu_Bake((UiMenu*)element, false);
                 }
 
                 else{
@@ -105,7 +105,7 @@ void Menu_Bake(UiMenu* menu, int centerInBorders) {
                 UiElement* element = menu->elements[i];
 
                 if(element->type == UI_TYPE_MENU) {
-                    Menu_Bake(element, false);
+                    Menu_Bake((UiMenu*) element, false);
                 }
                 
                 else{

@@ -383,7 +383,7 @@ void main() {
     SetupData();
     SetupFighter();
     currentMatch.history = NULL;
-    currentMatch.history = cb_init(currentMatch.history, 1);
+    cb_init(currentMatch.history, 1);
     currentMatch.paused = true;
     cb_push(currentMatch.history, (MatchState) {});
 
