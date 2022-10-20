@@ -481,7 +481,7 @@
             "mustLinkAfter": 48,
             "priority": 40,
             "shovebox": [-200, -600, 400, 600],
-            "entity": "ENTITY_AOKO_FIREBALL_A"
+            "entityPath": "fighterData/Projectiles/Aoko_FireballA.json"
         },
         {
             "name": "Medium Fireball",
@@ -490,7 +490,7 @@
             "mustLinkAfter": 48,
             "priority": 40,
             "shovebox": [-200, -600, 400, 600],
-            "entity": "ENTITY_AOKO_FIREBALL_B"
+            "entityPath": "fighterData/Projectiles/Aoko_FireballA.json"
         },
         {
             "name": "Heavy Fireball",
@@ -499,7 +499,7 @@
             "mustLinkAfter": 48,
             "priority": 40,
             "shovebox": [-200, -600, 400, 600],
-            "entity": "ENTITY_AOKO_FIREBALL_C"
+            "entityPath": "fighterData/Projectiles/Aoko_FireballA.json"
         },
         {
             "name": "Tatsu",
@@ -638,7 +638,7 @@
             "step": [1,0],
             "overrideSelfTime": 8,
             "overrideSelfGravity": [0, 0],
-            "overrideSelfVelocity": [50, 0]
+            "overrideSelfVelocity": [80, 0]
         },
         {
             "name": "Stagger",

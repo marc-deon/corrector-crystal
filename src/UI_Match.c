@@ -190,15 +190,19 @@ void DrawHUD(Match* m) {
     // Draw Names
     // Draw the plate twice; once without shader for the border and background, then again for the colors
     DrawTexture(p1nameplate, 0, 55, WHITE);
-    BeginShaderMode(p1->pointCharacter->entity->shader);
+    /* DEBUG */
+    // BeginShaderMode(p1->pointCharacter->entity->shader);
     DrawTexture(p1nameplate, 0, 55, WHITE);
-    EndShaderMode();
+    /* DEBUG */
+    // EndShaderMode();
     DrawText(p1->pointCharacter->entity->name, 5+p1nameOffset.x, 55+p1nameOffset.y, NAMEFONTSIZE, WHITE);
     v = MeasureTextEx(GetFontDefault(), p2->pointCharacter->entity->name, NAMEFONTSIZE, 2);
     DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X-p2nameplate.width, 55, WHITE);
-    BeginShaderMode(p2->pointCharacter->entity->shader);
+    /* DEBUG */
+    // BeginShaderMode(p2->pointCharacter->entity->shader);
     DrawTexture(p2nameplate, VIRT_SCREEN_SIZE_X-p2nameplate.width, 55, WHITE);
-    EndShaderMode();
+    /* DEBUG */
+    // EndShaderMode();
     DrawText(p2->pointCharacter->entity->name, VIRT_SCREEN_SIZE_X - v.x - 5 - p2nameOffset.x, 55 + p2nameOffset.y, NAMEFONTSIZE, WHITE);
 
     // #pragma region Portaits

@@ -1,6 +1,7 @@
 #ifndef JSON_EXTENSION_H
 #define JSON_EXTENSION_H
 
+#include <json-c/json.h>
 #include <stdbool.h>
 
 int json_get_default_int(const struct json_object* sourceObject, const char* key, int defaultValue);
@@ -10,5 +11,6 @@ const char* json_get_default_string(const struct json_object* sourceObject, cons
 const char* json_get_string(const struct json_object* sourceObject, const char* key);
 bool json_get_default_int_array(const struct json_object* sourceObject, const char* key, int* target, int defaultSize);
 int json_get_int_array(const struct json_object* sourceObject, const char* key, int* target);
+struct json_object* json_get_parsed_json(char* path);
 
 #endif

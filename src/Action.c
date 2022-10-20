@@ -3,6 +3,7 @@
 #include "RectI.h"
 #include "stretchy_buffer.h"
 #include <raylib.h>
+#include "Entities.h"
 
 uint _action_count;
 
@@ -36,9 +37,9 @@ Action* Action_Create(
     uint overrideSelfTime,
     uint index,
     bool phase,
-    int entity
+    char* entityPath
 ) {
-    Action* act = (Action*) malloc(1 * sizeof(Action));
+    Action* act = (Action*) malloc(sizeof(Action));
     act->currentFrame = 0;
     act->name = name;
     act->canLinkAfter = canLinkAfter;
@@ -92,7 +93,11 @@ Action* Action_Create(
     act->overrideSelfTime = overrideSelfTime;
     act->index = index;
     act->phase = phase;
-    act->entity = entity;
+    act->partial_entity = NULL;
+    if (entityPath) {
+        act->partial_entity = Entity_ReadPartial(entityPath);
+    }
+
     act->cb_on_Damage.function = NULL;
     return act;
 }
@@ -140,7 +145,7 @@ Action* Action_CreateNull() {
     act->overrideSelfTime = 0;
     act->index = 0;
     act->phase = 0;
-    act->entity = 0;
+    act->partial_entity = NULL;
     act->cb_on_Damage.function = NULL;
     return act;
 }
@@ -150,6 +155,24 @@ void Action_Free(Action* act) {
     free(act->overrideSelfGravity);
     free(act->overrideSelfVelocity);
     free(act);
+}
+
+Action* Action_Copy(Action* old_a) {
+    Action* new_a = malloc(sizeof(Action));
+    memcpy(new_a, old_a, sizeof(Action));
+    new_a->hitboxes  = NULL;
+    for(int i = 0; i < sb_count(old_a->hitboxes); i++) {
+        Hitbox* box = malloc(sizeof(Hitbox));
+        *box = *old_a->hitboxes[i];
+        sb_push(new_a->hitboxes, box);
+    }
+    new_a->hurtboxes = NULL;
+    for(int i = 0; i < sb_count(old_a->hurtboxes); i++) {
+        Hurtbox* box = malloc(sizeof(Hurtbox));
+        *box = *old_a->hurtboxes[i];
+        sb_push(new_a->hurtboxes, box);
+    }
+    return new_a;
 }
 
 int Action_FindIndexByName(Action** actions, int size, char* name) {

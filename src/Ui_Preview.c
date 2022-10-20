@@ -45,7 +45,7 @@ void Preview_Draw(UiPreview* p, Vec2I offset) {
     Animation* ani = cb_last(asamiya_f->entity->history).currentAnimation;
     int y = 2;
 
-    const FONTSIZE = 20;
+    const int FONTSIZE = 20;
     DrawRectangle(p->position.x + offset.x, p->position.y + offset.y, ui_w(p), ui_h(p), PURPLE);
 
 

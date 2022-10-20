@@ -37,7 +37,7 @@ Fighter* Fighter_Create(char* path) {
     f->stateHistory = NULL;
     f->opponent = NULL;
 
-    f->stateHistory = cb_init(f->stateHistory, MAX_REWIND);
+    cb_init(f->stateHistory, MAX_REWIND);
     
 
     Fighter_SpriteInit(f, path);
@@ -123,8 +123,10 @@ void Fighter_StartAction(Fighter* f, Action* a, uint setMax) {
     
     // TODO: Some entities shouldn't spawn immediately
     // Probably don't worry about that here, but add it to a queue within Entities_SpawnType
-    if (a->entity && !asamiya) {
-        Entities_SpawnType(a->entity, f->entity, VEC2_ZERO);
+    if (a->partial_entity && !asamiya) {
+        Entity* partial = Entity_Copy(a->partial_entity);
+        Entity_Initialize_Partial(partial, f->entity);
+
     }
 
     fs->frame = 0;
@@ -251,7 +253,7 @@ void Fighter_Process_Advance(Fighter* f) {
     else if(es->currentAction->mustLinkAfter >= 0 && es->frame > es->currentAction->mustLinkAfter) {
         printf("%s: %d >%d\n", es->currentAction->name, es->frame, es->currentAction->mustLinkAfter);
         printf("This shouldn't happen. %s (%d)\n", __FILE__, __LINE__);
-        return false;
+        // return false;
     }
 }
 
