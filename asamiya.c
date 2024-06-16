@@ -310,16 +310,17 @@ void UpdateHitboxes() {
     }
     
 
+    // TODO: the following if elif elif seems unsafe.
     Hitbox* selectedBox = 0;
 
     if (selectedBoxType == boxtype_hit && selectedBoxIdx >= 0 && selectedBoxIdx < sb_count(lastAct->hitboxes))
             selectedBox = lastAct->hitboxes[selectedBoxIdx];
 
     else if (selectedBoxType == boxtype_hurt && selectedBoxIdx >= 0 && selectedBoxIdx < sb_count(lastAct->hurtboxes))
-            selectedBox = lastAct->hurtboxes[selectedBoxIdx];
+            selectedBox = (Hitbox*) (lastAct->hurtboxes[selectedBoxIdx]);
 
     else if (selectedBoxType == boxtype_shove)
-        selectedBox = &lastAct->shovebox;
+        selectedBox = (Hitbox*) (&lastAct->shovebox);
     
     if (selectedBox) {
         selectedBox->rect.x += (IsKeyDown(KEY_D) - IsKeyDown(KEY_A)) * (1 + 9*IsKeyDown(KEY_LEFT_SHIFT));
@@ -360,7 +361,7 @@ void UpdateHitboxes() {
                     hb->activeOnFrame = 0;
                     hb->offOnFrame = 0;
                     hb->rect = (RectI) {0,0,0,0};
-                    PruneBoxes(lastAct->hitboxes, boxtype_hit);
+                    PruneBoxes((void*) lastAct->hitboxes, boxtype_hit);
                 }
                 break;
 
@@ -368,7 +369,7 @@ void UpdateHitboxes() {
                 if (selectedBoxIdx < sb_count(lastAct->hurtboxes)) {
                     Hurtbox* hb = lastAct->hurtboxes[selectedBoxIdx];
                     hb->rect = (RectI) {0,0,0,0};
-                    PruneBoxes(lastAct->hurtboxes, boxtype_hurt);
+                    PruneBoxes((void*) lastAct->hurtboxes, boxtype_hurt);
                 }
                 break;
             case boxtype_shove:

@@ -210,7 +210,7 @@ UiMenu* MakeMainMenu() {
     menu->on_cancel = (CallbackFunction) {cb_back};
     menu->elements = NULL;
 
-    menu->background_texture = LoadTexture("Graphics/Ui/mainbg.png");
+    menu->background_texture = LoadTexture("Graphics/Ui/menubg.png");
 
     // TODO(#27): Find a way to:
     // 1) Automatically space these with each other and with the borders
@@ -257,7 +257,7 @@ UiMenu* MakeMainMenu() {
     menu->p1focused = butt_arcade;
     Ui_PushFocus(menu);
 
-    menu->size = (Vec2I) {1280, 720};
+    menu->size = (Vec2I) {640, 480};
     menu->margin = (Vec4I) {4, 4, 4, 4};
     Menu_Bake(menu, false);
     return menu;

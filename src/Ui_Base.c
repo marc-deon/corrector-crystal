@@ -8,7 +8,7 @@ int uiidcount = 0;
 
 // Use with caution!
 void** Ui_GetFocusStack() {
-    return _ui_focus_stack;
+    return (void**)_ui_focus_stack;
 }
 
 UiMenu* Ui_GetTopFocus() {
