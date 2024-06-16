@@ -1,0 +1,20 @@
+{
+    "inherit":    null,
+    "name":      "Fireball",
+    "collisionMask":   3,
+
+    "animationName":        "Fireballball",
+    "filename":    "Graphics/Fighter/Shoto/ryu_fireball_loop.png",
+    "frameCount":  2,
+    "frameWait":   4,
+    "cropRect":    [0, 0, 639, 479],
+    "loopStart":   0,
+
+    "velocity":         [25, 0],
+    "damage":           1000,
+    "cb_on_Damage":     "temp_fireball_on_hit",
+    "hitbox":           [-1000, -2500, 639, 479, 0, -1],
+
+    "position": [500, 1600]
+
+}
