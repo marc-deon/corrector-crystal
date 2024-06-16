@@ -383,7 +383,7 @@ char* sfxPaths[] = {
     "audio/sfx/9.wav",
     "audio/sfx/10.wav",
     "audio/sfx/11.wav",
-    "audio/sfx/sumo.wav"
+    // "audio/sfx/sumo.wav"
 };
 
 // FIXME: For random
@@ -396,7 +396,7 @@ void Game_Data_InitActions(Player* p) {
     srand((unsigned) time(&t));
     for(int i = 0; i < sb_count(p->pointCharacter->actions); i++) {
         
-        char* path = sfxPaths[rand() % 12];
+        char* path = sfxPaths[rand() % 11];
         // TODO: Actual SFX
         p->pointCharacter->actions[i]->audioChunk = LoadSound(path);
     }

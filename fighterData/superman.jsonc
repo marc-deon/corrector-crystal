@@ -10,7 +10,10 @@
 
     "animations": [
         {
-            //'Frames' is the number of non-duplicate frames (cells) in an animation. 'Wait' is how many frames (1/60 second) each cell is paused on. There is NOT support for variable framerate animations. 'LoopStart' is the cell index that is returned to on loop, or null."
+            //'Frames' is the number of non-duplicate frames (cells) in an animation.
+            // 'Wait' is how many frames (1/60 second) each cell is paused on.
+            // There is NOT support for variable framerate animations.
+            // 'LoopStart' is the cell index that is returned to on loop, or null."
             "name": "Idle",
             "sprite": "Graphics/Fighter/Shoto/aoko_idle.png",
             "frames": 16,
@@ -592,9 +595,9 @@
             "hitboxes":[[200, -800, 300, 300]],
             "damage": 250,
             "knockback": [10, 0],
-            "airKnockback": [10, -35],
+            "airKnockback": [10, -55],
             "groundAir": 1,
-            "hitStop": 60
+            // "hitStop": 60
 
         },
         {
@@ -609,7 +612,7 @@
             "hitStop": 5,
             "damage": 700,
             "knockback": [10, 0],
-            "airKnockback": [10, -35],
+            "airKnockback": [10, -65],
             "groundAir": 1
 
         },
@@ -624,7 +627,7 @@
             "hitStop": 5,
             "damage": 1000,
             "knockback": [10, 0],
-            "airKnockback": [10, -35],
+            "airKnockback": [10, -75],
             "groundAir": 1
 
         },

@@ -94,8 +94,12 @@ void Fighter_Damage(Fighter* f, Action* a) {
     int hkdIndex        = Action_FindIndexByName(f->actions, sb_count(f->actions), "Back Land Hard");
     
     if(Fighter_Air(f)) {
-        es->velocity.x = a->airKnockback[0] * right;
+        es->velocity.x = a->airKnockback[0] * right * -1;
         es->velocity.y = a->airKnockback[1];
+    }
+    else {
+        es->velocity.x = a->knockback[0] * right * -1;
+        es->velocity.y = a->knockback[1];
     }
     if(a->forceAir) {
         fs->stateFlags = fs->stateFlags | FF_AIR;

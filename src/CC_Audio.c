@@ -98,8 +98,8 @@ Sound buttno;
 
 
 // TODO(#5): Read audio settings from save file
-float volumeMusic = 0;
-float volumeSfx = 0;
+float volumeMusic = 10;
+float volumeSfx = 10;
 float volumeVocal = 0;
 
 bool CC_Audio_Init() {
