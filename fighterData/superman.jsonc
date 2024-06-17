@@ -248,7 +248,7 @@
             "sprite": "Graphics/Fighter/Shoto/aoko_fireball.png",
             "frames": 20,
             "wait": 6,
-            "cropRect": [0,0, 255, 255]
+            "cropRect": [0,0, 255, 224]
         }
     ],
 

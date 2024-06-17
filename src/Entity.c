@@ -72,13 +72,17 @@ bool Entity_FacingRight(Entity* e) {
 void Entity_DrawSprite(Entity* e, RectI camera) {
     
     EntityState* es = &cb_last(e->history);
-    if (!es->valid)
+    if (!es->valid) {
+        // printf("EntityState invalid\n");
         return;
+    }
 
     Animation* animation = es->currentAnimation;
     
-    if (!animation)
+    if (!animation) {
+        // printf("Animation invalid\n");
         return;
+    }
 
     RectI** sc = animation->spriteClips; 
     

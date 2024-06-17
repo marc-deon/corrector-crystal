@@ -235,6 +235,7 @@ void SetupFighter() {
     
     FighterState* fs = &cb_last(f->stateHistory);
     EntityState* es = &cb_last(f->entity->history);
+    es->valid = true;
 
     fs->stateFlags              = 0;
     fs->tempGravity.x           = 6969;
@@ -250,7 +251,7 @@ void SetupFighter() {
     es->currentAction  = f->actions[0];
 
     es->position.x = 0;
-    Fighter_StartActionIndex(f, 15, -1);
+    Fighter_StartActionIndex(f, 0, -1);
 }
 
 void UpdateHitboxes() {
@@ -391,23 +392,26 @@ void main() {
     
     cb_tab_act();
 
-    #define infoTextLen 9
-    const char* infoText[infoTextLen] = {
+    // #define infoTextLen 9
+    const char* infoText[] = {
         "Arrows: Pan",
         "Space : Play/Pause",
         "KP +/- : Zoom",
-
+        "",
+        "[, ] : Select action",
+        "",
         "1, 3 : Select box type",
         "Q, E : Select box index",
-
+        "",
         "WASD : Move selected box",
         "KP 8456: Resize box",
-
+        "",
         "Return : Create new box",
         "Delete : Delete box",
-
-        "Ctrl+S : Save to json",
+        "",
+        "Ctrl+S : Save to json"
     };
+    const int infoTextLen = sizeof(infoText)/sizeof(infoText[0]);
 
     while(!WindowShouldClose()) {
 
@@ -425,8 +429,8 @@ void main() {
         fighterDrawScale += 1/60.0f * (IsKeyDown(KEY_KP_ADD) - IsKeyDown(KEY_KP_SUBTRACT));
         fighterDrawScale = fighterDrawScale * !IsKeyDown(KEY_KP_0) + IsKeyDown(KEY_KP_0);
 
-        previewCamera.x += (9 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_LEFT) - IsKeyDown(KEY_RIGHT));
-        previewCamera.y += (9 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_UP) - IsKeyDown(KEY_DOWN));
+        previewCamera.x += (20 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_LEFT) - IsKeyDown(KEY_RIGHT));
+        previewCamera.y += (20 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_UP) - IsKeyDown(KEY_DOWN));
         
         if(true) {
             UpdateHitboxes();
@@ -438,6 +442,7 @@ void main() {
         BeginDrawing();
         // printf("Begin\n");
         ClearBackground(BLACK);
+
 
         float dir;
         if (dir = GetMouseWheelMove()) {
