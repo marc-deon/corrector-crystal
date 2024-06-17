@@ -77,8 +77,8 @@ UiMenu* MakePauseMenu() {
     Ui_PushFocus(menu);
     
     menu->bakeType = BAKE_TYPE_SET_Y_SIZE;
-    menu->size = (Vec2I) {1280, 720};
-    menu->margin = (Vec4I) {0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50};
+    menu->size = (Vec2I) {VIRT_SCREEN_SIZE_X, VIRT_SCREEN_SIZE_Y};
+    menu->margin = (Vec4I) { 5, 5, 5, 5 };
 
     Menu_Bake(menu, true);
     // Menu_Bake(menu, (Vec4I) {0,VIRT_SCREEN_SIZE_X,50,VIRT_SCREEN_SIZE_Y-50}, (Vec4I) {.l=0, .r=0, .t=0, .b=0}, BAKE_TYPE_SET_Y_SIZE, true);

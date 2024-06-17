@@ -5,7 +5,7 @@
     "maxHealth": 10000,
     "maxMeter": 1000,
     "maxMana": 5,
-    "gravity": 6,
+    "gravity": 5.75,
 
 
     "animations": [
@@ -128,7 +128,7 @@
             "name": "2A",
             "sprite": "Graphics/Fighter/Shoto/aoko_2a.png",
             "frames": 4,
-            "wait": 4,
+            "wait": 3,
             "cropRect":[0,0, 87, 62],
             "loopStart": 2
         },
@@ -524,7 +524,7 @@
         {
             "name": "2A",
             "linksTo": ["Crouch Loop"],
-            "mustLinkAfter": 16,
+            "mustLinkAfter": 12,
             "priority": 10,
             "shovebox": [-200, -600, 400, 600],
             "hitboxes": [[50, -500, 400, 500]],
@@ -575,8 +575,8 @@
             "priority": 40,
             "shovebox": [-200, -600, 400, 600],
             "forceAir": true,
-            "knockback": [10, -115],
-            "airKnockback": [10, -115],
+            "knockback": [10, -140],
+            "airKnockback": [10, -140],
             "hitboxes": [[400, -1200, 300, 1200, 10]],
             "step": [40,0],
             "hitstun": 27,

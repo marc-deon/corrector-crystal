@@ -3,6 +3,7 @@
 #include "stretchy_buffer.h"
 #include "circular_buffer.h"
 #include "Json_Extension.h"
+#include "Fighter.h"
 
 #include <stdio.h>
 #include <json-c/json.h>
@@ -11,6 +12,8 @@ EntityState** unowned_entities = 0;
 
 void temp_fireball_on_hit(CallbackInfo info) {
     Entity_Die(info.target);
+    // Fighter_Damage((Fighter*) ((Entity*)info.target)->fighter), )
+    
     printf("doot %s %d\n", ((Entity*)info.target)->name, ((Entity*)info.target)->history->valid);
     printf("Inside invoke %p %c\n", info.target, ((Entity*)info.target)->history->valid ? 'T' : 'F');
 }
@@ -78,6 +81,8 @@ Entity* Entity_ReadPartial(char* path) {
     es->currentAction = Action_CreateNull();
     es->currentAction->damage = json_get_int(parsed_json, "damage");
     es->currentAction->name = json_get_string(parsed_json, "name");
+    es->currentAction->hitstun = json_get_default_int(parsed_json, "hitstun", 0);
+    es->currentAction->hitStop = json_get_default_int(parsed_json, "hitstop", 0);
     // Set defaults for hitbox onFrame, offFrame
     rect[4] = 0; rect[5] = -1;
     json_get_int_array(parsed_json, "hitbox", rect);

@@ -12,7 +12,7 @@ typedef struct ui_menu {
     
     enum bake_type bakeType;
     Vec2I size;
-    // Internal margin that separates children from edges
+    // Internal margin that separates children from edges (lrtb)
     Vec4I margin;
     // Only used when baketype is BAKE_TYPE_SET_SPACING
     int spacing; 

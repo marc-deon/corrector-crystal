@@ -395,10 +395,21 @@ void Game_Data_InitActions(Player* p) {
     time_t t;
     srand((unsigned) time(&t));
     for(int i = 0; i < sb_count(p->pointCharacter->actions); i++) {
-        
-        char* path = sfxPaths[rand() % 11];
+        Action* a = p->pointCharacter->actions[i];
+        // char* path = sfxPaths[rand() % 11];
         // TODO: Actual SFX
-        p->pointCharacter->actions[i]->audioChunk = LoadSound(path);
+        if (!strcmp(a->name, "5A") || !strcmp(a->name, "2A") || !strcmp(a->name, "j.A")) {
+            p->pointCharacter->actions[i]->audioChunk = LoadSound("audio/sfx/hit_light.wav");
+        }
+        if (!strcmp(a->name, "5B") || !strcmp(a->name, "2B") || !strcmp(a->name, "j.B")) {
+            p->pointCharacter->actions[i]->audioChunk = LoadSound("audio/sfx/hit_medium.wav");
+        }
+        if (!strcmp(a->name, "5C") || !strcmp(a->name, "2C") || !strcmp(a->name, "j.C") || !strcmp(a->name, "3C")) {
+            p->pointCharacter->actions[i]->audioChunk = LoadSound("audio/sfx/hit_heavy.wav");
+        }
+        if (!strcmp(a->name,"Light Fireball") || !strcmp(a->name,"Medium Fireball") || !strcmp(a->name,"Heavy Fireball")) {
+            p->pointCharacter->actions[i]->audioChunk = LoadSound("audio/sfx/fireball_shoot.wav");
+        }
     }
 }
 

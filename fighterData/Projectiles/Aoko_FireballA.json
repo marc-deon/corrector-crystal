@@ -10,6 +10,7 @@
     "cropRect":    [0, 0, 639, 479],
     "loopStart":   0,
 
+    "hitstun": 32,
     "velocity":         [25, 0],
     "damage":           1000,
     "cb_on_Damage":     "temp_fireball_on_hit",
