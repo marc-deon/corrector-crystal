@@ -4,6 +4,7 @@
 // #define DRAWCOLLISIONBOX
 #define DRAWHURTBOXES
 #define DRAWHITBOXES
+#define DRAWBLOCKBOXES
 // #define SUPERMAN "newchara.json"
 #define SUPERMAN "fighterData/superman.jsonc"
 
@@ -215,6 +216,9 @@ void CC_Render() {
         #endif
         #ifdef DRAWHITBOXES
             Fighter_DrawHitboxes(p->pointCharacter, camera);
+        #endif
+        #ifdef DRAWBLOCKBOXES
+            Fighter_DrawBlockboxes(p->pointCharacter, camera);
         #endif
     }
     DrawHUD(&currentMatch);

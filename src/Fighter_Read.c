@@ -153,9 +153,10 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         
         struct json_object* ob_hitboxes;
         struct json_object* ob_hurtboxes;
+        struct json_object* ob_blockboxes;
         json_bool hitExists = json_object_object_get_ex(action, "hitboxes", &ob_hitboxes);
         json_bool hurtExists = json_object_object_get_ex(action, "hurtboxes", &ob_hurtboxes);
-
+        json_bool blockExists = json_object_object_get_ex(action, "blockboxes", &ob_blockboxes);
 
         if(hitExists) {
             for(int j = 0; j < json_object_array_length(ob_hitboxes); j++) {
@@ -199,6 +200,36 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
                 rect.size.x = json_object_get_int((const json_object*) array_list_get_idx(rect_arr, 2));
                 rect.size.y = json_object_get_int((const json_object*) array_list_get_idx(rect_arr, 3));
                 Action_AddHurtbox(act, Hurtbox_Create(rect));
+            }
+        }
+
+        if(blockExists) {
+            for(int j = 0; j < json_object_array_length(ob_blockboxes); j++) {
+                RectI rect;
+                array_list* al = json_object_get_array(ob_blockboxes);
+                // First dig into the array of arrays...
+                array_list* rect_arr_list = json_object_get_array((const json_object*) array_list_get_idx(al, j));
+
+                // And then into the array of ints.
+                int blockArray[6];
+                
+                json_get_default_int_array((json_object*) rect_arr_list, "blockbox", blockArray, 6);
+
+                rect.pos.x =  json_object_get_int((const json_object*) array_list_get_idx(rect_arr_list, 0));
+                rect.pos.y =  json_object_get_int((const json_object*) array_list_get_idx(rect_arr_list, 1));
+                rect.size.x = json_object_get_int((const json_object*) array_list_get_idx(rect_arr_list, 2));
+                rect.size.y = json_object_get_int((const json_object*) array_list_get_idx(rect_arr_list, 3));
+                // A blockbox is actually a 6tuple; x, y, w, h, activeOnFrame, offOnFrame.
+                // If actOn isn't specified, set it to 0.
+                // If offOn isn't specified, set it to infinity.
+                int actOn = 0;
+                int offOn = __INT_MAX__;
+                if(array_list_length(rect_arr_list) > 4)
+                    actOn = json_object_get_int((const json_object*) array_list_get_idx(rect_arr_list, 4));
+                if(array_list_length(rect_arr_list) > 5)
+                    offOn = json_object_get_int((const json_object*) array_list_get_idx(rect_arr_list, 5));
+
+                Action_AddHitbox(act, Hitbox_Create(rect, actOn, offOn));
             }
         }
 

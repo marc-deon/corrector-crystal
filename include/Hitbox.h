@@ -15,6 +15,7 @@ enum boxtype {
     boxtype_hit,
     boxtype_hurt,
     boxtype_shove,
+    boxtype_block,
     boxtype_max
 };
 
@@ -38,13 +39,17 @@ typedef struct shovebox {
     RectI rect;
 } Shovebox;
 
+typedef Hitbox Blockbox;
+
 extern Hitbox NULLHIT;
 extern Hurtbox NULLHURT;
 extern Shovebox NULLSHOVE;
+extern Blockbox BLOCKBOX;
 
 Hitbox* Hitbox_Create(RectI rect, ushort activeOnFrame, ushort offOnFrame);
 Hurtbox* Hurtbox_Create(RectI rect);
 Shovebox Shovebox_Create(RectI rect);
+Blockbox Blockbox_Create(RectI rect);
 
 void Hitbox_UpdateTimer(Hitbox* hb);
 

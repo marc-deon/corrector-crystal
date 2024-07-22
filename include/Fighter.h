@@ -76,6 +76,7 @@ void Fighter_DrawPoint(Fighter* f, RectI camrea);
 void Fighter_DrawHitboxes(Fighter* f, RectI camrea);
 void Fighter_DrawHurtboxes(Fighter* f, RectI camrea);
 void Fighter_DrawCollisionbox(Fighter* f, RectI camrea);
+void Fighter_DrawBlockboxes(Fighter* f, RectI camera);
 
 void Fighter_ChangeAnimation(Fighter* f, Animation* newAnimation);
 

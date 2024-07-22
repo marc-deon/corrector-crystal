@@ -52,6 +52,7 @@ Action* Action_Create(
     act->hitboxes = 0;
     act->hurtboxes = 0;
     // act->shovebox;
+    act->blockboxes = 0;
     act->damage = damage;
     act->hitstun = hitstun;
     act->audioChunk.frameCount = 0;
@@ -116,6 +117,7 @@ Action* Action_CreateNull() {
     act->hitboxes = 0;
     act->hurtboxes = 0;
     // act->shovebox;
+    act->blockboxes = 0;
     act->damage = 0;
     act->hitstun = 0;
     act->audioChunk.frameCount = 0;
@@ -172,6 +174,12 @@ Action* Action_Copy(Action* old_a) {
         *box = *old_a->hurtboxes[i];
         sb_push(new_a->hurtboxes, box);
     }
+    new_a->blockboxes  = NULL;
+    for(int i = 0; i < sb_count(old_a->blockboxes); i++) {
+        Hitbox* box = malloc(sizeof(Hitbox));
+        *box = *old_a->blockboxes[i];
+        sb_push(new_a->blockboxes, box);
+    }
     return new_a;
 }
 
@@ -202,4 +210,10 @@ int Action_AddHitbox(Action* a, Hitbox* hb) {
 int Action_AddHurtbox(Action* a, Hurtbox* hb) {
     sb_push(a->hurtboxes, hb);
     return sb_count(a->hurtboxes)-1;
+}
+
+// Return the index of added element
+int Action_AddBlockbox(Action* a, Blockbox* hb) {
+    sb_push(a->blockboxes, hb);
+    return sb_count(a->blockboxes)-1;
 }

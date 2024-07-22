@@ -53,6 +53,9 @@ typedef struct action {
     // AKA collision box
     Shovebox shovebox;
 
+    // Stretchy buffer
+    Blockbox** blockboxes;
+
     // Unscaled damage, out of a default 10k health
     // Number is not used for non-attack actions, obviously
     unsigned short damage;

@@ -224,19 +224,14 @@ void Entity_Process_Hitbox(Entity* e) {
         }
 }
 
-
 void Entity_DrawHitboxes(Entity* e, RectI camera) {
     EntityState* es = &cb_last(e->history);
     Action* a = es->currentAction;
-
-
 
     for(int i = 0; i < sb_count(a->hitboxes); i++) {
         if(a->hitboxes[i]->active != HB_ACTIVE) {
             continue;
         }
-
-
 
         RectI hbr = a->hitboxes[i]->rect;
         // Since we can't *Draw* with negative width, we need to do this
@@ -246,6 +241,38 @@ void Entity_DrawHitboxes(Entity* e, RectI camera) {
         int selected = selectedBoxType == boxtype_none || (selectedBoxType == boxtype_hit && (selectedBoxIdx == i || selectedBoxIdx < 0));
         int opac = 127 * selected + 64 * !selected;
         opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_hit);
+
+        DrawRectangle(
+            ((hbr.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+            ((hbr.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+            hbr.w * UNIT_TO_PIX * fighterDrawScale,
+            hbr.h * UNIT_TO_PIX * fighterDrawScale,
+            (Color) {255, 0, 0, opac}
+        );
+    }
+
+    for(int i = 0; i < sb_count(e->subEntities); i++) {
+        Entity_DrawHitboxes(e->subEntities[i], camera);
+    }
+}
+
+void Entity_DrawBlockboxes(Entity* e, RectI camera) {
+    EntityState* es = &cb_last(e->history);
+    Action* a = es->currentAction;
+
+    for(int i = 0; i < sb_count(a->blockboxes); i++) {
+        if(a->blockboxes[i]->active != HB_ACTIVE) {
+            continue;
+        }
+
+        RectI hbr = a->blockboxes[i]->rect;
+        // Since we can't *Draw* with negative width, we need to do this
+        if (!Entity_FacingRight(e))
+            hbr = Rect_Flip_Draw(hbr);
+
+        int selected = selectedBoxType == boxtype_none || (selectedBoxType == boxtype_block && (selectedBoxIdx == i || selectedBoxIdx < 0));
+        int opac = 127 * selected + 64 * !selected;
+        opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_block);
 
         DrawRectangle(
             ((hbr.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
@@ -333,9 +360,11 @@ void Entity_Die(Entity* e) {
     cb_last(e->history).valid = false;
 
     // Queue to free after MAX_REWIND frames?
+
 }
 
 void Entity_Destroy(Entity* e) {
+
     for (int i = 0; i < cb_count(e->history); i++) {
         free(&e->history[i]);
     }

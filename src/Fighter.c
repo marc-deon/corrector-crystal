@@ -188,6 +188,10 @@ void Fighter_DrawHitboxes(Fighter* f, RectI camera) {
     Entity_DrawHitboxes(f->entity, camera);
 }
 
+void Fighter_DrawBlockboxes(Fighter* f, RectI camera) {
+    Entity_DrawBlockboxes(f->entity, camera);
+}
+
 void Fighter_DrawHurtboxes(Fighter* f, RectI camera) {
     EntityState* es = &cb_last(f->entity->history);
 

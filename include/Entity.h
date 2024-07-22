@@ -57,6 +57,7 @@ void Entity_Move(Entity* es);
 bool Entity_FacingRight(Entity* es);
 bool Entity_FacingRight(Entity* e);
 void Entity_DrawHitboxes(Entity* e, RectI camera);
+void Entity_DrawBlockboxes(Entity* e, RectI camera);
 void Entity_DrawSprite(Entity* e, RectI camera);
 void Entity_ChangeAnimation(Entity* e, Animation* newAnimation);
 /* Return a flat depth-first list of entities */
