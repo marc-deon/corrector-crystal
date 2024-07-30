@@ -29,6 +29,17 @@ Shovebox Shovebox_Create(RectI rect) {
     return sb;
 }
 
+Blockbox* Blockbox_Create(RectI rect, ushort activeOnFrame, ushort offOnFrame) {
+    Blockbox* hb = (Blockbox*)malloc(sizeof(Blockbox));
+    hb->rect = rect;
+    hb->activeOnFrame = activeOnFrame;
+    hb->offOnFrame = offOnFrame;
+    printf("Creating block box active on %d off on %d\n", activeOnFrame, offOnFrame);
+
+    hb->active = HB_INACTIVE;
+    return hb;
+}
+
 void Hitbox_UpdateTimer(Hitbox* hb) {
 
     // If HB_INACTIVE, then the hitbox hasn't gone live yet. If HB_DISABLED, then it shouldn't go live.

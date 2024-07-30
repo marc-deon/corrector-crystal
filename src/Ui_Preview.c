@@ -31,13 +31,15 @@ const char* boxtypes[] = {
     "Hit",
     "Hurt",
     "Shove",
+    "Block"
 };
 
 const Color boxcolors[] = {
     BLACK,
     RED,
     GREEN,
-    WHITE
+    WHITE,
+    YELLOW
 };
 
 void Preview_Draw(UiPreview* p, Vec2I offset) {
@@ -76,8 +78,21 @@ void Preview_Draw(UiPreview* p, Vec2I offset) {
     text = TextFormat("%d", sb_count(act->hurtboxes));
     DrawText(text, p->position.x + offset.x + 2 + textSize, p->position.y + offset.y + y, FONTSIZE, GREEN);  y += 20;
 
-    if(selectedBoxType == boxtype_hit && selectedBoxIdx >= 0) {
-        RectI r = act->hitboxes[selectedBoxIdx]->rect;
+    if (selectedBoxType != boxtype_none && selectedBoxIdx >= 0) {
+        RectI r;
+        switch(selectedBoxType) {
+            case boxtype_hit:
+                r = act->hitboxes[selectedBoxIdx]->rect;
+                break;
+            case boxtype_hurt:
+                r = act->hurtboxes[selectedBoxIdx]->rect;
+                break;
+            case boxtype_block:
+                r = act->blockboxes[selectedBoxIdx]->rect;
+                break;
+            case boxtype_shove:
+            r = act->shovebox.rect;
+        }
         text = TextFormat("%d %d %d %d", r.x, r.y, r.w, r.h);
         DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
     }
@@ -86,6 +101,7 @@ void Preview_Draw(UiPreview* p, Vec2I offset) {
     Fighter_DrawCollisionbox(asamiya_f, previewCamera);
     Fighter_DrawHitboxes(asamiya_f, previewCamera);
     Fighter_DrawHurtboxes(asamiya_f, previewCamera);
+    Fighter_DrawBlockboxes(asamiya_f, previewCamera);
     Fighter_DrawPoint(asamiya_f, previewCamera);
 
     // printf("Fighter drawn\n");

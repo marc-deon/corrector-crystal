@@ -33,6 +33,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         
         char* name = json_get_string(action, "name");
         int canLinkAfter = json_get_default_int(action, "canLinkAfter", 0);
+        // Should this be -1 by default?
         int mustLinkAfter = json_get_default_int(action, "mustLinkAfter", 0);
         FighterFlags state = (FighterFlags)json_get_default_int(action, "state", -1);
         int priority = json_get_default_int(action, "priority", 0);
@@ -141,12 +142,16 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         // Box shit
 
         int shoveArray[4];
-        json_get_default_int_array(action, "shovebox", shoveArray, 4);
+        bool defaulted = json_get_default_int_array(action, "shovebox", shoveArray, 4);
         RectI shovebox_rect;
-        shovebox_rect.pos.x  = shoveArray[0];
-        shovebox_rect.pos.y  = shoveArray[1];
-        shovebox_rect.size.x = shoveArray[2];
-        shovebox_rect.size.y = shoveArray[3];
+        if (defaulted) {
+            shovebox_rect = (RectI){0,0,0,0};
+        } else {
+            shovebox_rect.x = shoveArray[0];
+            shovebox_rect.y = shoveArray[1];
+            shovebox_rect.w = shoveArray[2];
+            shovebox_rect.h = shoveArray[3];
+        }
         Shovebox sb = Shovebox_Create(shovebox_rect);
         Action_SetShovebox(act, sb);
 
@@ -229,7 +234,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
                 if(array_list_length(rect_arr_list) > 5)
                     offOn = json_object_get_int((const json_object*) array_list_get_idx(rect_arr_list, 5));
 
-                Action_AddHitbox(act, Hitbox_Create(rect, actOn, offOn));
+                Action_AddBlockbox(act, Blockbox_Create(rect, actOn, offOn));
             }
         }
 

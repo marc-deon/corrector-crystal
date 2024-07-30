@@ -6,6 +6,7 @@
 
 typedef struct animation {
     char* name;
+    char* texture_filename; // We keep this around primarily for the Asamiya editor
     Texture texture;
     uint currentFrame;
     uint frameCount;

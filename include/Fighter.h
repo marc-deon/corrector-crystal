@@ -89,8 +89,8 @@ void Fighter_CheckWalls(Fighter* f);
 void Fighter_UpdateSubstate(Fighter* f);
 float Fighter_HealthPercent(Fighter* f);
 
-void Fighter_StartAction(Fighter*f, Action* a, uint setMax);
-void Fighter_StartActionIndex(Fighter*f, uint i, uint setMax);
+void Fighter_StartAction(Fighter*f, Action* a, int setMax);
+void Fighter_StartActionIndex(Fighter*f, uint i, int setMax);
 
 bool Fighter_Grounded(Fighter* f);
 bool Fighter_Air(Fighter* f);

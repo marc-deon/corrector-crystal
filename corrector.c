@@ -1,12 +1,12 @@
 // TODO(#19): Free stuff (animations, motions, etc) when done.
 
-// #define DRAWPOINT
-// #define DRAWCOLLISIONBOX
+#define DRAWPOINT
+#define DRAWCOLLISIONBOX
 #define DRAWHURTBOXES
 #define DRAWHITBOXES
 #define DRAWBLOCKBOXES
-// #define SUPERMAN "newchara.json"
-#define SUPERMAN "fighterData/superman.jsonc"
+//#define SUPERMAN "fighterData/superman_stable.jsonc"
+#define SUPERMAN "fighterData/superman_unstable.json"
 
 int asamiya = 0;
 
@@ -463,11 +463,7 @@ bool CC_ProcessFrame() {
     // Advance action frames, auto-advance action if neccesary
     Fighter_Process_Advance(currentMatch.players[0].pointCharacter);
     Fighter_Process_Advance(currentMatch.players[1].pointCharacter);
-    // for (int i = 0; i < 2; i++) {
-        
-    //     }
-    // }
-
+    
     // unshove
     Fighter* f1 = currentMatch.players[0].pointCharacter;
     Fighter* f2 = currentMatch.players[1].pointCharacter;

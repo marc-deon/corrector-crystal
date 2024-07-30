@@ -50,7 +50,7 @@ void Entity_Process_Advance(Entity* e);
 void Entity_Process_Position(Entity* e);
 void Entity_Process_Hitbox(Entity* e);
 
-void Entity_StartAction(Entity* e, Action* a, uint setMax);
+void Entity_StartAction(Entity* e, Action* a, int setMax);
 
 Entity* Entity_Create(Entity* owner);
 void Entity_Move(Entity* es);

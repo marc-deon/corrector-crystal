@@ -49,7 +49,7 @@ extern Blockbox BLOCKBOX;
 Hitbox* Hitbox_Create(RectI rect, ushort activeOnFrame, ushort offOnFrame);
 Hurtbox* Hurtbox_Create(RectI rect);
 Shovebox Shovebox_Create(RectI rect);
-Blockbox Blockbox_Create(RectI rect);
+Blockbox* Blockbox_Create(RectI rect, ushort activeOnFrame, ushort offOnFrame);
 
 void Hitbox_UpdateTimer(Hitbox* hb);
 

@@ -24,37 +24,44 @@ bool _Fighter_SaveAnimations(Fighter* f, json_object* job) {
 
 
     for(int i = 0; i < sb_count(f->animations); i++) {
+        Animation* anim = f->animations[i];
 
+        // Create root json object for animation
         json_object* animData = json_object_new_object();
 
+        // Create json_objects for everything we're going to save
         json_object* name;
-        // TODO: Texture filename?
-        // Texture texture;
-        // char* textureName;
+        json_object* texture_filename; // aka sprite
         json_object* frames;
         json_object* wait; // 1/frameRate. The number of frames to wait before incrementing the displayed frame. "Animated on X's".
         json_object* loopStart;
-        json_object* spriteClips = json_object_new_array_ext(4); // Stretchy buffer; RectIs for each sprite frame
+        json_object* cropRect_obj = json_object_new_array_ext(4); // Stretchy buffer; RectIs for each sprite frame
         json_object* linksToName;
 
-        Animation* anim = f->animations[i];
 
+        // Find relevent data
         name = json_object_new_string(anim->name);
+        texture_filename = json_object_new_string(anim->texture_filename);
         frames = json_object_new_int(anim->frameCount);
         wait = json_object_new_int(anim->frameWait);
         loopStart = json_object_new_int(anim->loopStart);
-        // for(int j = 0; j < 4; j ++)
-        //     json_object_array_add(spriteClips, json_object_new_int(anim->spriteClips[i][j]));
+        json_object_array_add(cropRect_obj, json_object_new_int(anim->spriteClips[0]->x));
+        json_object_array_add(cropRect_obj, json_object_new_int(anim->spriteClips[0]->y));
+        json_object_array_add(cropRect_obj, json_object_new_int(anim->spriteClips[0]->w));
+        json_object_array_add(cropRect_obj, json_object_new_int(anim->spriteClips[0]->h));
         linksToName = json_object_new_string(anim->linksTo->name);
 
+        // Add objects to root
         json_object_object_add(animData, "name", name);
+        json_object_object_add(animData, "sprite", texture_filename);
         json_object_object_add(animData, "frames", frames);
         json_object_object_add(animData, "wait", wait);
         json_object_object_add(animData, "loopStart", loopStart);
         json_object_object_add(animData, "linksTo", linksToName);
+        json_object_object_add(animData, "cropRect", cropRect_obj);
 
+        // Add root to list of animations
         json_object_array_add(animList, animData);
-
     }
 
     return true;
@@ -62,8 +69,8 @@ bool _Fighter_SaveAnimations(Fighter* f, json_object* job) {
 
 bool _Fighter_SaveActions(Fighter* f, json_object* job) {
 
-    json_object* animList = json_object_new_array_ext(sb_count(f->actions));
-    json_object_object_add(job, "actions", animList);
+    json_object* actList = json_object_new_array_ext(sb_count(f->actions));
+    json_object_object_add(job, "actions", actList);
 
 
     for(int i = 0; i < sb_count(f->actions); i++) {
@@ -71,7 +78,10 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         Action* act = f->actions[i];
         json_object* actData = json_object_new_object();
 
+        // Section: Declare
+
         json_object* name;
+        json_object* linksTo = json_object_new_array_ext(0);
         json_object* canLinkAfter;
         json_object* mustLinkAfter;
         json_object* state;
@@ -81,6 +91,7 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         json_object* hitstun;
         json_object* wallSplat;
         json_object* dunk;
+        json_object* slam;
         json_object* hardKnockdown;
         json_object* forceAir;
         json_object* groundAir;
@@ -100,8 +111,18 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         json_object* overrideSelfTime;
         json_object* index;
         json_object* phase;
+        json_object* hitboxes = json_object_new_array();
+        json_object* hurtboxes = json_object_new_array();
+        json_object* blockboxes = json_object_new_array();
+        json_object* shovebox = json_object_new_array_ext(4);
+
+        // Section: Assign value
 
         name = json_object_new_string(act->name);
+        for(int i = 0; i < sb_count(act->linksTo); i++) {
+            json_object* link = json_object_new_string(act->linksTo[i]->name);
+            json_object_array_add(linksTo, link);
+        }
         canLinkAfter = json_object_new_int(act->canLinkAfter);
         mustLinkAfter = json_object_new_int(act->mustLinkAfter);
         state = json_object_new_int(act->state);
@@ -111,17 +132,26 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         hitstun = json_object_new_int(act->hitstun);
         wallSplat = json_object_new_boolean(act->wallSplat);
         dunk = json_object_new_boolean(act->dunk);
+        slam = json_object_new_boolean(act->slam);
         hardKnockdown = json_object_new_boolean(act->hardKnockdown);
         forceAir = json_object_new_boolean(act->forceAir);
-        groundAir = json_object_new_boolean(act->groundAir);
+        groundAir = json_object_new_int(act->groundAir);
         overrideGravity = json_object_new_boolean(act->overrideGravity);
         hitStop = json_object_new_int(act->hitStop);
-        for(int i = 0; i < 2; i ++) json_object_array_add(knockback, json_object_new_int(act->knockback[i]));
-        for(int i = 0; i < 2; i ++) json_object_array_add(airKnockback, json_object_new_int(act->airKnockback[i]));
+        for(int i = 0; i < 2; i++) {
+            json_object_array_add(knockback, json_object_new_int(act->knockback[i]));
+        }
+        for(int i = 0; i < 2; i++) {
+            json_object_array_add(airKnockback, json_object_new_int(act->airKnockback[i]));
+        }
         knockbackFrames = json_object_new_int(act->knockbackFrames);
-        for(int i = 0; i < 2; i ++) json_object_array_add(selfKnockback, json_object_new_int(act->selfKnockback[i]));
+        for(int i = 0; i < 2; i++) {
+            json_object_array_add(selfKnockback, json_object_new_int(act->selfKnockback[i]));
+        }
         selfKnockbackFrames = json_object_new_int(act->selfKnockbackFrames);
-        for(int i = 0; i < 2; i ++) json_object_array_add(step, json_object_new_int(act->step[i]));
+        for(int i = 0; i < 2; i++) {
+            json_object_array_add(step, json_object_new_int(act->step[i]));
+        }
         stepDelay = json_object_new_int(act->stepDelay);
         burnsJump = json_object_new_int(act->burnsJump);
         restoresJump = json_object_new_boolean(act->restoresJump);
@@ -141,7 +171,52 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         index = json_object_new_int(act->index);
         phase = json_object_new_boolean(act->phase);
 
+        for(int i = 0; i < sb_count(act->hitboxes); i++) {
+            Hitbox* hb = act->hitboxes[i];
+            json_object* hb_obj = json_object_new_array_ext(6);
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.x));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.y));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.w));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.h));
+            json_object_array_add(hb_obj, json_object_new_int(hb->activeOnFrame));
+            json_object_array_add(hb_obj, json_object_new_int(hb->offOnFrame));
+            json_object_array_add(hitboxes, hb_obj);
+        }
+
+        for(int i = 0; i < sb_count(act->hurtboxes); i++) {
+            Hurtbox* hb = act->hurtboxes[i];
+            json_object* hb_obj = json_object_new_array_ext(6);
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.x));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.y));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.w));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.h));
+            json_object_array_add(hurtboxes, hb_obj);
+        }
+
+        for(int i = 0; i < sb_count(act->blockboxes); i++) {
+            Blockbox* hb = act->blockboxes[i];
+            json_object* hb_obj = json_object_new_array_ext(6);
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.x));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.y));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.w));
+            json_object_array_add(hb_obj, json_object_new_int(hb->rect.h));
+            json_object_array_add(hb_obj, json_object_new_int(hb->activeOnFrame));
+            json_object_array_add(hb_obj, json_object_new_int(hb->offOnFrame));
+            json_object_array_add(blockboxes, hb_obj);
+        }
+
+        // Shovebox
+        {
+            json_object_array_add(shovebox, json_object_new_int(act->shovebox.rect.x));
+            json_object_array_add(shovebox, json_object_new_int(act->shovebox.rect.y));
+            json_object_array_add(shovebox, json_object_new_int(act->shovebox.rect.w));
+            json_object_array_add(shovebox, json_object_new_int(act->shovebox.rect.h));
+        }
+
+        // Section: Add
+
         json_object_object_add(actData, "name", name);
+        json_object_object_add(actData, "linksTo", linksTo);
         json_object_object_add(actData, "canLinkAfter", canLinkAfter);
         json_object_object_add(actData, "mustLinkAfter", mustLinkAfter);
         json_object_object_add(actData, "state", state);
@@ -151,6 +226,7 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         json_object_object_add(actData, "hitstun", hitstun);
         json_object_object_add(actData, "wallSplat", wallSplat);
         json_object_object_add(actData, "dunk", dunk);
+        json_object_object_add(actData, "slam", slam);
         json_object_object_add(actData, "hardKnockdown", hardKnockdown);
         json_object_object_add(actData, "forceAir", forceAir);
         json_object_object_add(actData, "groundAir", groundAir);
@@ -170,10 +246,13 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         if(act->overrideSelfVelocity)
             json_object_object_add(actData, "overrideSelfVelocity", overrideSelfVelocity);
         json_object_object_add(actData, "overrideSelfTime", overrideSelfTime);
-        // json_object_object_add(actData, "i", i);
         json_object_object_add(actData, "phase", phase);
+        json_object_object_add(actData, "hitboxes", hitboxes);
+        json_object_object_add(actData, "hurtboxes", hurtboxes);
+        json_object_object_add(actData, "blockboxes", blockboxes);
+        json_object_object_add(actData, "shovebox", shovebox);
 
-        json_object_array_add(animList, actData);
+        json_object_array_add(actList, actData);
 
     }
 
@@ -244,11 +323,11 @@ bool Fighter_Save(Fighter* f, const char* path) {
     }
     size_t length;
 
-    const char* str = json_object_to_json_string_length(job, JSON_C_TO_STRING_PRETTY, &length);
-    printf("%s\n", str);
+    const char* str = json_object_to_json_string_length(job, JSON_C_TO_STRING_PRETTY | JSON_C_TO_STRING_NOSLASHESCAPE, &length);
+    // printf("%s\n", str);
 
     fwrite(str, sizeof(char), length, fp);
 
     fclose(fp);
-
+    printf("Finished writing\n");
 }

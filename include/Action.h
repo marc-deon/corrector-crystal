@@ -70,6 +70,7 @@ typedef struct action {
 
     bool wallSplat;
     bool dunk;
+    bool slam;
     bool hardKnockdown;
     bool forceAir;
 
@@ -144,6 +145,7 @@ void Action_SetShovebox(Action* a, Shovebox hb);
 int Action_AddHitbox(Action* a, Hitbox* hb);
 // Return the index of added element
 int Action_AddHurtbox(Action* a, Hurtbox* hb);
+int Action_AddBlockbox(Action* a, Blockbox* hb);
 int Action_FindIndexByName(Action** a, int size, char* name);
 void Action_SetLinkTo(Action* a, Action* link);
 void Action_SetLinkFrom(Action* a, Action* link);

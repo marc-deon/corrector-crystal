@@ -156,7 +156,7 @@ void Entity_ChangeAnimation(Entity* e, Animation* newAnimation) {
 }
 
 
-void Entity_StartAction(Entity* e, Action* a, uint setMax) {
+void Entity_StartAction(Entity* e, Action* a, int setMax) {
     // Play audio
     Sound sfx = a->audioChunk;
     if(sfx.frameCount)
@@ -190,6 +190,11 @@ void Entity_StartAction(Entity* e, Action* a, uint setMax) {
         a->hitboxes[i]->active = HB_INACTIVE;
     }
 
+    for(int i = 0; i < sb_count(a->blockboxes); i++) {
+        a->blockboxes[i]->currentFrame = 0;
+        a->blockboxes[i]->active = HB_INACTIVE;
+    }
+
     Entity_ChangeAnimation(e, a->animation);
 }
 
@@ -214,9 +219,14 @@ void Entity_Process_Position(Entity* e) {
 
 void Entity_Process_Hitbox(Entity* e) {
         Hitbox** hitboxes = cb_last(e->history).currentAction->hitboxes;
+        Blockbox** blockboxes = cb_last(e->history).currentAction->blockboxes;
 
         for(int hit = 0; hit < sb_count(hitboxes); hit++) {
             Hitbox_UpdateTimer(hitboxes[hit]);
+        }
+
+        for(int hit = 0; hit < sb_count(blockboxes); hit++) {
+            Hitbox_UpdateTimer(blockboxes[hit]);
         }
 
         for(int i = 0; i < sb_count(e->subEntities); i++) {
@@ -259,7 +269,7 @@ void Entity_DrawHitboxes(Entity* e, RectI camera) {
 void Entity_DrawBlockboxes(Entity* e, RectI camera) {
     EntityState* es = &cb_last(e->history);
     Action* a = es->currentAction;
-
+    printf("Draw boxes\n");
     for(int i = 0; i < sb_count(a->blockboxes); i++) {
         if(a->blockboxes[i]->active != HB_ACTIVE) {
             continue;
@@ -273,18 +283,17 @@ void Entity_DrawBlockboxes(Entity* e, RectI camera) {
         int selected = selectedBoxType == boxtype_none || (selectedBoxType == boxtype_block && (selectedBoxIdx == i || selectedBoxIdx < 0));
         int opac = 127 * selected + 64 * !selected;
         opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_block);
-
         DrawRectangle(
             ((hbr.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
             ((hbr.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
             hbr.w * UNIT_TO_PIX * fighterDrawScale,
             hbr.h * UNIT_TO_PIX * fighterDrawScale,
-            (Color) {255, 0, 0, opac}
+            (Color) {255, 255, 0, opac}
         );
     }
 
     for(int i = 0; i < sb_count(e->subEntities); i++) {
-        Entity_DrawHitboxes(e->subEntities[i], camera);
+        Entity_DrawBlockboxes(e->subEntities[i], camera);
     }
 }
 
@@ -344,12 +353,17 @@ Action* Entity_ShouldHit(Entity* attacker, Entity* defender) {
 
 void Entity_Damage(Entity* attacker, Entity* defender, Action* a) {
     EntityState* es = &cb_last(defender->history);
-    es->currentHealth = max(es->currentHealth - a->damage, 0);
-    if (es->currentHealth <= 0)
-        Entity_Die(defender);
 
-    if (a->cb_on_Damage.function) {
-        invoke(a->cb_on_Damage);
+    // No chip damage yet
+    if(strcmp(es->currentAction->name, "Block")) {
+        es->currentHealth = max(es->currentHealth - a->damage, 0);
+    
+        if (es->currentHealth <= 0)
+            Entity_Die(defender);
+
+        if (a->cb_on_Damage.function) {
+            invoke(a->cb_on_Damage);
+        }
     }
 
 

@@ -227,7 +227,7 @@ void SetupData() {
 
 
 void SetupFighter() {
-    Fighter* f = asamiya_f = Fighter_Create("fighterData/superman.jsonc");
+    Fighter* f = asamiya_f = Fighter_Create("fighterData/superman_stable.jsonc");
     cb_push(f->stateHistory, (FighterState) {});
     cb_push(f->entity->history, *EntityState_Create());
 
@@ -251,8 +251,46 @@ void SetupFighter() {
     es->currentAction  = f->actions[0];
 
     es->position.x = 0;
-    Fighter_StartActionIndex(f, 0, -1);
+
+    // Fighter_StartActionIndex(f, 0, -1);
+    // For testing purposes start with 5B
+    Fighter_StartActionIndex(f, 16, -1);
 }
+
+RectI* CreateNewBox() {
+    Action*    act = cb_last(asamiya_f->entity->history).currentAction;
+    Animation* ani = cb_last(asamiya_f->entity->history).currentAnimation;
+    switch (selectedBoxType) {
+        case boxtype_hit: {
+            selectedBoxIdx = sb_count(act->hitboxes);
+            Hitbox* hb = Hitbox_Create((RectI) {100, -100, 100, 100}, 0, ani->frameCount * ani->frameWait);
+            // hb->active = ani->currentFrame >= hb->activeOnFrame && ani < hb->offOnFrame;
+            sb_push(act->hitboxes, hb);
+            return &hb->rect;
+            break;
+        }
+
+        case boxtype_hurt: {
+            selectedBoxIdx = sb_count(act->hurtboxes);
+            Hurtbox* hb = Hurtbox_Create((RectI) {100, -100, 100, 100});
+            sb_push(act->hurtboxes, hb);
+            return &hb->rect;
+            break;
+        }
+
+        case boxtype_block: {
+            selectedBoxIdx = sb_count(act->blockboxes);
+            Blockbox* hb = Blockbox_Create((RectI) {100, -100, 100, 100}, 0, ani->frameCount * ani->frameWait);
+            sb_push(act->blockboxes, hb);
+            return &hb->rect;
+            break;
+        }
+    }
+    return NULL;
+}
+
+Vector2 mouseStartPos;
+RectI* mouseRect = NULL;
 
 void UpdateHitboxes() {
     Action*    lastAct = cb_last(asamiya_f->entity->history).currentAction;
@@ -273,6 +311,9 @@ void UpdateHitboxes() {
     for(int i = 0; i < sb_count(lastAct->hitboxes); i++) {
         lastAct->hitboxes[i]->currentFrame += (!currentMatch.paused) + IsKeyPressed(KEY_PERIOD) - IsKeyPressed(KEY_COMMA);
     }
+    for(int i = 0; i < sb_count(lastAct->blockboxes); i++) {
+        lastAct->blockboxes[i]->currentFrame += (!currentMatch.paused) + IsKeyPressed(KEY_PERIOD) - IsKeyPressed(KEY_COMMA);
+    }
 
     const int modMax = (lastAni->frameCount * lastAni->frameWait);
 
@@ -280,7 +321,12 @@ void UpdateHitboxes() {
     lastAct->currentFrame = lastAni->currentFrame;
     for(int i = 0; i < sb_count(lastAct->hitboxes); i++) {
         Hitbox* hb = lastAct->hitboxes[i];
+        hb->currentFrame = lastAni->currentFrame;
+        hb->active = (hb->currentFrame >= hb->activeOnFrame) && (hb->currentFrame < hb->offOnFrame);
+    }
 
+    for(int i = 0; i < sb_count(lastAct->blockboxes); i++) {
+        Blockbox* hb = lastAct->blockboxes[i];
         hb->currentFrame = lastAni->currentFrame;
         hb->active = (hb->currentFrame >= hb->activeOnFrame) && (hb->currentFrame < hb->offOnFrame);
     }
@@ -292,6 +338,7 @@ void UpdateHitboxes() {
         Fighter_StartActionIndex(asamiya_f, idx, -1);
         lastAct->currentFrame = 0;
         lastAni->currentFrame = 0;
+        selectedBoxIdx = -1;
     }
 
     selectedBoxType += IsKeyPressed(KEY_THREE) - IsKeyPressed(KEY_ONE);
@@ -308,6 +355,9 @@ void UpdateHitboxes() {
         case boxtype_hurt:
             selectedBoxIdx = min(selectedBoxIdx, sb_count(lastAct->hurtboxes) - 1);
             break;
+
+            case boxtype_block:
+            selectedBoxIdx = min(selectedBoxIdx, sb_count(lastAct->blockboxes) - 1);
     }
     
 
@@ -322,7 +372,10 @@ void UpdateHitboxes() {
 
     else if (selectedBoxType == boxtype_shove)
         selectedBox = (Hitbox*) (&lastAct->shovebox);
-    
+
+    else if (selectedBoxType == boxtype_block && selectedBoxIdx >= 0 && selectedBoxIdx < sb_count(lastAct->blockboxes))
+        selectedBox = (Hitbox*) (lastAct->blockboxes[selectedBoxIdx]);
+
     if (selectedBox) {
         selectedBox->rect.x += (IsKeyDown(KEY_D) - IsKeyDown(KEY_A)) * (1 + 9*IsKeyDown(KEY_LEFT_SHIFT));
         selectedBox->rect.y += (IsKeyDown(KEY_S) - IsKeyDown(KEY_W)) * (1 + 9*IsKeyDown(KEY_LEFT_SHIFT));
@@ -332,23 +385,36 @@ void UpdateHitboxes() {
 
     // Return: Create new box
     if (IsKeyPressed(KEY_ENTER)) {
-        switch (selectedBoxType) {
-            case boxtype_hit: {
-                selectedBoxIdx = sb_count(lastAct->hitboxes);
-                Hitbox* hb = Hitbox_Create((RectI) {100, -100, 100, 100}, 0, lastAni->frameCount * lastAni->frameWait);
-                // hb->active = lastAni->currentFrame >= hb->activeOnFrame && lastAni < hb->offOnFrame;
-                sb_push(lastAct->hitboxes, hb);
-                break;
-            }
+        CreateNewBox();
+    }
 
-            case boxtype_hurt: {
-                selectedBoxIdx = sb_count(lastAct->hurtboxes);
-                Hurtbox* hb = Hurtbox_Create((RectI) {100, -100, 100, 100});
-                
-                sb_push(lastAct->hurtboxes, hb);
-                break;
-            }
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        // Where 0,0 is upper left of window
+        mouseStartPos = GetMousePosition();
+        // Convert from screen space to unit space
+        mouseStartPos.x = (mouseStartPos.x * PIX_TO_UNIT + previewCamera.x) / fighterDrawScale;
+        mouseStartPos.y = (mouseStartPos.y * PIX_TO_UNIT + previewCamera.y) / fighterDrawScale;
+        
+        mouseRect = CreateNewBox();
+        if (mouseRect) {
+            mouseRect->x = mouseStartPos.x;
+            mouseRect->y = mouseStartPos.y;
         }
+    }
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseRect) {
+        // Where 0,0 is upper left of window
+        Vector2 current = GetMousePosition();
+        // Convert from screen space to unit space
+        current.x = (current.x * PIX_TO_UNIT + previewCamera.x) / fighterDrawScale;
+        current.y = (current.y * PIX_TO_UNIT + previewCamera.y) / fighterDrawScale;
+        
+        mouseRect->w = current.x - mouseStartPos.x;
+        mouseRect->h = current.y - mouseStartPos.y;
+    }
+
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+        mouseRect = NULL;
     }
 
     // Delete: Nulls current box
@@ -373,8 +439,21 @@ void UpdateHitboxes() {
                     PruneBoxes((void*) lastAct->hurtboxes, boxtype_hurt);
                 }
                 break;
+
             case boxtype_shove:
                 lastAct->shovebox.rect = (RectI) {0,0,0,0};
+                break;
+
+            case boxtype_block:
+                if (selectedBoxIdx < sb_count(lastAct->blockboxes)) {
+                    Blockbox* hb = lastAct->blockboxes[selectedBoxIdx];
+                    hb->active = 0;
+                    hb->activeOnFrame = 0;
+                    hb->offOnFrame = 0;
+                    hb->rect = (RectI) {0,0,0,0};
+                    PruneBoxes((void*) lastAct->blockboxes, boxtype_block);
+                }
+                break;
         }
     }
 }
@@ -418,7 +497,7 @@ void main() {
         currentMatch.paused = currentMatch.paused ^ IsKeyPressed(KEY_SPACE);
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
-            Fighter_Save(asamiya_f, "newchara.json");
+            Fighter_Save(asamiya_f, "fighterData/superman_unstable.json");
         }
 
         if (IsKeyPressed(KEY_KP_DECIMAL)) {

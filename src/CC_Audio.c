@@ -98,7 +98,7 @@ Sound buttno;
 
 
 // TODO(#5): Read audio settings from save file
-float volumeMusic = 10;
+float volumeMusic = 0;
 float volumeSfx = 10;
 float volumeVocal = 0;
 

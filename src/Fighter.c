@@ -121,7 +121,7 @@ void Fighter_Damage(Fighter* f, Action* a) {
 
 
 // Use setMax for things like blockstun, hitstun, grabstun
-void Fighter_StartAction(Fighter* f, Action* a, uint setMax) {
+void Fighter_StartAction(Fighter* f, Action* a, int setMax) {
 
     FighterState* fs = &cb_last(f->stateHistory);
     
@@ -158,7 +158,7 @@ void Fighter_StartAction(Fighter* f, Action* a, uint setMax) {
 }
 
 
-void Fighter_StartActionIndex(Fighter*f, uint i, uint setMax) {
+void Fighter_StartActionIndex(Fighter*f, uint i, int setMax) {
     Fighter_StartAction(f, f->actions[i], setMax);
 }
 
@@ -199,7 +199,7 @@ void Fighter_DrawHurtboxes(Fighter* f, RectI camera) {
         char* name = es->currentAction->name;
         RectI hbr = es->currentAction->hurtboxes[i]->rect;
         // Since we can't *Draw* with negative width, we need to do this
-        if (Fighter_FacingRight(f)) {
+        if (!Fighter_FacingRight(f)) {
             hbr = Rect_Flip_Draw(hbr);
         }
 
@@ -208,10 +208,10 @@ void Fighter_DrawHurtboxes(Fighter* f, RectI camera) {
         opac += 100 * (selectedBoxIdx == i && selectedBoxType == boxtype_hurt);
 
         DrawRectangle(
-            ((hbr.pos.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
-            ((hbr.pos.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
-            hbr.size.x * UNIT_TO_PIX * fighterDrawScale,
-            hbr.size.y * UNIT_TO_PIX * fighterDrawScale,
+            ((hbr.x + es->position.x) * fighterDrawScale - camera.x) * UNIT_TO_PIX,
+            ((hbr.y + es->position.y) * fighterDrawScale - camera.y) * UNIT_TO_PIX,
+            hbr.w * UNIT_TO_PIX * fighterDrawScale,
+            hbr.h * UNIT_TO_PIX * fighterDrawScale,
             (Color) {0, 255, 0, opac}
         );
     }
@@ -298,7 +298,7 @@ void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, RectI camer
     
 
     // If we're not walking
-    if(!(es->currentAction == f->actions[4] || es->currentAction == f->actions[5])) {
+    if(strcmp(es->currentAction->name, "Walk Forward") && strcmp(es->currentAction->name, "Walk Backward")) {
         us = 0;
         opp = 0;
     }
@@ -329,14 +329,16 @@ void Fighter_MoveGround(Fighter* f, StickState* ss, StickState* ess, RectI camer
 }
 
 void Fighter_Land(Fighter* f) {
+    printf("Landing\n");
     FighterState* fs = &cb_last(f->stateHistory);
     EntityState* es = &cb_last(f->entity->history);
 
     fs->jumps = f->maxJumps;
     
     fs->stateFlags ^= FF_AIR;
-    es->velocity = VEC2_ZERO;
-    
+    es->velocity = (Vec2I){0,0};
+    printf("After land velocity is %d\n", es->velocity.y);
+
     es->subframe = 0;
     
     if(fs->stateFlags & FF_HARD_KD) {
@@ -378,7 +380,7 @@ void Fighter_MoveAir(Fighter* f, StickState* ss, RectI camera) {
     Entity_Process_Position(f->entity);    
 
     // Land if neccesary, otherwise swap to rising/falling animation if neccesary
-    if (es->position.y >= FLOOR_OFFSET && es->velocity.y >= 0) {
+    if (es->position.y >= FLOOR_OFFSET && es->velocity.y > 0) {
         es->position.y = FLOOR_OFFSET;
         Fighter_Land(f);
     }

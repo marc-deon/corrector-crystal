@@ -67,7 +67,8 @@ int json_get_int_array(const struct json_object* sourceObject, const char* key, 
     json_bool exists = json_object_object_get_ex(sourceObject, key, &tempObject);
     struct array_list* arrlist = json_object_get_array(tempObject);
 
-    for(int i = 0; i < array_list_length(arrlist); i++) {
+    size_t listlength = array_list_length(arrlist);
+    for(int i = 0; i < listlength; i++) {
         target[i] = json_object_get_int((const json_object*)array_list_get_idx(arrlist, i));
     }
 

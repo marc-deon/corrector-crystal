@@ -20,6 +20,14 @@
             "wait": 4,
             "cropRect":[0, 0, 43, 105]
         },
+
+        {
+            "name": "Block",
+            "sprite": "Graphics/Fighter/Shoto/aoko_block.png",
+            "frames": 3,
+            "wait": 3,
+            "cropRect": [0,0,255, 255]
+        },
         {
             "name": "Crouch Start",
             "sprite": "Graphics/Fighter/Shoto/aoko_crouch_start.png",
@@ -254,12 +262,12 @@
 
     "actions":[
         {
-            //'state' is a mask integer; see docs for details, but know that 
+            //'state' is a mask integer; see docs for details, but know that
             // 0 will make this character grounded and 1 will make character airborn.
             // -1 will not change. json does not allow for binary literals."
             "name": "Idle",
 
-            
+
             "linksTo": null,         // list of Action strings to link to
             "canLinkAfter": 0,       // ALLOWS for canceling into any of linksTo[] after this many frames
             "mustLinkAfter": -1,     // AUTOMATICALLY goes to linksTo[0] after this many frames
@@ -282,6 +290,10 @@
             "shovebox": [-200, -600, 400, 600]
 
         },
+        {
+            "name": "Block"
+        },
+
         {
             "name": "Crouch Start",
             "linksTo": ["Crouch Loop"],
@@ -836,7 +848,7 @@
             "airOk":true,
             "bufferSize":2,
             "burnsJump": 1
-            
+
         },
         {   "name": "dj8",
             "pattern": "m8",
@@ -844,7 +856,7 @@
             "airOk":true,
             "bufferSize":2,
             "burnsJump": 1
-            
+
         },
         {   "name": "dj9",
             "pattern": "m9",
@@ -852,32 +864,32 @@
             "airOk":true,
             "bufferSize":2,
             "burnsJump": 1
-            
+
         },
         {   "name": "JumpSquat",
             "pattern": "u",
             "priority": 50,
             "action":"Jump Squat",
             "bufferSize":1
-            
+
         },
         {   "name": "8Jump",
             "pattern": "8",
             "priority": 51,
             "bufferSize":1
-            
+
         },
         {   "name": "7Jump",
             "pattern": "7",
             "priority": 51,
             "bufferSize":1
-            
+
         },
         {   "name": "9Jump",
             "pattern": "9",
             "priority": 51,
             "bufferSize":1
-            
+
         },
         {   "name": "Airdash F",
             "pattern": "656",
@@ -912,7 +924,7 @@
             "pattern": "6",
             "priority": 1,
             "action":"Walk Forward"
-            
+
         },
         {   "name": "Walk backward",
             "pattern": "4",

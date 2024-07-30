@@ -4,6 +4,7 @@
 #include "stretchy_buffer.h"
 #include <raylib.h>
 #include "Entities.h"
+#include <stdio.h>
 
 uint _action_count;
 
@@ -154,8 +155,8 @@ Action* Action_CreateNull() {
 
 void Action_Free(Action* act) {
     // Mix_FreeChunk(act->audioChunk);
-    free(act->overrideSelfGravity);
-    free(act->overrideSelfVelocity);
+    // free(act->overrideSelfGravity);
+    // free(act->overrideSelfVelocity);
     free(act);
 }
 
@@ -176,7 +177,7 @@ Action* Action_Copy(Action* old_a) {
     }
     new_a->blockboxes  = NULL;
     for(int i = 0; i < sb_count(old_a->blockboxes); i++) {
-        Hitbox* box = malloc(sizeof(Hitbox));
+        Blockbox* box = malloc(sizeof(Blockbox));
         *box = *old_a->blockboxes[i];
         sb_push(new_a->blockboxes, box);
     }
