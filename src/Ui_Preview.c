@@ -97,6 +97,43 @@ void Preview_Draw(UiPreview* p, Vec2I offset) {
         DrawText(text, p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
     }
 
+    // Draw Blockability
+    DrawText("Attack flags", p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
+    DrawText(act->attacker_flags & BLOCK_FLAG_AERIAL ? "A" : "-",
+        p->position.x + offset.x + 02, p->position.y + offset.y + y, FONTSIZE,
+        act->attacker_flags & BLOCK_FLAG_AERIAL ? RED : WHITE
+    ); 
+    DrawText(act->attacker_flags & BLOCK_FLAG_HIGH   ? "H" : "-",
+        p->position.x + offset.x + 22, p->position.y + offset.y + y, FONTSIZE,
+        act->attacker_flags & BLOCK_FLAG_HIGH   ? RED : WHITE
+    );
+    DrawText(act->attacker_flags & BLOCK_FLAG_MID    ? "M" : "-",
+        p->position.x + offset.x + 42, p->position.y + offset.y + y, FONTSIZE,
+        act->attacker_flags & BLOCK_FLAG_MID    ? RED : WHITE
+    );
+    DrawText(act->attacker_flags & BLOCK_FLAG_LOW    ? "L" : "-",
+        p->position.x + offset.x + 62, p->position.y + offset.y + y, FONTSIZE,
+        act->attacker_flags & BLOCK_FLAG_LOW    ? RED : WHITE
+    ); y += 20;
+
+DrawText("Defense flags", p->position.x + offset.x + 2, p->position.y + offset.y + y, FONTSIZE, WHITE); y += 20;
+    DrawText(act->defender_flags & BLOCK_FLAG_AERIAL ? "A" : "-",
+        p->position.x + offset.x + 02, p->position.y + offset.y + y, FONTSIZE,
+        act->defender_flags & BLOCK_FLAG_AERIAL ? GREEN : WHITE
+    ); 
+    DrawText(act->defender_flags & BLOCK_FLAG_HIGH   ? "H" : "-",
+        p->position.x + offset.x + 22, p->position.y + offset.y + y, FONTSIZE,
+        act->defender_flags & BLOCK_FLAG_HIGH   ? GREEN : WHITE
+    );
+    DrawText(act->defender_flags & BLOCK_FLAG_MID    ? "M" : "-",
+        p->position.x + offset.x + 42, p->position.y + offset.y + y, FONTSIZE,
+        act->defender_flags & BLOCK_FLAG_MID    ? GREEN : WHITE
+    );
+    DrawText(act->defender_flags & BLOCK_FLAG_LOW    ? "L" : "-",
+        p->position.x + offset.x + 62, p->position.y + offset.y + y, FONTSIZE,
+        act->defender_flags & BLOCK_FLAG_LOW    ? GREEN : WHITE
+    ); y += 20;
+
     Fighter_DrawSprite(asamiya_f, previewCamera);
     Fighter_DrawCollisionbox(asamiya_f, previewCamera);
     Fighter_DrawHitboxes(asamiya_f, previewCamera);

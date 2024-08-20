@@ -485,6 +485,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -545,6 +547,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -598,6 +602,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -651,6 +657,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -704,6 +712,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -761,6 +771,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -783,7 +795,6 @@
       "linksTo":[
         "Walk Backward"
       ],
-      "defenderFlags":14,
       "canLinkAfter":0,
       "mustLinkAfter":-1,
       "state":-1,
@@ -826,6 +837,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":true,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -888,6 +901,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -952,6 +967,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -1016,6 +1033,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -1080,6 +1099,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -1144,6 +1165,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -1208,6 +1231,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -1272,6 +1297,8 @@
       ],
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -1332,6 +1359,8 @@
       "restoresJump":true,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -1385,12 +1414,14 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
-          97,
-          -505,
-          200,
-          195,
+          247,
+          -655,
+          320,
+          221,
           0,
           65535
         ]
@@ -1416,7 +1447,6 @@
       "linksTo":[
         "Idle"
       ],
-      "attackerFlags":2,
       "canLinkAfter":0,
       "mustLinkAfter":32,
       "state":-1,
@@ -1455,6 +1485,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":true,
+      "defenderFlags":false,
       "hitboxes":[
         [
           -50,
@@ -1541,6 +1573,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           300,
@@ -1618,6 +1652,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           300,
@@ -1695,6 +1731,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -1719,7 +1757,7 @@
       "hitstun":0,
       "wallSplat":false,
       "dunk":false,
-      "slam":false,
+      "slam":true,
       "hardKnockdown":false,
       "forceAir":false,
       "groundAir":-1,
@@ -1748,6 +1786,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -1772,7 +1812,7 @@
       "hitstun":0,
       "wallSplat":false,
       "dunk":false,
-      "slam":false,
+      "slam":true,
       "hardKnockdown":false,
       "forceAir":false,
       "groundAir":-1,
@@ -1801,6 +1841,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -1825,7 +1867,7 @@
       "hitstun":0,
       "wallSplat":false,
       "dunk":false,
-      "slam":false,
+      "slam":true,
       "hardKnockdown":false,
       "forceAir":false,
       "groundAir":-1,
@@ -1854,6 +1896,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -1878,7 +1922,7 @@
       "hitstun":0,
       "wallSplat":false,
       "dunk":false,
-      "slam":false,
+      "slam":true,
       "hardKnockdown":false,
       "forceAir":false,
       "groundAir":-1,
@@ -1907,6 +1951,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -1931,7 +1977,7 @@
       "hitstun":15,
       "wallSplat":false,
       "dunk":false,
-      "slam":false,
+      "slam":true,
       "hardKnockdown":false,
       "forceAir":false,
       "groundAir":-1,
@@ -1960,6 +2006,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           50,
@@ -1993,7 +2041,7 @@
       "hitstun":21,
       "wallSplat":false,
       "dunk":false,
-      "slam":false,
+      "slam":true,
       "hardKnockdown":false,
       "forceAir":false,
       "groundAir":-1,
@@ -2022,6 +2070,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           100,
@@ -2055,7 +2105,7 @@
       "hitstun":23,
       "wallSplat":false,
       "dunk":false,
-      "slam":false,
+      "slam":true,
       "hardKnockdown":true,
       "forceAir":false,
       "groundAir":-1,
@@ -2084,6 +2134,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           0,
@@ -2146,6 +2198,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -2206,6 +2260,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           400,
@@ -2268,6 +2324,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           200,
@@ -2330,6 +2388,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           -50,
@@ -2411,6 +2471,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           -50,
@@ -2481,6 +2543,8 @@
       ],
       "overrideSelfTime":8,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -2534,6 +2598,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -2594,6 +2660,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           0,
@@ -2656,6 +2724,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":true,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[
         [
           0,
@@ -2718,6 +2788,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -2778,6 +2850,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[
         [
@@ -2838,6 +2912,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -2891,6 +2967,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],
@@ -2944,6 +3022,8 @@
       "restoresJump":false,
       "overrideSelfTime":0,
       "phase":false,
+      "attackerFlags":false,
+      "defenderFlags":false,
       "hitboxes":[],
       "hurtboxes":[],
       "blockboxes":[],

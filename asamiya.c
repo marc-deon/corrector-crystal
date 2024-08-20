@@ -488,7 +488,10 @@ void main() {
         "Return : Create new box",
         "Delete : Delete box",
         "",
-        "Ctrl+S : Save to json"
+        "Ctrl+S : Save to json",
+        "",
+        "ZXCV : Toggle attack flag",
+        "SHIFT: Toggle defend flag"
     };
     const int infoTextLen = sizeof(infoText)/sizeof(infoText[0]);
 
@@ -511,6 +514,29 @@ void main() {
         previewCamera.x += (20 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_LEFT) - IsKeyDown(KEY_RIGHT));
         previewCamera.y += (20 * IsKeyDown(KEY_LEFT_SHIFT) + 1) * (IsKeyDown(KEY_UP) - IsKeyDown(KEY_DOWN));
         
+        Action* selected_act = cb_last(asamiya_f->entity->history).currentAction;
+        
+        if (IsKeyDown(KEY_LEFT_SHIFT)) {
+            if(IsKeyPressed(KEY_Z))
+                selected_act->defender_flags ^= BLOCK_FLAG_AERIAL;
+            if(IsKeyPressed(KEY_X))
+                selected_act->defender_flags ^= BLOCK_FLAG_HIGH;
+            if(IsKeyPressed(KEY_C))
+                selected_act->defender_flags ^= BLOCK_FLAG_MID;
+            if(IsKeyPressed(KEY_V))
+                selected_act->defender_flags ^= BLOCK_FLAG_LOW;
+
+        } else {
+            if(IsKeyPressed(KEY_Z))
+                selected_act->attacker_flags ^= BLOCK_FLAG_AERIAL;
+            if(IsKeyPressed(KEY_X))
+                selected_act->attacker_flags ^= BLOCK_FLAG_HIGH;
+            if(IsKeyPressed(KEY_C))
+                selected_act->attacker_flags ^= BLOCK_FLAG_MID;
+            if(IsKeyPressed(KEY_V))
+                selected_act->attacker_flags ^= BLOCK_FLAG_LOW;
+        }
+
         if(true) {
             UpdateHitboxes();
         }
