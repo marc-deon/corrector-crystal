@@ -77,6 +77,7 @@ typedef struct save_state {
 SaveState trainingState;
 int isStateSet = 0;
 
+
 void Training_SaveState() {
     isStateSet = 1;
     trainingState.currentTime = cb_last(currentMatch.history).currentTime;
@@ -86,6 +87,7 @@ void Training_SaveState() {
     // Do puppets
     // Do projectiles
 }
+
 
 void Training_LoadState() {
     if (!isStateSet)
@@ -100,6 +102,7 @@ void Training_LoadState() {
 
 // returns -1, 0, or 1 based on the sign of i.
 #define sign(i) (i > 0 | -(i<0))
+
 
 bool CC_INIT() {
     bool videoSuccess;
@@ -130,11 +133,13 @@ bool CC_INIT() {
     return videoSuccess & audioSuccess;
 }
 
+
 void CC_CLOSE() {
     // Destroy Window
 
     free(previousKeyStates);
 }
+
 
 void Game_PlayerInit() {
     currentMatch.players[0].stick =          &p1Stick;
@@ -173,8 +178,6 @@ Match* GameInit(int p1CharaIndex, int p2CharaIndex) {
     currentMatch = Match_Init();
 
     Game_PlayerInit();
-
-    // Fighter_SpriteInit(p1CharaIndex, p2CharaIndex);
 
     Game_DataInit(p1CharaIndex, p2CharaIndex);
 
@@ -256,8 +259,8 @@ void CC_ProcessCamera() {
 
 }
 
-int CC_ProcessInput() {
 
+int CC_ProcessInput() {
 
     if (Stick_IsButtonJustDown(&p1Stick, STICK_START) || Stick_IsButtonJustDown(&p2Stick, STICK_START)) {
         printf("paused\n");
@@ -273,7 +276,6 @@ int CC_ProcessInput() {
     else if (QF_IsKeyJustDown(KEY_F6)) {
         Training_LoadState();
     }
-
 
     int p1Pal_old = p1Pal;
     int p2Pal_old = p2Pal;
@@ -312,6 +314,7 @@ int CC_ProcessInput() {
     return 1;
 }
 
+
 void CC_RewindFrames(int x) {
     // What histories do we have?
     // P1 history
@@ -321,57 +324,6 @@ void CC_RewindFrames(int x) {
     // Match history
 }
 
-// TODO: Make sure we can do Fighter-Fireball and Fireball-Fireball overlaps.
-// TODO: Maybe change this to Entity_CheckHitboxOverlap
-// Action* CC_Process_Hitbox_Overlap(Fighter* f, Fighter* opponent) {
-//     bool madeContact = false;
-//     FighterState* fs = &cb_last(f->stateHistory);
-//     EntityState* es = &cb_last(f->entity->history);
-//     EntityState* oes = &cb_last(opponent->entity->history);
-//     Action* out_hitBy = NULL;
-
-//     Hitbox** hitboxes = es->currentAction->hitboxes;
-//     Hurtbox** hurtboxes = oes->currentAction->hurtboxes;
-
-//     for (int hit = 0; (!madeContact) && (hit < sb_count(hitboxes)); hit++) {
-//         if (hitboxes[hit]->active != HB_ACTIVE)
-//             continue;
-
-//         // Adjust our hitbox according to our position and side
-//         RectI r1 = hitboxes[hit]->rect;
-//         if (!Fighter_FacingRight(f))
-//             r1 = Rect_Flip(r1);
-//         r1.pos.x += es->position.x;
-//         r1.pos.y += es->position.y;
-
-//         // Iterate over every opponent hurtbox, until we make contact
-//         for (int hurt = 0; (!madeContact) && (hurt < sb_count(hurtboxes)); hurt++) {
-
-
-//             // Adjust opponent's hurtbox according to their position and side
-//             RectI r2 = hurtboxes[hurt]->rect;
-//             if (!Fighter_FacingRight(opponent))
-//                 r2 = Rect_Flip(r2);
-//             r2.pos = Vec2_Add(r2.pos, cb_last(opponent->entity->history).position);
-
-//             if (Rect_Overlap(r1, r2)) {
-//                 // Break from double loop
-//                 madeContact = true;
-
-//                 // Save the action so we can apply hitstun later
-//                 out_hitBy = es->currentAction;
-
-//                 // Disable our action's hitboxes so we don't hit more than once
-//                 // (use multiple actions for multi hit moves)
-//                 for (int k = 0; k < sb_count(hitboxes); k++) {
-//                     hitboxes[k]->active = HB_DISABLED;
-//                 }
-//                 break;
-//             }
-//         }
-//     }
-//     return out_hitBy;
-// }
 
 struct Collision_Hit {
     Entity* attacker;
@@ -381,38 +333,54 @@ struct Collision_Hit {
 };
 
 
-
 Entity** CC_ProcessCheckBlocks(struct Collision_Hit* hits) {
     // Stretchy buffer of Entity pointers
     Entity** results = NULL;
 
-    for(int i = 0; i < sb_count(hits); i++) {
+    for (int i = 0; i < sb_count(hits); i++) {
         struct Collision_Hit hit = hits[i];
+        bool allowed_to_block = true;
 
-        // FIXME: I think there's an issue with this calculation, but before that...
-        // Compare defender state and action flags
-        bool allowed_to_block;
-        // If the attacker is NOT targetting this flag, OR regardless if we can block it, then we're good
-        uint a = ~hit.attacker_action->attacker_flags;
-        a = 0b1111 & a;
-        uint b = hit.defender_action->defender_flags;
-        allowed_to_block = a | b;
+        // Retrieve a copy of attacker and defender flags
+        uint attacker = hit.attacker_action->attacker_flags; 
+        uint defender = hit.defender_action->defender_flags; 
+        // Separate air component
+        bool attacker_air = attacker && BLOCK_FLAG_AERIAL;   
+        bool defender_air = defender && BLOCK_FLAG_AERIAL;   
+        // Separate grounded components
+        attacker &= 0b0111;                                  
+        defender &= 0b0111;                                  
 
-        if(!allowed_to_block)
+        // If the defender is in the air but the attack is not air blockable
+        if (defender_air && !attacker_air)
+            allowed_to_block = false;
+
+        // If this is valid defense, then attacker will be a subset of defender (I think)
+        if ((attacker | defender) != defender)
+            allowed_to_block = false;
+
+        if (!allowed_to_block)
             continue;
 
         // Only fighters can block
-        if(hit.defender->fighter == NULL)
+        if (hit.defender->fighter == NULL)
             continue;
 
         // Check stick direction
         bool holding_away;
         Fighter* us_f = ((Fighter*)(hit.defender->fighter));
-        int index = us_f->ownerIndex -1;
+        Stick* stick = currentMatch.players[us_f->ownerIndex-1].stick;
+
         int us_x = cb_last(hit.defender->history).position.x;
         int op_x = cb_last(hit.attacker->history).position.x;
-        int button = us_x < op_x ? STICK_LEFT : STICK_RIGHT;
-        holding_away = (currentMatch.players[index].stick, button);
+
+        if (us_x < op_x)
+            holding_away = Stick_IsButtonDown(stick, STICK_LEFT);
+        else if (us_x > op_x)
+            holding_away = Stick_IsButtonDown(stick, STICK_RIGHT);
+        else
+            holding_away = Stick_IsButtonDown(stick, STICK_LEFT | STICK_RIGHT);
+
         if (holding_away) {
             sb_push(results, hit.defender);
         }
@@ -427,7 +395,7 @@ uint CC_Process_ApplyHits(struct Collision_Hit* hits) {
 
     for (int i = 0; i < sb_count(hits); i++) {
         struct Collision_Hit hit = hits[i];
-        if(hit.defender == NULL) {
+        if (hit.defender == NULL) {
             printf("Skipped because block\n");
             continue;
         }
@@ -443,7 +411,7 @@ uint CC_Process_ApplyHits(struct Collision_Hit* hits) {
             hits[i].attacker_action->hitboxes[hit]->active = HB_DISABLED;
 
         // Point fighter specific
-        if(hit.defender->fighter)
+        if (hit.defender->fighter)
             Fighter_Damage(hit.defender->fighter, hit.attacker_action);
         // Deal damage
         Entity_Damage(hit.attacker, hit.defender, hit.attacker_action);
@@ -451,41 +419,6 @@ uint CC_Process_ApplyHits(struct Collision_Hit* hits) {
 
     return hitstop;
 }
-
-// struct Collision_Hit* CC_Process_CheckBlockHurt_Pairs(struct Collision_Hit* hits) {
-
-//     Entity** p1Entities = Entity_GetRecursive(currentMatch.players[0].pointCharacter->entity, NULL);
-//     Entity** p2Entities = Entity_GetRecursive(currentMatch.players[1].pointCharacter->entity, NULL);
-
-
-//     // To traverse the entities list depth first, just loop i, j from len to 0
-//     for (int i = sb_count(p1Entities)-1; i >= 0; i--) {
-//         for (int j = sb_count(p2Entities)-1; j >= 0; j--) {
-
-//             // Don't check self-self
-//             if ((p1Entities == p2Entities) && (i == j)) 
-//                 continue;
-
-//             Action* hit = Entity_ShouldBlock(p1Entities[i], p2Entities[j]);
-
-//             // We want to prevent actions from hitting multiple targets... or do we? I'll leave this commented out for now.
-//             bool action_already_used = false;
-//             /*
-//             for (int k = 0; k < stb_len(hits); k++) {
-//                 action_already_used |= hit == hits[k].action;
-//             }
-//             */
-
-//             if (hit && !action_already_used) {
-//                 struct Collision_Hit chit = {hit, p1Entities[i], p2Entities[j]};
-//                 sb_push(hits, chit);
-//                 break;
-//             }
-//         }    
-//     }
-//     // sb_push may change hits's address inplace, which isn't propogated out to our caller
-//     return hits;
-// }
 
 struct Collision_Hit* CC_Process_CheckHitboxes_Pairs(Entity** eList1, Entity** eList2, struct Collision_Hit* hits) {
     // To traverse the entities list depth first, just loop i, j from len to 0
@@ -550,7 +483,7 @@ bool CC_ProcessFrame() {
         cb_last(currentMatch.history).hitStop--;
         return true;
     }
-    else{
+    else {
         cb_last(currentMatch.history).currentTime--;
     }
 
@@ -582,7 +515,7 @@ bool CC_ProcessFrame() {
         RectI r1 = rect1;
         RectI r2 = rect2;
         int dir;
-        while(dir = Rect_ShortestEscape(r1, r2))
+        while (dir = Rect_ShortestEscape(r1, r2))
         {
             p1delta += Fighter_OnRight(f1) ? 1 : -1;
             p2delta += Fighter_OnRight(f2) ? 1 : -1;
@@ -605,7 +538,7 @@ bool CC_ProcessFrame() {
         if (Fighter_Air(p->pointCharacter)) {
             Fighter_MoveAir(p->pointCharacter, &p->stick->buffer[0], camera);
         }
-        else{
+        else {
             Fighter_MoveGround(p->pointCharacter, &p->stick->buffer[0], &op->stick->buffer[0], camera);
         }
         Fighter_UpdateSubstate(p->pointCharacter);
@@ -628,15 +561,12 @@ bool CC_ProcessFrame() {
         Entity* e = entities_to_block[i];
 
         // Start blocking
-        printf("Block!\n");
         // TODO: Don't use hard coded 60 frames of blockstun
         Entity_BeginBlock(e, 60);
 
         //// Update the hits list
-        // Find the matching entity
         for(int j = 0; j < sb_count(hits); j++) {
             if (hits[j].defender == e) {
-                // hits[j].defender_action = Entity_GetAction(e);
                 hits[j].defender = NULL;
             }
         }
@@ -661,8 +591,6 @@ bool CC_ProcessFrame() {
     if (hitStop || cb_last(currentMatch.history).hitStop)
         cb_last(currentMatch.history).hitStop = max(hitStop, cb_last(currentMatch.history).hitStop);
 
-
-    
     { // Check for win
         int result = Match_CheckRoundWin(&currentMatch);
         if (result == 1 || result == 2) {
@@ -685,6 +613,7 @@ bool CC_ProcessFrame() {
         }
     }
 }
+
 
 bool CC_Update() {
 
@@ -754,9 +683,8 @@ void ResetRound() {
 
 }
 
-Texture mmbg_texture;
+// Texture mmbg_texture;
 
-float pitch;
 
 int main(int argc, char* args[]) {
 
