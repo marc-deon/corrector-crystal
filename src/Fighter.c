@@ -89,9 +89,9 @@ void Fighter_Damage(Fighter* f, Action* a) {
     FighterState* fs = &cb_last(f->stateHistory);
     EntityState* es = &cb_last(f->entity->history);
     int right = es->facingRight ? 1 : -1;
-    int staggerIndex    = Action_FindIndexByName(f->actions, sb_count(f->actions), "Stagger");
-    int airStaggerIndex = Action_FindIndexByName(f->actions, sb_count(f->actions), "Air Stagger");
-    int hkdIndex        = Action_FindIndexByName(f->actions, sb_count(f->actions), "Back Land Hard");
+    int staggerIndex    = Action_FindIndexByName(f->actions, "Stagger");
+    int airStaggerIndex = Action_FindIndexByName(f->actions, "Air Stagger");
+    int hkdIndex        = Action_FindIndexByName(f->actions, "Back Land Hard");
     
     if(Fighter_Air(f)) {
         es->velocity.x = a->airKnockback[0] * right * -1;
@@ -116,7 +116,6 @@ void Fighter_Damage(Fighter* f, Action* a) {
     else{
     Fighter_StartActionIndex(f, staggerIndex, a->hitstun);
     }
-
 }
 
 
@@ -342,11 +341,11 @@ void Fighter_Land(Fighter* f) {
     es->subframe = 0;
     
     if(fs->stateFlags & FF_HARD_KD) {
-        int i = Action_FindIndexByName(f->actions, sb_count(f->actions), "Back Land Hard");
+        int i = Action_FindIndexByName(f->actions, "Back Land Hard");
         Fighter_StartActionIndex(f, i, 0);
     }
     else{
-        int i = Action_FindIndexByName(f->actions, sb_count(f->actions), "Land");
+        int i = Action_FindIndexByName(f->actions, "Land");
         Fighter_StartActionIndex(f, i, 0);
     }
 }

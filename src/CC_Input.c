@@ -7,7 +7,6 @@ Stick p1Stick = {.playerNumber = 1};
 Stick p2Stick = {.playerNumber = 2};
 
 
-
 void SaveInput() {
     // Save Old
     QF_CopyKeyArray(currentKeyStates, previousKeyStates);

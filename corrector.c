@@ -1,7 +1,7 @@
 // TODO(#19): Free stuff (animations, motions, etc) when done.
 
-#define DRAWPOINT
-#define DRAWCOLLISIONBOX
+// #define DRAWPOINT
+// #define DRAWCOLLISIONBOX
 #define DRAWHURTBOXES
 #define DRAWHITBOXES
 #define DRAWBLOCKBOXES
@@ -139,6 +139,7 @@ void CC_CLOSE() {
 void Game_PlayerInit() {
     currentMatch.players[0].stick =          &p1Stick;
     currentMatch.players[0].pointCharacter = Fighter_Create(SUPERMAN);
+    printf("During init p1 is %p\nDuring init p2 is %p\n", &p1Stick, &p2Stick);
     void* parsed = json_get_parsed_json(SUPERMAN);
     Fighter_GetPalette(currentMatch.players[0].pointCharacter, p1Pal);
     currentMatch.players[1].stick =          &p2Stick;
@@ -373,30 +374,120 @@ void CC_RewindFrames(int x) {
 // }
 
 struct Collision_Hit {
-    Action* action;
     Entity* attacker;
     Entity* defender;
+    Action* attacker_action;
+    Action* defender_action;
 };
 
+
+
+Entity** CC_ProcessCheckBlocks(struct Collision_Hit* hits) {
+    // Stretchy buffer of Entity pointers
+    Entity** results = NULL;
+
+    for(int i = 0; i < sb_count(hits); i++) {
+        struct Collision_Hit hit = hits[i];
+
+        // FIXME: I think there's an issue with this calculation, but before that...
+        // Compare defender state and action flags
+        bool allowed_to_block;
+        // If the attacker is NOT targetting this flag, OR regardless if we can block it, then we're good
+        uint a = ~hit.attacker_action->attacker_flags;
+        a = 0b1111 & a;
+        uint b = hit.defender_action->defender_flags;
+        allowed_to_block = a | b;
+
+        if(!allowed_to_block)
+            continue;
+
+        // Only fighters can block
+        if(hit.defender->fighter == NULL)
+            continue;
+
+        // Check stick direction
+        bool holding_away;
+        Fighter* us_f = ((Fighter*)(hit.defender->fighter));
+        int index = us_f->ownerIndex -1;
+        int us_x = cb_last(hit.defender->history).position.x;
+        int op_x = cb_last(hit.attacker->history).position.x;
+        int button = us_x < op_x ? STICK_LEFT : STICK_RIGHT;
+        holding_away = (currentMatch.players[index].stick, button);
+        if (holding_away) {
+            sb_push(results, hit.defender);
+        }
+    }
+
+    return results;
+}
 
 // Returns larget hitstop
 uint CC_Process_ApplyHits(struct Collision_Hit* hits) {
     uint hitstop = 0;
+
     for (int i = 0; i < sb_count(hits); i++) {
         struct Collision_Hit hit = hits[i];
+        if(hit.defender == NULL) {
+            printf("Skipped because block\n");
+            continue;
+        }
+
         printf("Appply Hits\n");
-        Entity_Damage(hit.attacker, hit.defender, hit.action);
-        if (hit.defender->fighter)
-            Fighter_Damage((Fighter*)hit.defender->fighter, hit.action);
-        hitstop = max(hitstop, hit.action->hitStop);
-        for (int hit = 0; hit < sb_count(hits[i].action->hitboxes); hit++)
-            hits[i].action->hitboxes[hit]->active = HB_DISABLED;
+
+        // Calculate hitstop to return
+        // TODO: Different on block?
+        hitstop = max(hitstop, hit.attacker_action->hitStop);
+
+        // Disable involved hitboxes
+        for (int hit = 0; hit < sb_count(hits[i].attacker_action->hitboxes); hit++)
+            hits[i].attacker_action->hitboxes[hit]->active = HB_DISABLED;
+
+        // Point fighter specific
+        if(hit.defender->fighter)
+            Fighter_Damage(hit.defender->fighter, hit.attacker_action);
+        // Deal damage
+        Entity_Damage(hit.attacker, hit.defender, hit.attacker_action);
     }
+
     return hitstop;
 }
 
-struct Collision_Hit* CC_Process_CheckHitboxes_Pairs(Entity** eList1, Entity** eList2, struct Collision_Hit* hits) {
+// struct Collision_Hit* CC_Process_CheckBlockHurt_Pairs(struct Collision_Hit* hits) {
 
+//     Entity** p1Entities = Entity_GetRecursive(currentMatch.players[0].pointCharacter->entity, NULL);
+//     Entity** p2Entities = Entity_GetRecursive(currentMatch.players[1].pointCharacter->entity, NULL);
+
+
+//     // To traverse the entities list depth first, just loop i, j from len to 0
+//     for (int i = sb_count(p1Entities)-1; i >= 0; i--) {
+//         for (int j = sb_count(p2Entities)-1; j >= 0; j--) {
+
+//             // Don't check self-self
+//             if ((p1Entities == p2Entities) && (i == j)) 
+//                 continue;
+
+//             Action* hit = Entity_ShouldBlock(p1Entities[i], p2Entities[j]);
+
+//             // We want to prevent actions from hitting multiple targets... or do we? I'll leave this commented out for now.
+//             bool action_already_used = false;
+//             /*
+//             for (int k = 0; k < stb_len(hits); k++) {
+//                 action_already_used |= hit == hits[k].action;
+//             }
+//             */
+
+//             if (hit && !action_already_used) {
+//                 struct Collision_Hit chit = {hit, p1Entities[i], p2Entities[j]};
+//                 sb_push(hits, chit);
+//                 break;
+//             }
+//         }    
+//     }
+//     // sb_push may change hits's address inplace, which isn't propogated out to our caller
+//     return hits;
+// }
+
+struct Collision_Hit* CC_Process_CheckHitboxes_Pairs(Entity** eList1, Entity** eList2, struct Collision_Hit* hits) {
     // To traverse the entities list depth first, just loop i, j from len to 0
     for (int i = sb_count(eList1)-1; i >= 0; i--) {
         for (int j = sb_count(eList2)-1; j >= 0; j--) {
@@ -416,7 +507,12 @@ struct Collision_Hit* CC_Process_CheckHitboxes_Pairs(Entity** eList1, Entity** e
             */
 
             if (hit && !action_already_used) {
-                struct Collision_Hit chit = {hit, eList1[i], eList2[j]};
+                struct Collision_Hit chit = {
+                    .attacker = eList1[i],
+                    .defender = eList2[j],
+                    .attacker_action = hit,
+                    .defender_action = cb_last(eList2[j]->history).currentAction
+                };
                 sb_push(hits, chit);
                 break;
             }
@@ -438,6 +534,7 @@ struct Collision_Hit* CC_Process_CheckHitboxes(Fighter* f1, Fighter* f2) {
     // hits = CC_Process_CheckHitboxes_Pairs(p1Entities, p1Entities, hits);
     // 3) Do same for P2-P2
     // hits = CC_Process_CheckHitboxes_Pairs(p2Entities, p2Entities, hits);
+
     // 4) Check P1-P2 collisions RDF
     hits = CC_Process_CheckHitboxes_Pairs(p1Entities, p2Entities, hits);
     // 5 Do same for P2-P1
@@ -519,7 +616,31 @@ bool CC_ProcessFrame() {
     Entity_Process_Hitbox(currentMatch.players[0].pointCharacter->entity);
     Entity_Process_Hitbox(currentMatch.players[1].pointCharacter->entity);
 
+    // You know what, ignore blockboxes for now. They're really only needed for a grounded state,
+    // And therefore not universal.
+    // auto val = CC_Process_CheckBlockboxes(f1, f2);
+
     struct Collision_Hit* hits = CC_Process_CheckHitboxes(f1, f2);
+
+    Entity** entities_to_block = CC_ProcessCheckBlocks(hits);
+
+    for (int i = 0; i < sb_count(entities_to_block); i++) {
+        Entity* e = entities_to_block[i];
+
+        // Start blocking
+        printf("Block!\n");
+        // TODO: Don't use hard coded 60 frames of blockstun
+        Entity_BeginBlock(e, 60);
+
+        //// Update the hits list
+        // Find the matching entity
+        for(int j = 0; j < sb_count(hits); j++) {
+            if (hits[j].defender == e) {
+                // hits[j].defender_action = Entity_GetAction(e);
+                hits[j].defender = NULL;
+            }
+        }
+    }
 
     uint hitStop = CC_Process_ApplyHits(hits);
 

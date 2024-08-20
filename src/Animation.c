@@ -54,7 +54,7 @@ Animation* Animation_Create(char* name, char* filename, uint frameCount, uint fr
     anim->frameCount = frameCount;
     anim->frameWait = frameWait;
     anim->loopStart = loopStart;
-    anim->texture_filename = malloc(sizeof(char) * strlen(filename));
+    anim->texture_filename = malloc(sizeof(char) * strlen(filename) + 1);
     strcpy(anim->texture_filename, filename);
     anim->texture = LoadTexture(filename);
     

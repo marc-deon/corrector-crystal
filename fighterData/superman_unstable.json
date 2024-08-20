@@ -25,7 +25,7 @@
       "sprite":"Graphics/Fighter/Shoto/aoko_block.png",
       "frames":3,
       "wait":3,
-      "loopStart":0,
+      "loopStart":2,
       "linksTo":"Block",
       "cropRect":[
         0,
@@ -510,7 +510,7 @@
       "canLinkAfter":0,
       "mustLinkAfter":0,
       "state":-1,
-      "priority":0,
+      "priority":1000,
       "animation":"Block",
       "damage":0,
       "hitstun":0,
@@ -783,6 +783,7 @@
       "linksTo":[
         "Walk Backward"
       ],
+      "defenderFlags":14,
       "canLinkAfter":0,
       "mustLinkAfter":-1,
       "state":-1,
@@ -1415,6 +1416,7 @@
       "linksTo":[
         "Idle"
       ],
+      "attackerFlags":2,
       "canLinkAfter":0,
       "mustLinkAfter":32,
       "state":-1,

@@ -217,6 +217,7 @@ void Entity_Process_Position(Entity* e) {
 }
 
 
+// Update the timers for hitboxes and blockboxes
 void Entity_Process_Hitbox(Entity* e) {
         Hitbox** hitboxes = cb_last(e->history).currentAction->hitboxes;
         Blockbox** blockboxes = cb_last(e->history).currentAction->blockboxes;
@@ -269,7 +270,6 @@ void Entity_DrawHitboxes(Entity* e, RectI camera) {
 void Entity_DrawBlockboxes(Entity* e, RectI camera) {
     EntityState* es = &cb_last(e->history);
     Action* a = es->currentAction;
-    printf("Draw boxes\n");
     for(int i = 0; i < sb_count(a->blockboxes); i++) {
         if(a->blockboxes[i]->active != HB_ACTIVE) {
             continue;
@@ -329,6 +329,27 @@ RectI Entity_GlobalizeRect(Entity* e, RectI r) {
         return hbr;
 }
 
+// Action* Entity_ShouldBlock(Entity* attacker, Entity* defender) {
+//     Blockbox** blockboxes = Entity_Getblockboxes(attacker);
+//     Hurtbox** hurtboxes = Entity_GetHurtboxes(defender);
+
+//     for(int block = 0; block < sb_count(blockboxes); block++) {
+//         for(int hurt = 0; hurt < sb_count(hurtboxes); hurt++) {
+//             if (blockboxes[block]->active != HB_ACTIVE)
+//                 continue;
+            
+//             RectI r1 = Entity_GlobalizeRect(attacker, blockboxes[block]->rect);
+//             RectI r2 = Entity_GlobalizeRect(defender, hurtboxes[hurt]->rect);
+
+//              if (Rect_Overlap(r1, r2)) {
+//                 return Entity_GetAction(attacker);
+//              }
+//         }
+//     }
+
+//     return NULL;
+// }
+
 Action* Entity_ShouldHit(Entity* attacker, Entity* defender) {
     Hitbox** hitboxes = Entity_GetHitboxes(attacker);
     Hurtbox** hurtboxes = Entity_GetHurtboxes(defender);
@@ -387,4 +408,12 @@ void Entity_Destroy(Entity* e) {
     for (int i = 0; i < sb_count(e->subEntities); i++) {
         Entity_Destroy(e->subEntities[i]);
     }
+}
+
+void Entity_BeginBlock(Entity* e, int blockstun) {
+    EntityState* es = &cb_last(e->history);
+    Fighter* f = e->fighter;
+    int idx = Action_FindIndexByName(f->actions, "Block");
+    // FIXME: Use variable blockstun
+    Fighter_StartActionIndex(f, idx, blockstun);
 }

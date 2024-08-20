@@ -34,7 +34,11 @@ bool Stick_IsButtonJustUp(Stick* s, int button) {
     return (bool)ret;
 }
 
+#include "CC_Input.h"
+
 bool Stick_IsButtonDown(Stick* s, int button) {
+    Stick* p1s = &p1Stick;
+    Stick* p2s = &p2Stick;
     return Stick_StickStateToInt(s->buffer[0]) & button;
 }
 

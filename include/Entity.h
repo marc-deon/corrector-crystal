@@ -74,5 +74,6 @@ Action* Entity_GetAction(Entity* e);
 void Entity_Damage(Entity* attacker, Entity* defender, Action* a);
 void Entity_Destroy(Entity* e);
 void Entity_Die(Entity* e);
+void Entity_BeginBlock(Entity* e, int blockstun);
 
 #endif // ENTITY.H

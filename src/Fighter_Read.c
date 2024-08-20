@@ -100,6 +100,9 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
 
         bool phase = json_get_default_bool(action, "phase", false);
 
+        int attacker_flags = json_get_default_int(action, "attackerFlags", 0);
+        int defender_flags = json_get_default_int(action, "defenderFlags", 0);
+
         // char* entity_name = json_get_default_string(action, "entity", NULL);
         // int entity = Entities_GetEntityFromName(entity_name);
         char* entityPath = json_get_default_string(action, "entityPath", NULL);
@@ -134,6 +137,8 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
             overrideSelfTime,
             i,
             phase,
+            attacker_flags,
+            defender_flags,
             entityPath
         );
         sb_push(fighter->actions, act);
@@ -265,7 +270,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
                     char* linkName = (char *) json_object_get_string(json_object_array_get_idx(nameArray, j));
                     // printf("... %s", linkName);
                     if (linkName) {
-                        int index = Action_FindIndexByName(fighter->actions, sb_count(fighter->actions), linkName);
+                        int index = Action_FindIndexByName(fighter->actions, linkName);
                         // printf("%s\n", linkName);
                         assert(index >= 0 && "Could not find action by name");
                         sb_push(a->linksTo, fighter->actions[index]);
@@ -279,7 +284,7 @@ const char* Fighter_ReadActions(Fighter* fighter, struct json_object* parsed_jso
         char* linksFromName = json_get_default_string(action, "linksFrom", NULL);
 
         if (linksFromName) {
-            int index = Action_FindIndexByName(fighter->actions, sb_count(fighter->actions), linksFromName);
+            int index = Action_FindIndexByName(fighter->actions, linksFromName);
             printf("%s\n", linksFromName);
             assert(index >= 0 && "Could not find action by name");
             Action_SetLinkFrom(a, fighter->actions[index]);
@@ -466,8 +471,7 @@ const char* Fighter_ReadMotions(Fighter* fighter, struct json_object* parsed_jso
         const char* actionName  = json_get_default_string(motion, "action", name);
         int bufferSize          = json_get_default_int(motion, "bufferSize", 0);
 
-        int len = sb_count(fighter->actions);
-        int j = Action_FindIndexByName(fighter->actions, len, actionName);
+        int j = Action_FindIndexByName(fighter->actions, actionName);
         assert(j >= 0 && "Couldn't find action by name");
 
         Action* actionLink = fighter->actions[j];

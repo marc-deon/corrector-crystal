@@ -111,6 +111,8 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         json_object* overrideSelfTime;
         json_object* index;
         json_object* phase;
+        json_object* attackerFlags;
+        json_object* defenderFlags;
         json_object* hitboxes = json_object_new_array();
         json_object* hurtboxes = json_object_new_array();
         json_object* blockboxes = json_object_new_array();
@@ -170,6 +172,8 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         overrideSelfTime = json_object_new_int(act->overrideSelfTime);
         index = json_object_new_int(act->index);
         phase = json_object_new_boolean(act->phase);
+        attackerFlags = json_object_new_boolean(act->attacker_flags);
+        defenderFlags = json_object_new_boolean(act->defender_flags);
 
         for(int i = 0; i < sb_count(act->hitboxes); i++) {
             Hitbox* hb = act->hitboxes[i];
@@ -247,6 +251,8 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
             json_object_object_add(actData, "overrideSelfVelocity", overrideSelfVelocity);
         json_object_object_add(actData, "overrideSelfTime", overrideSelfTime);
         json_object_object_add(actData, "phase", phase);
+        json_object_object_add(actData, "attackerFlags", attackerFlags);
+        json_object_object_add(actData, "defenderFlags", defenderFlags);
         json_object_object_add(actData, "hitboxes", hitboxes);
         json_object_object_add(actData, "hurtboxes", hurtboxes);
         json_object_object_add(actData, "blockboxes", blockboxes);

@@ -9,14 +9,19 @@
 #include "CC_Audio.h"
 #include "Types.h"
 
+#define BLOCK_FLAG_NONE     0b0000
+#define BLOCK_FLAG_LOW      0b0001
+#define BLOCK_FLAG_MID      0b0010
+#define BLOCK_FLAG_HIGH     0b0100
+#define BLOCK_FLAG_AERIAL   0b1000
+#define BLOCK_FLAG_MASK     0b1111
+typedef uint block_flags;
+
 /*
 Everything a character does is an Action: standing, walking, blocking, attacking,
 they're all actions. 99% of the time you see an animation change, 
 it's because the current action changed.
 */
-
-// typedef struct action Action;
-
 typedef struct action {
     // Human readable name 
     char* name;  
@@ -104,6 +109,9 @@ typedef struct action {
 
     CallbackFunction cb_on_Damage;
 
+    block_flags attacker_flags;
+    block_flags defender_flags;
+
 } Action;
 
 Action* Action_Create(
@@ -136,6 +144,8 @@ Action* Action_Create(
     uint overrideSelfTime,
     uint index,
     bool phase,
+    block_flags attacker_flags,
+    block_flags defender_flags,
     char* entityPath
     );
 
@@ -146,7 +156,7 @@ int Action_AddHitbox(Action* a, Hitbox* hb);
 // Return the index of added element
 int Action_AddHurtbox(Action* a, Hurtbox* hb);
 int Action_AddBlockbox(Action* a, Blockbox* hb);
-int Action_FindIndexByName(Action** a, int size, char* name);
+int Action_FindIndexByName(Action** a, char* name);
 void Action_SetLinkTo(Action* a, Action* link);
 void Action_SetLinkFrom(Action* a, Action* link);
 void Action_Free(Action* act);

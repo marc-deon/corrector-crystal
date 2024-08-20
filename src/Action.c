@@ -38,6 +38,8 @@ Action* Action_Create(
     uint overrideSelfTime,
     uint index,
     bool phase,
+    block_flags attacker_flags,
+    block_flags defender_flags,
     char* entityPath
 ) {
     Action* act = (Action*) malloc(sizeof(Action));
@@ -95,6 +97,8 @@ Action* Action_Create(
     act->overrideSelfTime = overrideSelfTime;
     act->index = index;
     act->phase = phase;
+    act->attacker_flags = attacker_flags;
+    act->defender_flags = defender_flags;
     act->partial_entity = NULL;
     if (entityPath) {
         act->partial_entity = Entity_ReadPartial(entityPath);
@@ -148,6 +152,8 @@ Action* Action_CreateNull() {
     act->overrideSelfTime = 0;
     act->index = 0;
     act->phase = 0;
+    act->attacker_flags = 0;
+    act->defender_flags = 0;
     act->partial_entity = NULL;
     act->cb_on_Damage.function = NULL;
     return act;
@@ -184,8 +190,8 @@ Action* Action_Copy(Action* old_a) {
     return new_a;
 }
 
-int Action_FindIndexByName(Action** actions, int size, char* name) {
-    for(int i = 0; i < size; i++) {
+int Action_FindIndexByName(Action** actions, char* name) {
+    for(int i = 0; i < sb_count(actions); i++) {
         int result = TextIsEqual(actions[i]->name, name);
         if(result)
             return i;
