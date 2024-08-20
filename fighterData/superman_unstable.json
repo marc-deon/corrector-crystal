@@ -505,7 +505,7 @@
     {
       "name":"Block",
       "linksTo":[
-        "Block"
+        "Idle"
       ],
       "canLinkAfter":0,
       "mustLinkAfter":0,
