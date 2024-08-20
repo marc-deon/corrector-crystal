@@ -227,7 +227,7 @@ void SetupData() {
 
 
 void SetupFighter() {
-    Fighter* f = asamiya_f = Fighter_Create("fighterData/superman_stable.jsonc");
+    Fighter* f = asamiya_f = Fighter_Create("fighterData/superman_stable.json");
     cb_push(f->stateHistory, (FighterState) {});
     cb_push(f->entity->history, *EntityState_Create());
 

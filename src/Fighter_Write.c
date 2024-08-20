@@ -172,8 +172,8 @@ bool _Fighter_SaveActions(Fighter* f, json_object* job) {
         overrideSelfTime = json_object_new_int(act->overrideSelfTime);
         index = json_object_new_int(act->index);
         phase = json_object_new_boolean(act->phase);
-        attackerFlags = json_object_new_boolean(act->attacker_flags);
-        defenderFlags = json_object_new_boolean(act->defender_flags);
+        attackerFlags = json_object_new_int(act->attacker_flags);
+        defenderFlags = json_object_new_int(act->defender_flags);
 
         for(int i = 0; i < sb_count(act->hitboxes); i++) {
             Hitbox* hb = act->hitboxes[i];

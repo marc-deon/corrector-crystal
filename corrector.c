@@ -5,7 +5,7 @@
 #define DRAWHURTBOXES
 #define DRAWHITBOXES
 #define DRAWBLOCKBOXES
-//#define SUPERMAN "fighterData/superman_stable.jsonc"
+//#define SUPERMAN "fighterData/superman_stable.json"
 #define SUPERMAN "fighterData/superman_unstable.json"
 
 int asamiya = 0;
@@ -330,6 +330,7 @@ struct Collision_Hit {
     Entity* defender;
     Action* attacker_action;
     Action* defender_action;
+    bool blocked;
 };
 
 
@@ -395,13 +396,7 @@ uint CC_Process_ApplyHits(struct Collision_Hit* hits) {
 
     for (int i = 0; i < sb_count(hits); i++) {
         struct Collision_Hit hit = hits[i];
-        if (hit.defender == NULL) {
-            printf("Skipped because block\n");
-            continue;
-        }
-
-        printf("Appply Hits\n");
-
+        
         // Calculate hitstop to return
         // TODO: Different on block?
         hitstop = max(hitstop, hit.attacker_action->hitStop);
@@ -410,11 +405,17 @@ uint CC_Process_ApplyHits(struct Collision_Hit* hits) {
         for (int hit = 0; hit < sb_count(hits[i].attacker_action->hitboxes); hit++)
             hits[i].attacker_action->hitboxes[hit]->active = HB_DISABLED;
 
-        // Point fighter specific
-        if (hit.defender->fighter)
-            Fighter_Damage(hit.defender->fighter, hit.attacker_action);
-        // Deal damage
-        Entity_Damage(hit.attacker, hit.defender, hit.attacker_action);
+        // 
+        if (!hit.blocked) {
+            // Point fighter specific
+            if (hit.defender->fighter)
+                Fighter_Damage(hit.defender->fighter, hit.attacker_action);
+            // Deal damage
+            Entity_Damage(hit.attacker, hit.defender, hit.attacker_action);
+        }
+        else {
+
+        }
     }
 
     return hitstop;
@@ -444,7 +445,8 @@ struct Collision_Hit* CC_Process_CheckHitboxes_Pairs(Entity** eList1, Entity** e
                     .attacker = eList1[i],
                     .defender = eList2[j],
                     .attacker_action = hit,
-                    .defender_action = cb_last(eList2[j]->history).currentAction
+                    .defender_action = cb_last(eList2[j]->history).currentAction,
+                    .blocked = false
                 };
                 sb_push(hits, chit);
                 break;
@@ -567,7 +569,11 @@ bool CC_ProcessFrame() {
         //// Update the hits list
         for(int j = 0; j < sb_count(hits); j++) {
             if (hits[j].defender == e) {
-                hits[j].defender = NULL;
+                hits[j].blocked = true;
+                // hits[j].defender = NULL;
+                // // Disable involved hitboxes
+                // for (int hit = 0; hit < sb_count(hits[j].attacker_action->hitboxes); hit++)
+                //     hits[j].attacker_action->hitboxes[hit]->active = HB_DISABLED;
             }
         }
     }
